@@ -1,5 +1,11 @@
+import DashboardLayout from "../dashboardLayout"
+
 function Dashboard() {
-    return <>대시보드</>
+    return (
+        <DashboardLayout>
+            <div>대시보드</div>
+        </DashboardLayout>
+    )
 }
 
 export default Dashboard

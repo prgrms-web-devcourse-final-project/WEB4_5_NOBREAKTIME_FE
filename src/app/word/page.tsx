@@ -1,5 +1,11 @@
+import DashboardLayout from "../dashboardLayout"
+
 function Word() {
-    return <>영단어</>
+    return (
+        <DashboardLayout>
+            <div>영단어</div>
+        </DashboardLayout>
+    )
 }
 
 export default Word

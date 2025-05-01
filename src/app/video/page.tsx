@@ -1,5 +1,11 @@
+import DashboardLayout from "../dashboardLayout"
+
 function Video() {
-    return <>비디오</>
+    return (
+        <DashboardLayout>
+            <div>비디오</div>
+        </DashboardLayout>
+    )
 }
 
 export default Video
