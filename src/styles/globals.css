@@ -1,0 +1,92 @@
+@import 'tailwindcss';
+
+/* 폰트 등록 */
+@font-face {
+    font-family: 'NotoSans';
+    src: url('/fonts/NotoSans-Medium.woff2') format('woff2'), url('/fonts/NotoSans-Medium.woff') format('woff');
+    font-weight: 500;
+    font-style: normal;
+}
+
+@font-face {
+    font-family: 'NotoSans';
+    src: url('/fonts/NotoSans-Bold.woff2') format('woff2'), url('/fonts/NotoSans-Bold.woff') format('woff');
+    font-weight: 700;
+    font-style: normal;
+}
+
+@font-face {
+    font-family: 'Maplestory';
+    src: url('/fonts/Maplestory Light.ttf') format('truetype');
+    font-weight: 300;
+    font-style: normal;
+}
+
+@font-face {
+    font-family: 'Maplestory';
+    src: url('/fonts/Maplestory Bold.ttf') format('truetype');
+    font-weight: 700;
+    font-style: normal;
+}
+
+/* 테마 변수 */
+:root {
+    --background: #fdfdfd;
+    --foreground: #141525;
+
+    /* 컬러 팔레트 */
+    --color-main: #52119f;
+    --color-sub-1: #c8b8f1;
+    --color-sub-2: #f4f1fb;
+    --color-point: #ffa726;
+    --color-white: #fdfdfd;
+    --color-black: #141525;
+    --color-black-sub: #9e9e9e;
+    --color-warning: #fe7f7f;
+    --color-success: #00ca00;
+
+    /* 폰트 */
+    --font-sans: 'NotoSans', Arial, Helvetica, sans-serif;
+    --font-maple: 'Maplestory', Arial, Helvetica, sans-serif;
+}
+
+/* 다크 모드 대응 -> 당장 필요가 없으니 주석처리 해놨는데 삭제를 할지 ?*/
+/* @media (prefers-color-scheme: dark) {
+  :root {
+    --background: #0a0a0a;
+    --foreground: #ededed;
+  }
+} */
+
+/* 기본 스타일 */
+html,
+body {
+    height: 100%;
+    overflow: hidden;
+    background: var(--background);
+    color: var(--foreground);
+    font-family: var(--font-sans);
+}
+
+button {
+    cursor: pointer;
+}
+
+/* 스크롤바 스타일링 */
+::-webkit-scrollbar {
+    width: 4px;
+}
+
+::-webkit-scrollbar-track {
+    background: var(--color-sub-2);
+    border-radius: 4px;
+}
+
+::-webkit-scrollbar-thumb {
+    background: var(--color-main);
+    border-radius: 4px;
+}
+
+::-webkit-scrollbar-thumb:hover {
+    background: var(--color-sub-1);
+}
