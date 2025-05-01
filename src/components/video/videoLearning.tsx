@@ -1,15 +1,16 @@
-import { useState } from "react";
-import VideoTab from "./videoTab";
-import VideoScript from "./videoScript";
+'use client'
+
+import { useState } from 'react'
+import VideoTab from './videoTab'
+import VideoScript from './videoScript'
 
 interface Props {
-    videoId: string;
-    onBack: () => void;
+    videoId: string
+    onBack: () => void
 }
 
 function VideoLearning({ videoId, onBack }: Props) {
-
-    const [fontSize, setFontSize] = useState(16);
+    const [fontSize, setFontSize] = useState(16)
 
     return (
         <div className="flex flex-col gap-4 h-full">
@@ -30,13 +31,13 @@ function VideoLearning({ videoId, onBack }: Props) {
                 <div className="flex justify-between items-center w-full h-20">
                     <h3>{videoId}번 영상의 제목</h3>
                     <div className="flex items-center gap-2">
-                        <button onClick={() => setFontSize(prev => Math.max(12, prev - 4))}>
+                        <button onClick={() => setFontSize((prev) => Math.max(12, prev - 4))}>
                             <img src="/assets/minus.svg" alt="video" className="w-6 h-6" />
                         </button>
 
                         <img src="/assets/font-size.svg" alt="video" className="w-6 h-6" />
                         <span className="text-sm font-bold">{fontSize}px</span>
-                        <button onClick={() => setFontSize(prev => Math.min(40, prev + 4))}>
+                        <button onClick={() => setFontSize((prev) => Math.min(40, prev + 4))}>
                             <img src="/assets/plus.svg" alt="video" className="w-6 h-6" />
                         </button>
                     </div>
@@ -46,7 +47,7 @@ function VideoLearning({ videoId, onBack }: Props) {
                 <VideoTab fontSize={fontSize} />
             </div>
         </div>
-    );
+    )
 }
 
-export default VideoLearning;
+export default VideoLearning
