@@ -55,7 +55,6 @@ function Video() {
                     {/* 검색 + 필터 */}
                     <div className="flex items-center gap-4 w-full mb-4">
                         <Search onSearch={handleSearch} placeholder="video search..." />
-
                         {/* 카테고리 버튼들 */}
                         <div className="flex gap-2">
                             {['전체', '노래', '드라마', '영화', '새로온 맞춤 동영상'].map((label) => (

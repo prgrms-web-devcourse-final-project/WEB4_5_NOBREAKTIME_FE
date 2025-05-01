@@ -1,7 +1,6 @@
-
 type HeaderProps = {
-    userName: string;
-    userLevel: number;
+    userName: string
+    userLevel: number
 }
 
 export default function Header({ userName, userLevel }: HeaderProps) {
@@ -23,5 +22,5 @@ export default function Header({ userName, userLevel }: HeaderProps) {
                 </div>
             </div>
         </header>
-    );
+    )
 }

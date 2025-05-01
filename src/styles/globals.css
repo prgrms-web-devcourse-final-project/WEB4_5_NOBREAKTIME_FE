@@ -74,7 +74,7 @@ button {
 
 /* 스크롤바 스타일링 */
 ::-webkit-scrollbar {
-    width: 4px;
+    width: 4px !important;
 }
 
 ::-webkit-scrollbar-track {
