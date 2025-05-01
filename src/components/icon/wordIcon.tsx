@@ -13,7 +13,8 @@ export default function AbcIcon({ className }: { className?: string }) {
                 stroke="currentColor"
                 strokeWidth="4"
                 strokeLinecap="round"
-                strokeLinejoin="round" />
+                strokeLinejoin="round"
+            />
         </svg>
-    );
+    )
 }

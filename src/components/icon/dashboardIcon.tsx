@@ -13,5 +13,5 @@ export default function DashboardIcon({ className }: { className?: string }) {
                 fill="currentColor"
             />
         </svg>
-    );
+    )
 }

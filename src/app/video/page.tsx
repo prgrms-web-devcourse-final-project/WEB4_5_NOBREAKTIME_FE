@@ -4,28 +4,57 @@ import { useState } from 'react'
 import DashboardLayout from '../dashboardLayout'
 import VideoLearning from '../../components/video/videoLearning'
 import VideoIcon from '@/components/icon/videoIcon'
+import Search from '@/components/layout/search'
+
+interface VideoData {
+    id: string
+    title: string
+    description: string
+    thumbnail?: string // 없을 수도 있으니까 optional
+}
+
 function Video() {
     const [selectedVideo, setSelectedVideo] = useState<string | null>(null)
 
+    const dummyVideos: VideoData[] = [
+        {
+            id: '1',
+            title: 'React 기초',
+            description: 'React를 배워보자',
+            thumbnail: '', // 실제 이미지 없으면 공백
+        },
+        {
+            id: '2',
+            title: '노마드 코더 강의',
+            description: '코딩 시작하기',
+            thumbnail: '',
+        },
+        {
+            id: '3',
+            title: '드라마로 배우는 영어',
+            description: '재밌게 배우는 영어',
+            thumbnail: '',
+        },
+    ]
+
+    const [videoList, setVideoList] = useState<VideoData[]>(dummyVideos)
+
+    const handleSearch = (keyword: string) => {
+        const filtered = dummyVideos.filter(
+            (video) =>
+                video.title.toLowerCase().includes(keyword.toLowerCase()) ||
+                video.description.toLowerCase().includes(keyword.toLowerCase()),
+        )
+        setVideoList(filtered)
+    }
+
     return (
         <DashboardLayout title="Video Learning" icon={<VideoIcon />}>
-            {/* 컨텐츠 */}
             {selectedVideo === null ? (
                 <>
                     {/* 검색 + 필터 */}
-                    <div className="flex items-center gap-4 w-full">
-                        {/* 검색창 */}
-                        <div className="flex items-center border-[3px] border-[var(--color-main)] bg-[var(--color-white)] rounded-full px-4 py-2 flex-1">
-                            <input
-                                type="text"
-                                placeholder="search..."
-                                className="w-full outline-none text-sm bg-transparent placeholder:text-gray-400"
-                            />
-                            <button className="text-[var(--color-main)]">
-                                <img src="/assets/search.svg" alt="search" className="w-8 h-8" />
-                            </button>
-                        </div>
-
+                    <div className="flex items-center gap-4 w-full mb-4">
+                        <Search onSearch={handleSearch} placeholder="video search..." />
                         {/* 카테고리 버튼들 */}
                         <div className="flex gap-2">
                             {['전체', '노래', '드라마', '영화', '새로온 맞춤 동영상'].map((label) => (
@@ -40,32 +69,29 @@ function Video() {
                     </div>
 
                     {/* 동영상 리스트 */}
-                    <div className="flex flex-col gap-6 overflow-y-auto pr-2 overflow-hidden">
-                        {[1, 2, 3, 4, 5, 6, 7, 8, 9, 10].map((id) => (
+
+                    <div className="flex flex-col gap-6 overflow-y-auto pr-2">
+                        {videoList.map((video) => (
                             <div
-                                key={id}
-                                onClick={() => setSelectedVideo(`video-${id}`)} // 👈 클릭 시 상태 변경
+                                key={video.id}
+                                onClick={() => setSelectedVideo(video.id)}
                                 className="flex gap-4 bg-[var(--color-white)] rounded-lg p-4 cursor-pointer"
                             >
                                 <div className="w-120 h-80 bg-gray-200 rounded-md" />
                                 <div className="flex flex-col">
-                                    <div>
-                                        <p className="text-lg font-bold">1 2 Variables</p>
-                                        <p className="text-lg text-gray-500">
-                                            노마드 코더 Nomad Coders | 조회수 6만회9
-                                        </p>
-                                    </div>
-                                    <p className="text-sm text-gray-700 mt-2">
-                                        📌 니콜라스와 무료로 코딩 공부하기 https://nomadcoders.co <br />
-                                        📌 Learn to code for free! https://en.nomadcoders.co
-                                    </p>
+                                    <p className="text-lg font-bold">{video.title}</p>
+                                    <p className="text-lg text-gray-500">조회수 0회</p>
+                                    <p className="text-sm text-gray-700 mt-2">{video.description}</p>
                                 </div>
                             </div>
                         ))}
+
+                        {videoList.length === 0 && (
+                            <div className="text-gray-500 text-center mt-10">검색 결과가 없습니다.</div>
+                        )}
                     </div>
                 </>
             ) : (
-                // 상세 컴포넌트 보여주기
                 <VideoLearning videoId={selectedVideo} onBack={() => setSelectedVideo(null)} />
             )}
         </DashboardLayout>
