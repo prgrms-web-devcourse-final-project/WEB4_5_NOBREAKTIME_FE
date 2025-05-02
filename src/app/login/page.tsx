@@ -27,7 +27,7 @@ function Login() {
                 <div className="flex flex-col gap-8">
                     <button
                         onClick={handleKakaoLogin}
-                        className="flex items-center justify-center gap-2 w-full text-center bg-[#FFEB3B] text-[var(--color-balck)] rounded-sm py-2"
+                        className="flex items-center h-12 justify-center gap-2 w-full text-center bg-[#FFEB3B] text-[var(--color-balck)] rounded-sm py-2"
                     >
                         <img src="/logo/kakao-icon.svg" alt="kakao" />
                         카카오 1초 안에 시작하기
@@ -35,7 +35,7 @@ function Login() {
 
                     <button
                         onClick={handleGoHome}
-                        className="w-full text-center bg-[var(--color-sub-2)] text-[var(--color-balck)] rounded-sm py-2"
+                        className="w-full h-12 text-center bg-[var(--color-sub-2)] text-[var(--color-balck)] rounded-sm py-2"
                     >
                         메인 페이지로 돌아가기
                     </button>
