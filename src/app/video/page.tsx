@@ -14,7 +14,7 @@ interface VideoData {
 }
 
 function Video() {
-    const [selectedVideo, setSelectedVideo] = useState<string | null>(null)
+    const [selectedVideo, setSelectedVideo] = useState<VideoData | null>(null)
 
     const dummyVideos: VideoData[] = [
         {
@@ -40,11 +40,19 @@ function Video() {
     const [videoList, setVideoList] = useState<VideoData[]>(dummyVideos)
 
     const handleSearch = (keyword: string) => {
+        const trimmed = keyword.trim().toLowerCase()
+
+        if (!trimmed) {
+            // 1. 검색어 비었을 경우: 전체 리스트
+            setVideoList(dummyVideos)
+            return
+        }
+
         const filtered = dummyVideos.filter(
-            (video) =>
-                video.title.toLowerCase().includes(keyword.toLowerCase()) ||
-                video.description.toLowerCase().includes(keyword.toLowerCase()),
+            (video) => video.title.toLowerCase().includes(trimmed) || video.description.toLowerCase().includes(trimmed),
         )
+
+        // 2. 결과 있으면 → 필터된 결과, 없으면 → 빈 배열
         setVideoList(filtered)
     }
 
@@ -55,6 +63,7 @@ function Video() {
                     {/* 검색 + 필터 */}
                     <div className="flex items-center gap-4 w-full mb-4">
                         <Search onSearch={handleSearch} placeholder="video search..." />
+
                         {/* 카테고리 버튼들 */}
                         <div className="flex gap-2">
                             {['전체', '노래', '드라마', '영화', '새로온 맞춤 동영상'].map((label) => (
@@ -74,7 +83,7 @@ function Video() {
                         {videoList.map((video) => (
                             <div
                                 key={video.id}
-                                onClick={() => setSelectedVideo(video.id)}
+                                onClick={() => setSelectedVideo(video)}
                                 className="flex gap-4 bg-[var(--color-white)] rounded-lg p-4 cursor-pointer"
                             >
                                 <div className="w-120 h-80 bg-gray-200 rounded-md" />
@@ -92,7 +101,7 @@ function Video() {
                     </div>
                 </>
             ) : (
-                <VideoLearning videoId={selectedVideo} onBack={() => setSelectedVideo(null)} />
+                <VideoLearning video={selectedVideo} onBack={() => setSelectedVideo(null)} />
             )}
         </DashboardLayout>
     )
