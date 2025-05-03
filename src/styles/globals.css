@@ -91,10 +91,10 @@ button {
     background: var(--color-sub-1);
 }
 
-/* 배경화면 */
-.bg-image {
-    background-image: url('/assets/bg.jpg');
+/* main 배경화면 */
+.bg-main {
+    background-image: url('/assets/Frame1.png');
     background-size: cover;
-    background-position: center;
+    background-position: top;
     background-repeat: no-repeat;
 }
