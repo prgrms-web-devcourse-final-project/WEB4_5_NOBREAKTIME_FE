@@ -90,3 +90,11 @@ button {
 ::-webkit-scrollbar-thumb:hover {
     background: var(--color-sub-1);
 }
+
+/* 배경화면 */
+.bg-image {
+    background-image: url('/assets/bg.jpg');
+    background-size: cover;
+    background-position: center;
+    background-repeat: no-repeat;
+}

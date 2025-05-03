@@ -4,7 +4,7 @@ import { useState } from 'react'
 import DashboardLayout from '../dashboardLayout'
 import VideoLearning from '../../components/video/videoLearning'
 import VideoIcon from '@/components/icon/videoIcon'
-import Search from '@/components/layout/search'
+import Search from '@/components/common/search'
 
 interface VideoData {
     id: string
@@ -78,7 +78,6 @@ function Video() {
                     </div>
 
                     {/* 동영상 리스트 */}
-
                     <div className="flex flex-col gap-6 overflow-y-auto pr-2">
                         {videoList.map((video) => (
                             <div
