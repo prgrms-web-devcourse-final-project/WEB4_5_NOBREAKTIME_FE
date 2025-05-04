@@ -1,6 +1,7 @@
 'use client'
 
 import { useRouter } from 'next/navigation'
+import Image from 'next/image'
 
 export default function MainHeader() {
     const router = useRouter()
@@ -8,7 +9,7 @@ export default function MainHeader() {
     return (
         <header className="flex justify-between items-center pl-10 pr-10">
             <div>
-                <img src="/logo/all-logo.svg" alt="logo" className="w-45 ml-10 mt-5" />
+                <Image src="/logo/all-logo.svg" alt="logo" width={180} height={180} className="ml-10 mt-5" />
             </div>
             <div>
                 <button

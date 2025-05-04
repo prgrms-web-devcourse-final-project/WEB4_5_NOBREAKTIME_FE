@@ -3,6 +3,7 @@
 import { useRouter } from 'next/navigation'
 import MainHeader from '@/components/layout/mainHeader'
 import Footer from '@/components/layout/footer'
+import Image from 'next/image'
 
 const benefits = [
     { icon: '/assets/play.svg', text: '관심 영상 기반 학습' },
@@ -26,7 +27,7 @@ export default function Home() {
 
             <div className="flex flex-col">
                 <section className="bg-main h-[800px] flex justify-center items-center px-10">
-                    <img src="/assets/img-item01.png" alt="item" className="w-[700px]" />
+                    <Image src="/assets/img-item01.png" alt="item" width={700} height={500} />
                     <div className="flex flex-col gap-10">
                         <div>
                             <p className="text-[var(--color-white)] text-4xl font-bold">
@@ -38,7 +39,7 @@ export default function Home() {
                             </div>
                         </div>
                         <div className="flex gap-10 items-center">
-                            <img src="/assets/line-arrow.svg" alt="arrow" className="w-[700px]" />
+                            <Image src="/assets/line-arrow.svg" alt="arrow" width={700} height={500} />
                             <button
                                 className="bg-[var(--color-point)] text-[var(--color-white)] text-4xl font-bold rounded-full px-10 py-5"
                                 onClick={() => router.push('/login')}
@@ -73,7 +74,7 @@ export default function Home() {
                         <ul className="flex flex-col gap-5">
                             {features.map((text, idx) => (
                                 <li key={idx} className="flex items-center gap-5">
-                                    <img src="/assets/check-fill.svg" alt="check" />
+                                    <Image src="/assets/check-fill.svg" width={40} height={40} alt="check" />
                                     <p className="text-2xl font-bold text-[var(--color-black)]">{text}</p>
                                 </li>
                             ))}
@@ -86,7 +87,7 @@ export default function Home() {
                                 key={i}
                                 className="flex flex-col gap-5 bg-[var(--color-white)] rounded-sm w-[200px] h-[200px] justify-center items-center shadow"
                             >
-                                <img src={item.icon} alt={`icon-${i}`} className="w-18" />
+                                <Image src={item.icon} alt={`icon-${i}`} width={60} height={60} />
                                 <span className="text-center text-lg font-bold">{item.text}</span>
                             </div>
                         ))}

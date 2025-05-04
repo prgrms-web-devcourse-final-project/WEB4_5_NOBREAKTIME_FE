@@ -1,4 +1,5 @@
 import Card from '@/components/learning/card'
+import Image from 'next/image'
 
 interface Description {
     text: string
@@ -12,7 +13,7 @@ interface Props {
 export default function LearningCard({ title, descriptions }: Props) {
     return (
         <div className="flex gap-4 border border-[var(--color-main)] rounded-lg shadow-lg p-6">
-            <img src="/character/character-word.png" alt="word" className="w-70 h-60" />
+            <Image src="/character/character-word.png" alt="word" width={300} height={300} />
             <div className="flex-1 m-auto">
                 <h1 className="text-5xl font-bold mb-8">오늘 함께할 {title} 퀴즈는?</h1>
 

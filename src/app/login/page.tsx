@@ -2,6 +2,7 @@
 
 import { useRouter } from 'next/navigation'
 import Footer from '@/components/layout/footer'
+import Image from 'next/image'
 
 function Login() {
     const router = useRouter()
@@ -30,7 +31,7 @@ function Login() {
 
     return (
         <div className="flex flex-col h-screen">
-            <img src="/logo/all-logo.svg" alt="logo" className="w-45 ml-10 mt-5" />
+            <Image src="/logo/all-logo.svg" alt="logo" width={180} height={180} className="ml-10 mt-5" />
 
             <div className="flex-1 flex flex-col items-center gap-24 pt-30 p-12 m-auto">
                 <h1 className="text-5xl font-bold w-full text-center">Login</h1>
@@ -41,7 +42,7 @@ function Login() {
                         onClick={handleKakaoLogin}
                         className="flex items-center justify-center gap-2 h-12 w-full bg-[#FFEB3B] text-black rounded-sm shadow"
                     >
-                        <img src="/logo/kakao-icon.svg" alt="kakao" className="w-6 h-6" />
+                        <Image src="/logo/kakao-icon.svg" alt="kakao" width={24} height={24} />
                         <span className="text-base font-medium">카카오 1초 안에 시작하기</span>
                     </button>
 
@@ -50,7 +51,7 @@ function Login() {
                         onClick={handleNaverLogin}
                         className="flex items-center justify-center gap-2 h-12 w-full bg-[#03C75A] text-white rounded-sm shadow"
                     >
-                        <img src="/logo/naver.png" alt="naver" className="h-8" />
+                        <Image src="/logo/naver.png" alt="naver" width={24} height={24} />
                         <span className="text-base font-medium">네이버 1초 안에 시작하기</span>
                     </button>
 
@@ -59,8 +60,8 @@ function Login() {
                         onClick={handleGoogleLogin}
                         className="flex items-center justify-center gap-2 h-12 w-full bg-white border border-gray-300 text-black rounded-sm shadow"
                     >
-                        <img src="/logo/google.png" alt="google" className="w-6 h-6" />
-                        <span className="text-base font-medium">구글 1초 안에 시작하기</span>
+                        <Image src="/logo/google.png" alt="google" width={20} height={20} />
+                        <span className="text-base font-medium ml-2">구글 1초 안에 시작하기</span>
                     </button>
 
                     {/* Home Button */}

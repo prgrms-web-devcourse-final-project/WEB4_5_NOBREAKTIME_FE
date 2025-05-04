@@ -3,7 +3,7 @@
 import React from 'react'
 import Link from 'next/link'
 import { usePathname } from 'next/navigation'
-
+import Image from 'next/image'
 import DashboardIcon from '../icon/dashboardIcon'
 import QuestionIcon from '../icon/grammarIcon'
 import AbcIcon from '../icon/wordIcon'
@@ -17,7 +17,7 @@ function Nav() {
     return (
         <nav className="group flex flex-col h-screen bg-[var(--color-sub-2)] text-[var(--color-main)] w-[83px] hover:w-[280px] transition-all duration-300 overflow-hidden p-4 flex flex-col gap-6">
             {/* 로고 */}
-            <img src="/logo/icon-logo.svg" alt="logo" className="w-12 h-12 mx-auto" />
+            <Image src="/logo/icon-logo.svg" alt="logo" width={48} height={48} className="mx-auto" />
 
             {/* 메뉴 아이템 */}
             <NavItem

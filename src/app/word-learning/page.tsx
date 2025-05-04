@@ -4,6 +4,7 @@ import { useState } from 'react'
 import { useSearchParams } from 'next/navigation'
 import DashboardLayout from '@/app/dashboardLayout'
 import WordIcon from '@/components/icon/wordIcon'
+import Image from 'next/image'
 
 const wordList = [
     {
@@ -147,7 +148,7 @@ export default function WordLearningPage() {
                 <p className="text-5xl font-bold text-center">{current.word}</p>
 
                 <button className="flex items-center gap-2 justify-center" onClick={() => speak(current.word)}>
-                    <img src="/assets/volume.svg" alt="volume" />
+                    <Image src="/assets/volume.svg" alt="volume" width={24} height={24} />
                     <span className="text-lg">{current.meaning}</span>
                 </button>
 
@@ -165,14 +166,14 @@ export default function WordLearningPage() {
                         className="flex-1 flex items-center justify-center bg-[var(--color-sub-2)] border-[var(--color-main)] border-2 rounded-sm disabled:opacity-50"
                         disabled={index === 0}
                     >
-                        <img src="/assets/left.svg" alt="left" />
+                        <Image src="/assets/left.svg" alt="left" width={40} height={40} />
                     </button>
                     <button
                         onClick={handleNext}
                         className="flex-1 flex items-center justify-center bg-[var(--color-sub-2)] border-[var(--color-main)] border-2 rounded-sm disabled:opacity-50"
                         disabled={index === wordItem - 1}
                     >
-                        <img src="/assets/right.svg" alt="right" />
+                        <Image src="/assets/right.svg" alt="right" width={40} height={40} />
                     </button>
                 </div>
             </div>

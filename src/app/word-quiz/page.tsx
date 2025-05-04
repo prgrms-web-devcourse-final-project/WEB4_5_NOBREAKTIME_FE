@@ -4,6 +4,7 @@ import { useState, useEffect } from 'react'
 import { useSearchParams } from 'next/navigation'
 import DashboardLayout from '../dashboardLayout'
 import WordIcon from '@/components/icon/wordIcon'
+import Image from 'next/image'
 
 const wordQuizList = [
     { word: 'abandon', meaning: '버리다', stars: 2 },
@@ -174,7 +175,7 @@ export default function WordQuiz() {
                             onClick={handleHint}
                             disabled={hintCount >= maxHint || isCorrect === true}
                         >
-                            <img src={getResultIcon()} alt="result" className="w-full h-full" />
+                            <Image src={getResultIcon()} alt="result" width={80} height={80} />
                         </button>
                         <p className="text-sm text-gray-500">
                             힌트 사용: {hintCount} / {maxHint}
@@ -188,14 +189,14 @@ export default function WordQuiz() {
                         className="flex-1 flex items-center justify-center bg-[var(--color-sub-2)] border-[var(--color-main)] border-2 rounded-sm disabled:opacity-50"
                         disabled={index === 0}
                     >
-                        <img src="/assets/left.svg" alt="left" />
+                        <Image src="/assets/left.svg" alt="left" width={40} height={40} />
                     </button>
                     <button
                         onClick={handleNext}
                         className="flex-1 flex items-center justify-center bg-[var(--color-sub-2)] border-[var(--color-main)] border-2 rounded-sm disabled:opacity-50"
                         disabled={index === wordQuizList.length - 1}
                     >
-                        <img src="/assets/right.svg" alt="right" />
+                        <Image src="/assets/right.svg" alt="right" width={40} height={40} />
                     </button>
                 </div>
             </div>
