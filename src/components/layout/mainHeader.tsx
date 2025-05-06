@@ -7,7 +7,7 @@ export default function MainHeader() {
     const router = useRouter()
 
     return (
-        <header className="flex justify-between items-center pl-10 pr-10">
+        <header className="flex justify-between items-center pl-10 pr-10 pb-2">
             <div>
                 <Image src="/logo/all-logo.svg" alt="logo" width={180} height={180} className="ml-10 mt-5" />
             </div>

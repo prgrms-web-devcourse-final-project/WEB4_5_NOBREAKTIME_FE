@@ -4,6 +4,7 @@ import { useRouter } from 'next/navigation'
 import MainHeader from '@/components/layout/mainHeader'
 import Footer from '@/components/layout/footer'
 import Image from 'next/image'
+import { useState, useEffect } from 'react'
 
 const benefits = [
     { icon: '/assets/play.svg', text: '관심 영상 기반 학습' },
@@ -18,8 +19,22 @@ const features = [
     '다양한 퀴즈로 나의 레벨 체크하며 목표율까지 도달!',
 ]
 
+const images = ['/img/image1.jpg', '/img/image2.jpg', '/img/image3.jpg', '/img/image4.jpg']
+
 export default function Home() {
     const router = useRouter()
+    const [currentIndex, setCurrentIndex] = useState(0)
+
+    useEffect(() => {
+        const timer = setInterval(() => {
+            setCurrentIndex((prev) => (prev + 1) % images.length)
+        }, 5000)
+        return () => clearInterval(timer)
+    }, [])
+
+    const goToSlide = (index: number) => {
+        setCurrentIndex(index)
+    }
 
     return (
         <main className="bg-[var(--color-sub-2)] h-screen flex flex-col overflow-y-auto font-[Maplestory]">
@@ -50,6 +65,7 @@ export default function Home() {
                     </div>
                 </section>
 
+                {/* 캐러셀 슬라이더 */}
                 <section className="flex flex-col gap-10 justify-center items-center text-center h-[800px] px-10">
                     <h3 className="text-[var(--color-black)] text-7xl font-bold leading-snug">
                         쉽게 배우는 영단어, 자연스러운 말하기!
@@ -57,8 +73,61 @@ export default function Home() {
                     <p className="text-[var(--color-black)] text-2xl font-bold">
                         그동안 어려웠던 언어의 재미! 말랑~ 하게 말하기도 단어도 한번에 잡자!
                     </p>
+
+                    <div className="relative w-[800px] h-[400px] overflow-hidden">
+                        <div className="relative w-full h-full flex justify-center items-center">
+                            {images.map((src, idx) => {
+                                const offset = idx - currentIndex
+                                const position =
+                                    offset === 0
+                                        ? { left: '50%', scale: 1.2, opacity: 1, zIndex: 10, blur: '0px', y: '0px' }
+                                        : offset === -1 || offset === images.length - 1
+                                        ? { left: '30%', scale: 0.65, opacity: 0.6, zIndex: 5, blur: '1px', y: '20px' }
+                                        : offset === 1 || offset === -(images.length - 1)
+                                        ? { left: '70%', scale: 1.5, opacity: 0.7, zIndex: 5, blur: '0.5px', y: '10px' }
+                                        : { left: '50%', scale: 0.5, opacity: 0, zIndex: 1, blur: '2px', y: '0px' }
+
+                                return (
+                                    <div
+                                        key={idx}
+                                        className="absolute transition-all duration-700 ease-in-out"
+                                        style={{
+                                            left: position.left,
+                                            transform: `translateX(-50%) scale(${position.scale}) translateY(${position.y})`,
+                                            opacity: position.opacity,
+                                            zIndex: position.zIndex,
+                                            filter: `blur(${position.blur})`,
+                                        }}
+                                        onClick={() => goToSlide(idx)}
+                                    >
+                                        <Image
+                                            src={src}
+                                            alt={`slide-${idx}`}
+                                            width={550}
+                                            height={350}
+                                            className="rounded-xl shadow-lg object-cover"
+                                            priority={idx === currentIndex}
+                                        />
+                                    </div>
+                                )
+                            })}
+                        </div>
+
+                        <div className="flex justify-center gap-2 mt-8">
+                            {images.map((_, idx) => (
+                                <button
+                                    key={idx}
+                                    onClick={() => goToSlide(idx)}
+                                    className={`w-3 h-3 rounded-full transition-all duration-300 ${
+                                        currentIndex === idx ? 'bg-orange-400 w-6' : 'bg-purple-200'
+                                    }`}
+                                />
+                            ))}
+                        </div>
+                    </div>
                 </section>
 
+                {/* 장점 섹션 */}
                 <section className="flex flex-row gap-40 justify-center items-center h-[800px] w-full px-20 bg-gradient-to-b from-[#F4F1FB] to-[#C8B8F1]">
                     <div className="flex flex-col gap-10 max-w-[600px]">
                         <p className="text-2xl font-bold bg-[var(--color-main)] rounded-full text-white text-center py-3 px-6 w-fit">
