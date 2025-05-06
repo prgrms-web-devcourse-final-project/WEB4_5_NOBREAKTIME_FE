@@ -1,7 +1,10 @@
-import { useRouter } from 'next/navigation'
+import { useRouter, usePathname } from 'next/navigation'
 
 export default function Card() {
     const router = useRouter()
+    const pathname = usePathname()
+    const isGrammar = pathname.startsWith('/grammar')
+    const basePath = isGrammar ? 'grammar' : 'word'
 
     return (
         <div className="flex-1 grid grid-cols-2 gap-4">
@@ -21,20 +24,18 @@ export default function Card() {
 
                     {/* 버튼 영역 */}
                     <div className="flex justify-end gap-2">
-                        <button
-                            className="bg-[var(--color-main)] text-white px-3 py-1 rounded text-sm"
-                            onClick={() => {
-                                router.push(`/word-learning?title=${encodeURIComponent(title)}`)
-                            }}
-                        >
-                            학습
-                        </button>
+                        {!isGrammar && (
+                            <button
+                                className="bg-[var(--color-main)] text-white px-3 py-1 rounded text-sm"
+                                onClick={() => router.push(`/${basePath}-learning?title=${encodeURIComponent(title)}`)}
+                            >
+                                학습
+                            </button>
+                        )}
 
                         <button
                             className="bg-[var(--color-point)] text-white px-3 py-1 rounded text-sm"
-                            onClick={() => {
-                                router.push(`/word-quiz?title=${encodeURIComponent(title)}`)
-                            }}
+                            onClick={() => router.push(`/${basePath}-quiz?title=${encodeURIComponent(title)}`)}
                         >
                             퀴즈
                         </button>

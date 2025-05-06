@@ -5,7 +5,7 @@ import DashboardLayout from '../dashboardLayout'
 import WordIcon from '@/components/icon/wordIcon'
 import LearningCard from '@/components/learning/learningCard'
 import DropdownCheckBox from '@/components/common/dropdownCheckBox'
-import ItemCard from '@/components/learning/itemCard'
+import WordCard from '@/components/learning/wordCard'
 
 function Word() {
     return (
@@ -32,7 +32,7 @@ function Word() {
 
                 {/* 카드 리스트 */}
                 <div className="flex-1 overflow-y-auto p-2">
-                    <ItemCard />
+                    <WordCard />
                 </div>
             </div>
         </DashboardLayout>
