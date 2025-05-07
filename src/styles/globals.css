@@ -74,7 +74,7 @@ button {
 
 /* 스크롤바 스타일링 */
 ::-webkit-scrollbar {
-    width: 4px !important;
+    width: 4px;
 }
 
 ::-webkit-scrollbar-track {
@@ -89,4 +89,12 @@ button {
 
 ::-webkit-scrollbar-thumb:hover {
     background: var(--color-sub-1);
+}
+
+/* main 배경화면 */
+.bg-main {
+    background-image: url('/assets/Frame1.png');
+    background-size: cover;
+    background-position: top;
+    background-repeat: no-repeat;
 }

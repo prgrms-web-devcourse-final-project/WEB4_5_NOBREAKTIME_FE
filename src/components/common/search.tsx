@@ -1,6 +1,7 @@
 'use client'
 
 import { useState } from 'react'
+import Image from 'next/image'
 
 interface SearchProps {
     placeholder?: string
@@ -26,7 +27,7 @@ export default function Search({ placeholder = 'search...', onSearch }: SearchPr
                 className="w-full outline-none text-sm bg-transparent placeholder:text-gray-400"
             />
             <button onClick={handleSearch} className="text-[var(--color-main)]">
-                <img src="/assets/search.svg" alt="search" className="w-8 h-8" />
+                <Image src="/assets/search.svg" alt="search" width={32} height={32} />
             </button>
         </div>
     )

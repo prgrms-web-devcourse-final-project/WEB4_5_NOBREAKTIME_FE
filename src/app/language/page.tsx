@@ -3,6 +3,7 @@
 import { useState } from 'react'
 import { useRouter } from 'next/navigation'
 import Footer from '@/components/layout/footer'
+import Image from 'next/image'
 
 const LANGUAGES = [
     { code: 'en', label: 'English', image: '/assets/america.svg' },
@@ -24,7 +25,7 @@ export default function LanguagePage() {
 
     return (
         <div className="flex flex-col h-screen">
-            <img src="/logo/all-logo.svg" alt="logo" className="w-45 ml-10 mt-5" />
+            <Image src="/logo/all-logo.svg" alt="logo" width={180} height={180} className="ml-10 mt-5" />
             <div className="flex-1 flex flex-col items-center gap-30 pt-30 p-12 m-auto">
                 <h1 className="text-5xl font-bold w-full text-center">Language Choice</h1>
                 <div className="flex gap-4">
@@ -38,7 +39,7 @@ export default function LanguagePage() {
                                     : 'border-none bg-white'
                             }`}
                         >
-                            <img src={lang.image} alt={lang.label} className="w-20 h-20 mb-2" />
+                            <Image src={lang.image} alt={lang.label} width={80} height={80} className="mb-2" />
                             {lang.label}
                         </button>
                     ))}
