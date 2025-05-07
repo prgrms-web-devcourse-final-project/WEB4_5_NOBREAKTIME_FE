@@ -1,10 +1,10 @@
 'use client'
 
 import { useState, useEffect } from 'react'
-import { useSearchParams } from 'next/navigation'
 import DashboardLayout from '../dashboardLayout'
 import WordIcon from '@/components/icon/wordIcon'
 import Image from 'next/image'
+import { useParams } from 'next/navigation'
 
 const grammarQuizList = [
     { sentence: 'I abandoned my plan.', meaning: '나는 내 계획을 버렸다.', stars: 2 },
@@ -15,9 +15,8 @@ const grammarQuizList = [
 type QuizMode = 'sentence' | 'meaning' | 'random'
 
 export default function GrammarQuiz() {
-    const searchParams = useSearchParams()
-    const selectedTitle = searchParams.get('title') || '제목 없음'
-
+    const params = useParams()
+    const selectedTitle = (params.title as string) || '제목 없음'
     const [index, setIndex] = useState(0)
     const [mode, setMode] = useState<QuizMode>('sentence')
     const [hiddenPart, setHiddenPart] = useState<'sentence' | 'meaning' | null>(null)

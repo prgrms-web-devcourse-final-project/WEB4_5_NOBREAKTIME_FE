@@ -1,8 +1,8 @@
 'use client'
 
 import { useState, useEffect } from 'react'
-import { useSearchParams } from 'next/navigation'
-import DashboardLayout from '../dashboardLayout'
+import { useParams } from 'next/navigation'
+import DashboardLayout from '../../dashboardLayout'
 import WordIcon from '@/components/icon/wordIcon'
 import Image from 'next/image'
 
@@ -15,8 +15,8 @@ const wordQuizList = [
 type QuizMode = 'word' | 'meaning' | 'random'
 
 export default function WordQuiz() {
-    const searchParams = useSearchParams()
-    const selectedTitle = searchParams.get('title') || '제목 없음'
+    const params = useParams()
+    const selectedTitle = (params.title as string) || '제목 없음'
 
     const [index, setIndex] = useState(0)
     const [mode, setMode] = useState<QuizMode>('word')
