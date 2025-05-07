@@ -88,6 +88,14 @@ const Overview: React.FC<OverviewProps> = ({ fontSize, selectedSubtitle }) => {
                 {selectedSubtitle.transcript}
             </div>
 
+            {/* 🔹 표현 버튼 */}
+            <button
+                className="mt-2 w-fit px-4 py-1 rounded bg-[var(--color-main)] text-white font-medium hover:bg-[var(--color-main-sub)]"
+                onClick={() => alert('표현 추가')}
+            >
+                표현 추가
+            </button>
+
             {/* 호버 시 나타나는 카드 */}
             {hoveredKeyword && (
                 <KeywordCard

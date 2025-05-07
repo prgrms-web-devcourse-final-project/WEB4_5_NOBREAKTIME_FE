@@ -1,6 +1,7 @@
 'use client'
 
 import React, { useState } from 'react'
+import Image from 'next/image'
 
 interface Keyword {
     word: string
@@ -47,8 +48,8 @@ function VideoScript({ analysisData, onSubtitleClick, showTranscript, setShowTra
 
             <div className="flex w-full h-90 rounded-lg p-2 flex-col gap-2 bg-[var(--color-sub-2)] overflow-hidden overflow-y-auto">
                 {isLoading ? (
-                    <div className="flex items-center justify-center h-full text-gray-500">
-                        <div className="animate-pulse">로딩 중...</div>
+                    <div className="flex items-center justify-center h-full text-gray-500 bg-[var(--color-white)]">
+                        <Image src="/character/loading-2.gif" alt="loading" width={300} height={300} />
                     </div>
                 ) : showTranscript && analysisData?.subtitleResults?.length ? (
                     <ul className="list-disc pl-8 space-y-2">
