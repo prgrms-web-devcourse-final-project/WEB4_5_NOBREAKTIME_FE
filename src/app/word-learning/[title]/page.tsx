@@ -1,7 +1,7 @@
 'use client'
 
 import { useState } from 'react'
-import { useSearchParams } from 'next/navigation'
+import { useParams } from 'next/navigation'
 import DashboardLayout from '@/app/dashboardLayout'
 import WordIcon from '@/components/icon/wordIcon'
 import Image from 'next/image'
@@ -90,8 +90,8 @@ const wordList = [
 ]
 
 export default function WordLearningPage() {
-    const searchParams = useSearchParams()
-    const selectedTitle = searchParams.get('title') || '제목 없음'
+    const params = useParams()
+    const selectedTitle = (params.title as string) || '제목 없음'
 
     const [index, setIndex] = useState(0)
     const wordItem = wordList.length
