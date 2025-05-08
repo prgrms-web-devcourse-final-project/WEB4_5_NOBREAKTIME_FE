@@ -1,10 +1,10 @@
+import DailySelector from '@/components/dashboard/dailySelector'
+import LearningHistory from '@/components/dashboard/learningHistory'
+import LevelBox from '@/components/dashboard/levelBox'
+import WatchHistory from '@/components/dashboard/watchHistory'
 import Header from '@/components/layout/header'
 import Nav from '@/components/layout/nav'
 import Image from 'next/image'
-import DailySelector from '@/components/dashboard/dailySelector'
-import LevelBox from '@/components/dashboard/levelBox'
-import WatchHistory from '@/components/dashboard/watchHistory'
-import LearningHistory from '@/components/dashboard/learningHistory'
 
 function Dashboard() {
     const userInfo = {
@@ -26,7 +26,7 @@ function Dashboard() {
         <div className="flex min-h-screen">
             <Nav />
             <div className="flex-1 flex flex-col">
-                <Header userName={userInfo.name} userLevel={userInfo.level} />
+                <Header />
                 <main className="flex flex-1 px-12 py-4 overflow-hidden">
                     {/* 본문 좌측: 인사말 + 목표 + 레벨 */}
                     <section className="flex-1 flex flex-col gap-6 overflow-auto border-r-2 border-[var(--color-sub-2)] pr-4">

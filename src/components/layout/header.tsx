@@ -1,20 +1,12 @@
 'use client'
+import { useGlobalLoginMember } from '@/stores/auth/loginMember'
 import Image from 'next/image'
-import { useState } from 'react'
 import Link from 'next/link'
+import { useState } from 'react'
 
-type HeaderProps = {
-    userName: string
-    userLevel: number
-}
-
-export default function Header({ userName, userLevel }: HeaderProps) {
+export default function Header() {
+    const { loginMember, logoutAndHome } = useGlobalLoginMember()
     const [isDropdownOpen, setIsDropdownOpen] = useState(false)
-
-    const handleLogout = () => {
-        // TODO: Implement logout logic
-        console.log('Logout clicked')
-    }
 
     return (
         <header className="flex items-center justify-end h-16 px-6 relative">
@@ -26,8 +18,8 @@ export default function Header({ userName, userLevel }: HeaderProps) {
 
                 {/* 이름 + 레벨 + 드롭다운 */}
                 <div className="flex items-center gap-1 cursor-pointer">
-                    <span className="text-sm font-semibold text-gray-800">{userName}</span>
-                    <span className="text-sm text-gray-500">Lv. {userLevel}</span>
+                    <span className="text-sm font-semibold text-gray-800">{loginMember.nickname}</span>
+                    <span className="text-sm text-gray-500">Lv. 0</span>
                     <button onClick={() => setIsDropdownOpen(!isDropdownOpen)}>
                         <Image src="/assets/bottmBTN.svg" alt="dropdown" width={24} height={24} />
                     </button>
@@ -41,7 +33,7 @@ export default function Header({ userName, userLevel }: HeaderProps) {
                         마이페이지
                     </Link>
                     <button
-                        onClick={handleLogout}
+                        onClick={logoutAndHome}
                         className="block w-full text-left px-4 py-2 text-sm text-[var(--color-black)] hover:bg-gray-100"
                     >
                         로그아웃

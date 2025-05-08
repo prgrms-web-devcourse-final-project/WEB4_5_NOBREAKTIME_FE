@@ -3,27 +3,18 @@
 import { useRouter } from 'next/navigation'
 import Footer from '@/components/layout/footer'
 import Image from 'next/image'
+import Link from 'next/link'
+import { useGlobalLoginMember } from '@/stores/auth/loginMember'
 
 function Login() {
+    const socialLoginForKakaoUrl = `${process.env.NEXT_PUBLIC_API_URL}/oauth2/authorization/kakao`
+    const socialLoginForNaverUrl = `${process.env.NEXT_PUBLIC_API_URL}/oauth2/authorization/naver`
+    const socialLoginForGoogleUrl = `${process.env.NEXT_PUBLIC_API_URL}/oauth2/authorization/google`
+    const redirectUrlAfterSocialLogin = process.env.NEXT_PUBLIC_FRONT_BASE_URL
+
+    const { isLogin, loginMember, logoutAndHome } = useGlobalLoginMember()
+
     const router = useRouter()
-
-    const handleKakaoLogin = () => {
-        console.log('카카오 로그인 시도')
-        // TODO: Kakao OAuth API 연동
-        router.push('/language')
-    }
-
-    const handleNaverLogin = () => {
-        console.log('네이버 로그인 시도')
-        // TODO: Naver OAuth API 연동
-        router.push('/language')
-    }
-
-    const handleGoogleLogin = () => {
-        console.log('구글 로그인 시도')
-        // TODO: Google OAuth API 연동
-        router.push('/language')
-    }
 
     const handleGoHome = () => {
         router.push('/')
@@ -31,38 +22,39 @@ function Login() {
 
     return (
         <div className="flex flex-col h-screen">
-            <Image src="/logo/all-logo.svg" alt="logo" width={180} height={180} className="ml-10 mt-5" />
-
+            <Link href="/">
+                <Image src="/logo/all-logo.svg" alt="logo" width={180} height={180} className="ml-10 mt-5" />
+            </Link>
             <div className="flex-1 flex flex-col items-center gap-24 pt-30 p-12 m-auto">
                 <h1 className="text-5xl font-bold w-full text-center">Login</h1>
 
                 <div className="flex flex-col gap-4 w-full max-w-[360px]">
                     {/* Kakao Login */}
-                    <button
-                        onClick={handleKakaoLogin}
+                    <Link
+                        href={`${socialLoginForKakaoUrl}?redirectUrl=${redirectUrlAfterSocialLogin}`}
                         className="flex items-center justify-center gap-2 h-12 w-full bg-[#FFEB3B] text-black rounded-sm shadow"
                     >
                         <Image src="/logo/kakao-icon.svg" alt="kakao" width={24} height={24} />
                         <span className="text-base font-medium">카카오 1초 안에 시작하기</span>
-                    </button>
+                    </Link>
 
                     {/* Naver Login */}
-                    <button
-                        onClick={handleNaverLogin}
+                    <Link
+                        href={`${socialLoginForNaverUrl}?redirectUrl=${redirectUrlAfterSocialLogin}`}
                         className="flex items-center justify-center gap-2 h-12 w-full bg-[#03C75A] text-white rounded-sm shadow"
                     >
                         <Image src="/logo/naver.png" alt="naver" width={24} height={24} />
                         <span className="text-base font-medium">네이버 1초 안에 시작하기</span>
-                    </button>
+                    </Link>
 
                     {/* Google Login */}
-                    <button
-                        onClick={handleGoogleLogin}
+                    <Link
+                        href={`${socialLoginForGoogleUrl}?redirectUrl=${redirectUrlAfterSocialLogin}`}
                         className="flex items-center justify-center gap-2 h-12 w-full bg-white border border-gray-300 text-black rounded-sm shadow"
                     >
                         <Image src="/logo/google.png" alt="google" width={20} height={20} />
                         <span className="text-base font-medium ml-2">구글 1초 안에 시작하기</span>
-                    </button>
+                    </Link>
 
                     {/* Home Button */}
                     <button

@@ -1,9 +1,11 @@
 'use client'
 
-import { useState } from 'react'
-import { useRouter } from 'next/navigation'
 import Footer from '@/components/layout/footer'
+import client from '@/lib/backend/client'
 import Image from 'next/image'
+import Link from 'next/link'
+import { useRouter } from 'next/navigation'
+import { useState } from 'react'
 
 const LANGUAGES = [
     { code: 'en', label: 'English', image: '/assets/america.svg' },
@@ -15,17 +17,43 @@ export default function LanguagePage() {
     const router = useRouter()
     const [selectedLang, setSelectedLang] = useState<string | null>(null)
 
-    const handleStart = () => {
+    const handleStart = async () => {
         if (!selectedLang) return
 
-        console.log('선택된 언어:', selectedLang)
-        localStorage.setItem('lang', selectedLang)
-        router.push('/dashboard')
+        const languageMap = {
+            en: 'ENGLISH',
+            ja: 'JAPANESE',
+            zh: 'NONE',
+        } as const
+
+        const apiLanguage = languageMap[selectedLang as keyof typeof languageMap]
+
+        try {
+            const { error } = await client.PATCH('/api/v1/members/update-language', {
+                params: {
+                    query: {
+                        language: apiLanguage,
+                    },
+                },
+            })
+
+            if (error) {
+                throw new Error('언어 업데이트에 실패했습니다')
+            }
+
+            localStorage.setItem('lang', selectedLang)
+            router.push('/dashboard')
+        } catch (error) {
+            console.error('언어 업데이트 중 오류 발생:', error)
+            alert('언어 설정 중 오류가 발생했습니다. 다시 시도해주세요.')
+        }
     }
 
     return (
         <div className="flex flex-col h-screen">
-            <Image src="/logo/all-logo.svg" alt="logo" width={180} height={180} className="ml-10 mt-5" />
+            <Link href="/">
+                <Image src="/logo/all-logo.svg" alt="logo" width={180} height={180} className="ml-10 mt-5" />
+            </Link>
             <div className="flex-1 flex flex-col items-center gap-30 pt-30 p-12 m-auto">
                 <h1 className="text-5xl font-bold w-full text-center">Language Choice</h1>
                 <div className="flex gap-4">

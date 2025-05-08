@@ -1,5 +1,5 @@
-import Nav from '@/components/layout/nav'
 import Header from '@/components/layout/header'
+import Nav from '@/components/layout/nav'
 
 interface Props {
     title: string
@@ -13,7 +13,7 @@ function DashboardLayout({ title, children, icon, className }: Props) {
         <div className="flex min-h-screen">
             <Nav />
             <div className="flex-1 flex flex-col">
-                <Header userName="홍길동" userLevel={1} />
+                <Header />
                 <main className="flex flex-1 flex-col px-12 py-4 overflow-hidden gap-6">
                     {/* 타이틀 */}
                     <div className="flex items-center gap-2">
