@@ -29,8 +29,8 @@ export function ClientLayout({ children }: React.ComponentProps<typeof NextTheme
                     console.log(res.error)
                     // 로그인되지 않은 상태로 처리
                     setNoLoginMember()
-                } else {
-                    setLoginMember(res.data?.data)
+                } else if (res.data?.data) {
+                    setLoginMember(res.data.data)
                 }
             })
             .catch((error) => {
