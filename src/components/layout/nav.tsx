@@ -15,31 +15,41 @@ function Nav() {
     const pathname = usePathname()
 
     return (
-        <nav className="group flex flex-col h-screen bg-[var(--color-sub-2)] text-[var(--color-main)] w-[83px] hover:w-[280px] transition-all duration-300 overflow-hidden p-4 flex flex-col gap-6">
+        <nav className="flex flex-col h-screen bg-[var(--color-sub-2)] text-[var(--color-main)] w-[120px] p-4 flex flex-col gap-6">
             {/* 로고 */}
             <Image src="/logo/icon-logo.svg" alt="logo" width={48} height={48} className="mx-auto" />
 
             {/* 메뉴 아이템 */}
-            <NavItem
-                icon={<DashboardIcon />}
-                label="Dashboard"
-                href="/dashboard"
-                active={pathname.startsWith('/dashboard')}
-            />
-            <NavItem
-                icon={<BookmarkIcon />}
-                label="Bookmark"
-                href="/bookmark"
-                active={pathname.startsWith('/bookmark')}
-            />
-            <NavItem icon={<VideoIcon />} label="Video Learning" href="/video" active={pathname.startsWith('/video')} />
-            <NavItem icon={<AbcIcon />} label="Word Learning" href="/word" active={pathname.startsWith('/word')} />
-            <NavItem
-                icon={<QuestionIcon />}
-                label="Grammar Learning"
-                href="/grammar"
-                active={pathname.startsWith('/grammar')}
-            />
+            <div className="flex flex-col items-center gap-1">
+                <NavItem
+                    icon={<DashboardIcon />}
+                    label="Dashboard"
+                    href="/dashboard"
+                    active={pathname.startsWith('/dashboard')}
+                />
+            </div>
+            <div className="flex flex-col items-center gap-1">
+                <NavItem
+                    icon={<BookmarkIcon />}
+                    label="Bookmark"
+                    href="/bookmark"
+                    active={pathname.startsWith('/bookmark')}
+                />
+            </div>
+            <div className="flex flex-col items-center gap-1">
+                <NavItem icon={<VideoIcon />} label="Video" href="/video" active={pathname.startsWith('/video')} />
+            </div>
+            <div className="flex flex-col items-center gap-1">
+                <NavItem icon={<AbcIcon />} label="Word" href="/word" active={pathname.startsWith('/word')} />
+            </div>
+            <div className="flex flex-col items-center gap-1">
+                <NavItem
+                    icon={<QuestionIcon />}
+                    label="Grammar"
+                    href="/grammar"
+                    active={pathname.startsWith('/grammar')}
+                />
+            </div>
         </nav>
     )
 }
@@ -56,25 +66,17 @@ function NavItem({
     href: string
     active?: boolean
 }) {
-    const iconClass = `${
-        active ? 'text-[var(--color-point)]' : 'text-[var(--color-main)] opacity-60 group-hover:opacity-100'
-    }`
+    const iconClass = `${active ? 'text-[var(--color-point)]' : 'text-[var(--color-main)] opacity-60'}`
 
     return (
         <Link
             href={href}
-            className={`flex items-center gap-4 px-1 py-2 rounded-lg transition-all cursor-pointer
-                ${
-                    active
-                        ? 'bg-white text-[var(--color-point)] font-bold'
-                        : 'text-[var(--color-main)] opacity-60 hover:opacity-100'
-                }
+            className={`flex flex-col items-center gap-1 px-1 py-2 rounded-lg transition-all cursor-pointer
+                ${active ? 'text-[var(--color-point)] font-bold' : 'text-[var(--color-main)] opacity-60'}
             `}
         >
             <div className="min-w-[24px]">{React.cloneElement(icon, { className: iconClass })}</div>
-            <span className="text-sm text-left whitespace-nowrap opacity-0 group-hover:opacity-100 transition-opacity duration-300">
-                {label}
-            </span>
+            <span className="text-xs text-center">{label}</span>
         </Link>
     )
 }

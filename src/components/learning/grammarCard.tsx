@@ -6,7 +6,7 @@ export default function GrammarCard() {
             {Array.from({ length: 20 }).map((_, idx) => (
                 <div
                     key={idx}
-                    className="flex flex-col justify-between p-4 w-[540px] h-[180px] bg-[var(--color-white)] rounded-lg border border-2 border-[var(--color-main)]"
+                    className="flex flex-col justify-between p-4 w-[520px] h-[180px] bg-[var(--color-white)] rounded-lg border border-2 border-[var(--color-main)]"
                 >
                     <div className="flex justify-between">
                         <div>⭐</div>
