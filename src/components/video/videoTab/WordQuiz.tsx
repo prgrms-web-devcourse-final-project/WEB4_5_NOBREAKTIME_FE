@@ -1,59 +1,68 @@
 'use client'
 
-import React, { useState } from 'react'
+import React, { useState, useEffect } from 'react'
+import client from '@/lib/backend/client'
+import { WordQuizType, WordQuizProps } from '@/types/video'
 
-// 단어 퀴즈를 위한 목업 데이터
-export const wordQuizMock = [
-    {
-        word: 'distracted',
-        meaning: '주의가 산만한, 집중이 안 되는',
-        sentence: 'A reader will be {} by the readable content.',
-        sentenceMeaning: '독자는 읽기 쉬운 내용에 집중이 안 될 것이다.',
-    },
-    {
-        word: 'established',
-        meaning: '설립된, 확립된',
-        sentence: 'It is a long {} fact that a reader will be distracted.',
-        sentenceMeaning: '독자가 주의가 산만해진다는 것은 오래 전부터 확립된 사실이다.',
-    },
-    {
-        word: 'layout',
-        meaning: '레이아웃, 배치',
-        sentence: 'The reader is distracted by the {} of the page.',
-        sentenceMeaning: '독자는 페이지의 레이아웃에 의해 주의가 산만해진다.',
-    },
-]
-
-interface WordQuizProps {
-    fontSize: number
-}
-
-const WordQuiz: React.FC<WordQuizProps> = ({ fontSize }) => {
+const WordQuiz: React.FC<WordQuizProps> = ({ fontSize, videoId }) => {
     // 단어 퀴즈 상태 관리
     const [currentQuizIndex, setCurrentQuizIndex] = useState(0)
     const [input, setInput] = useState('')
     const [quizResult, setQuizResult] = useState<null | boolean>(null)
+    const [wordQuizzes, setWordQuizzes] = useState<WordQuizType[]>([])
+    const [isLoading, setIsLoading] = useState(true)
+
+    // API 호출
+    useEffect(() => {
+        const fetchWordQuiz = async () => {
+            try {
+                const { data, error } = await client.GET('/api/v1/videos/{videoId}/quiz/words', {
+                    params: {
+                        path: {
+                            videoId: videoId,
+                        },
+                    },
+                })
+
+                if (error) {
+                    console.error('단어 퀴즈 데이터 요청 실패:', error)
+                    return
+                }
+
+                console.log('단어 퀴즈 데이터:', data)
+                if (data?.data?.quiz) {
+                    setWordQuizzes(data.data.quiz as WordQuizType[])
+                }
+            } catch (error) {
+                console.error('단어 퀴즈 데이터 요청 실패:', error)
+            } finally {
+                setIsLoading(false)
+            }
+        }
+
+        fetchWordQuiz()
+    }, [videoId])
 
     // 현재 퀴즈
-    const currentQuiz = wordQuizMock[currentQuizIndex]
+    const currentQuiz = wordQuizzes[currentQuizIndex]
 
     // 다음 퀴즈로 이동
     const handleNextQuiz = () => {
-        setCurrentQuizIndex((prev) => (prev + 1) % wordQuizMock.length)
+        setCurrentQuizIndex((prev) => (prev + 1) % wordQuizzes.length)
         setInput('')
         setQuizResult(null)
     }
 
     // 이전 퀴즈로 이동
     const handlePrevQuiz = () => {
-        setCurrentQuizIndex((prev) => (prev - 1 + wordQuizMock.length) % wordQuizMock.length)
+        setCurrentQuizIndex((prev) => (prev - 1 + wordQuizzes.length) % wordQuizzes.length)
         setInput('')
         setQuizResult(null)
     }
 
     // 정답 확인
     const handleSubmit = () => {
-        const isCorrect = input.trim().toLowerCase() === currentQuiz.word.toLowerCase()
+        const isCorrect = input.trim().toLowerCase() === currentQuiz.word?.toLowerCase()
         setQuizResult(isCorrect)
 
         // 오답인 경우 잠시 후 자동으로 초기화
@@ -72,7 +81,9 @@ const WordQuiz: React.FC<WordQuizProps> = ({ fontSize }) => {
 
     // 빈칸을 input으로 변환
     const renderSentence = () => {
-        const parts = currentQuiz.sentence.split('{}')
+        if (!currentQuiz) return null
+
+        const parts = currentQuiz.sentence?.split('{}') || []
         return (
             <div>
                 <div className="mb-1" style={{ fontSize: `${fontSize}px` }}>
@@ -102,6 +113,22 @@ const WordQuiz: React.FC<WordQuizProps> = ({ fontSize }) => {
         )
     }
 
+    if (isLoading) {
+        return (
+            <div className="w-full h-full flex items-center justify-center">
+                <div className="animate-pulse">로딩 중...</div>
+            </div>
+        )
+    }
+
+    if (wordQuizzes.length === 0) {
+        return (
+            <div className="w-full h-full flex items-center justify-center">
+                <div>사용 가능한 단어 퀴즈가 없습니다.</div>
+            </div>
+        )
+    }
+
     return (
         <div className="w-full h-full overflow-y-auto" style={{ fontSize: `${fontSize}px` }}>
             <div className="bg-white rounded-lg p-4 relative h-full flex flex-col">
@@ -118,13 +145,13 @@ const WordQuiz: React.FC<WordQuizProps> = ({ fontSize }) => {
                             정답 확인
                         </button>
 
-                        {/* 정답/오답 메시지 */}
+                        {/* 정답/오답 메시지 → 이미지로 대체 */}
                         {quizResult !== null && (
-                            <div className="ml-3 text-md font-bold">
+                            <div className="ml-3 text-md font-bold flex items-center">
                                 {quizResult ? (
-                                    <span className="text-green-600">정답입니다!</span>
+                                    <img src="/assets/ok.svg" alt="정답" className="w-6 h-6" />
                                 ) : (
-                                    <span className="text-red-600">오답입니다!</span>
+                                    <img src="/assets/fail.svg" alt="오답" className="w-6 h-6" />
                                 )}
                             </div>
                         )}
@@ -135,7 +162,7 @@ const WordQuiz: React.FC<WordQuizProps> = ({ fontSize }) => {
                             &larr;
                         </button>
                         <span className="px-2">
-                            {currentQuizIndex + 1}/{wordQuizMock.length}
+                            {currentQuizIndex + 1}/{wordQuizzes.length}
                         </span>
                         <button onClick={handleNextQuiz} className="px-2 py-1 bg-gray-200 rounded">
                             &rarr;

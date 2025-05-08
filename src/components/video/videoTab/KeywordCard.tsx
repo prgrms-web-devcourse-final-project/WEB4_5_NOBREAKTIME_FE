@@ -1,13 +1,7 @@
 'use client'
 
 import React from 'react'
-
-interface Keyword {
-    word: string
-    meaning: string
-    difficulity: number
-}
-
+import { Keyword } from '@/types/video'
 interface KeywordCardProps {
     keyword: Keyword
     position: { x: number; y: number }

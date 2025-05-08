@@ -51,9 +51,9 @@ export function ClientLayout({ children }: React.ComponentProps<typeof NextTheme
         )
     }
 
-    if (loginMember.language === 'NONE') {
-        router.push('/additional_info')
-    }
+    // if (loginMember.language === 'NONE') {
+    //     router.push('/additional_info')
+    // }
 
     return (
         <NextThemesProvider attribute="class" defaultTheme="system" enableSystem disableTransitionOnChange>

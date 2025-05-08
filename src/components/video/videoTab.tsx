@@ -6,6 +6,7 @@ import WordQuiz from './videoTab/WordQuiz'
 import ExpressionQuiz from './videoTab/ExpressionQuiz'
 import Overview from './videoTab/Overview'
 import Image from 'next/image'
+
 interface Props {
     fontSize: number // 폰트 크기
     selectedSubtitle?: {
@@ -16,9 +17,10 @@ interface Props {
     selectedTab: string
     onTabChange: (tab: string) => void
     isLoading: boolean
+    videoId: string
 }
 
-function VideoTab({ fontSize, selectedSubtitle, selectedTab, onTabChange, isLoading }: Props) {
+function VideoTab({ fontSize, selectedSubtitle, selectedTab, onTabChange, isLoading, videoId }: Props) {
     return (
         <div className="flex flex-row w-full justify-center items-center h-[180px] bg-[var(--color-white)] rounded-lg">
             {/* 좌측 탭 목록 */}
@@ -53,8 +55,8 @@ function VideoTab({ fontSize, selectedSubtitle, selectedTab, onTabChange, isLoad
                         {selectedTab === 'overview' && (
                             <Overview fontSize={fontSize} selectedSubtitle={selectedSubtitle} />
                         )}
-                        {selectedTab === '단어' && <WordQuiz fontSize={fontSize} />}
-                        {selectedTab === '표현' && <ExpressionQuiz fontSize={fontSize} />}
+                        {selectedTab === '단어' && <WordQuiz fontSize={fontSize} videoId={videoId} />}
+                        {selectedTab === '표현' && <ExpressionQuiz fontSize={fontSize} videoId={videoId} />}
                     </>
                 )}
             </div>

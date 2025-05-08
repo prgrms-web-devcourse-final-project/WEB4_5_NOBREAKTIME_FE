@@ -1,36 +1,11 @@
 'use client'
 
-import { useState, useEffect, useRef } from 'react'
+import { useState, useEffect, useRef, useCallback } from 'react'
 import VideoTab from './videoTab'
 import VideoScript from './videoScript'
 import WordModal from './wordModal'
 import Image from 'next/image'
-
-interface VideoData {
-    videoId: string
-    title: string
-    description: string
-    thumbnail?: string // 없을 수도 있으니까 optional
-}
-
-interface Keyword {
-    word: string
-    meaning: string
-    difficulity: number
-}
-
-interface SubtitleResult {
-    startTime: string
-    endTime: string
-    speaker: string
-    original: string
-    transcript: string
-    keywords: Keyword[]
-}
-
-interface AnalysisData {
-    subtitleResults: SubtitleResult[]
-}
+import { VideoData, AnalysisData, SubtitleResult } from '@/types/video'
 
 interface Props {
     video: VideoData
@@ -52,8 +27,10 @@ function VideoLearning({ video, analysisData: initialAnalysisData, onBack, isLoa
     const [selectedTab, setSelectedTab] = useState<string>('overview')
     const [showTranscript, setShowTranscript] = useState(true)
     const [isLoading, setIsLoading] = useState(initialIsLoading)
+    const [currentTime, setCurrentTime] = useState(0)
     const url = process.env.NEXT_PUBLIC_API_URL
     const playerRef = useRef<HTMLIFrameElement | null>(null)
+    const playerStateRef = useRef<any>(null)
 
     useEffect(() => {
         setAnalysisData(initialAnalysisData)
@@ -64,6 +41,106 @@ function VideoLearning({ video, analysisData: initialAnalysisData, onBack, isLoa
             setSelectedSubtitle(initialAnalysisData.subtitleResults[0])
         }
     }, [initialAnalysisData, initialIsLoading])
+
+    // YouTube Player API 초기화
+    useEffect(() => {
+        // YouTube API 로드
+        const tag = document.createElement('script')
+        tag.src = 'https://www.youtube.com/iframe_api'
+        const firstScriptTag = document.getElementsByTagName('script')[0]
+        firstScriptTag.parentNode?.insertBefore(tag, firstScriptTag)
+
+        // YouTube Player 이벤트 처리
+        const onYouTubeIframeAPIReady = () => {
+            if (!playerStateRef.current && playerRef.current) {
+                playerStateRef.current = new (window as any).YT.Player(playerRef.current, {
+                    events: {
+                        onStateChange: onPlayerStateChange,
+                        onReady: onPlayerReady,
+                    },
+                })
+            }
+        }
+
+        // API가 로드되면 초기화
+        if ((window as any).YT && (window as any).YT.Player) {
+            onYouTubeIframeAPIReady()
+        } else {
+            ;(window as any).onYouTubeIframeAPIReady = onYouTubeIframeAPIReady
+        }
+
+        return () => {
+            // 컴포넌트 언마운트 시 타이머 정리
+            if (playerStateRef.current) {
+                clearInterval(playerStateRef.current.timeUpdateInterval)
+            }
+        }
+    }, [video.videoId])
+
+    // 플레이어 준비 완료 시 호출
+    const onPlayerReady = () => {
+        // 1초마다 현재 재생 시간 업데이트
+        playerStateRef.current.timeUpdateInterval = setInterval(() => {
+            if (playerStateRef.current && playerStateRef.current.getCurrentTime) {
+                const currentTime = playerStateRef.current.getCurrentTime()
+                setCurrentTime(currentTime)
+                updateCurrentSubtitle(currentTime)
+            }
+        }, 1000)
+    }
+
+    // 플레이어 상태 변경 시 호출
+    const onPlayerStateChange = (event: any) => {
+        // 재생 중일 때만 시간 업데이트
+        if (event.data === 1) {
+            // YT.PlayerState.PLAYING
+            if (!playerStateRef.current.timeUpdateInterval) {
+                playerStateRef.current.timeUpdateInterval = setInterval(() => {
+                    if (playerStateRef.current && playerStateRef.current.getCurrentTime) {
+                        const currentTime = playerStateRef.current.getCurrentTime()
+                        setCurrentTime(currentTime)
+                        updateCurrentSubtitle(currentTime)
+                    }
+                }, 1000)
+            }
+        } else if (event.data === 0) {
+            // YT.PlayerState.ENDED - 영상이 끝났을 때
+            clearInterval(playerStateRef.current.timeUpdateInterval)
+            playerStateRef.current.timeUpdateInterval = null
+            // 영상이 끝나면 모달 열기
+            setIsModalOpen(true)
+        } else {
+            // 일시정지, 정지 등의 상태일 때 타이머 정리
+            clearInterval(playerStateRef.current.timeUpdateInterval)
+            playerStateRef.current.timeUpdateInterval = null
+        }
+    }
+
+    // 현재 시간에 맞는 자막 업데이트
+    const updateCurrentSubtitle = useCallback(
+        (currentTime: number) => {
+            const subtitles = analysisData?.subtitleResults
+            if (!subtitles || subtitles.length === 0) return
+
+            // 현재 시간에 해당하는 자막 찾기
+            const currentSubtitle = subtitles.find((subtitle, index) => {
+                const startTime = parseTimeToSeconds(subtitle.startTime || '0:0:0')
+                const endTime = parseTimeToSeconds(subtitle.endTime || '0:0:0')
+
+                // 마지막 자막인 경우 특별 처리
+                if (index === subtitles.length - 1) {
+                    return currentTime >= startTime
+                }
+
+                return currentTime >= startTime && currentTime < endTime
+            })
+
+            if (currentSubtitle && currentSubtitle !== selectedSubtitle) {
+                setSelectedSubtitle(currentSubtitle)
+            }
+        },
+        [analysisData?.subtitleResults, selectedSubtitle],
+    )
 
     // 탭 변경 시 트랜스크립트 표시 여부 연동
     useEffect(() => {
@@ -79,15 +156,8 @@ function VideoLearning({ video, analysisData: initialAnalysisData, onBack, isLoa
         setSelectedSubtitle(subtitle)
 
         const seconds = parseTimeToSeconds(time)
-        if (playerRef.current) {
-            playerRef.current.contentWindow?.postMessage(
-                JSON.stringify({
-                    event: 'command',
-                    func: 'seekTo',
-                    args: [seconds, true],
-                }),
-                '*',
-            )
+        if (playerRef.current && playerStateRef.current) {
+            playerStateRef.current.seekTo(seconds, true)
         }
     }
 
@@ -103,7 +173,7 @@ function VideoLearning({ video, analysisData: initialAnalysisData, onBack, isLoa
                     <div className="w-full aspect-video bg-gray-300 rounded-sm overflow-hidden">
                         <iframe
                             ref={playerRef}
-                            src={`https://www.youtube.com/embed/${video.videoId}?enablejsapi=1`}
+                            src={`https://www.youtube-nocookie.com/embed/${video.videoId}?enablejsapi=1&rel=0&modestbranding=1`}
                             title="YouTube video player"
                             allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
                             allowFullScreen
@@ -116,6 +186,8 @@ function VideoLearning({ video, analysisData: initialAnalysisData, onBack, isLoa
                         showTranscript={showTranscript}
                         setShowTranscript={setShowTranscript}
                         isLoading={isLoading}
+                        currentTime={currentTime}
+                        selectedSubtitle={selectedSubtitle}
                     />
                 </div>
 
@@ -146,14 +218,15 @@ function VideoLearning({ video, analysisData: initialAnalysisData, onBack, isLoa
                     fontSize={fontSize}
                     selectedSubtitle={
                         selectedSubtitle && {
-                            original: selectedSubtitle.original,
-                            transcript: selectedSubtitle.transcript,
+                            original: selectedSubtitle.original || '',
+                            transcript: selectedSubtitle.transcript || '',
                             keywords: selectedSubtitle.keywords,
                         }
                     }
                     selectedTab={selectedTab}
                     onTabChange={setSelectedTab}
                     isLoading={isLoading}
+                    videoId={video.videoId || ''}
                 />
             </div>
 

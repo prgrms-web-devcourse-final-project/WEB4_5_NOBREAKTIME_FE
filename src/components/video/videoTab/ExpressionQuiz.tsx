@@ -1,34 +1,60 @@
 'use client'
 
-import React, { useState } from 'react'
+import React, { useState, useEffect } from 'react'
+import client from '@/lib/backend/client'
+import { ExpressionQuizType, ExpressionQuizProps } from '@/types/video'
 
-// 버튼형 빈칸 채우기 퀴즈를 위한 목업 데이터
-export const expressionQuizMock = [
-    {
-        sentence: '{} {} {}, {} {} {}!',
-        choices: ['This', 'apple', 'like', 'is', 'apple', 'I'],
-        answer: 'This is apple, I like apple!',
-    },
-    {
-        sentence: '{} {} {}, {} {} {}!',
-        choices: ["Let's", 'apple', 'like', 'play', 'apple', 'I'],
-        answer: "Let's play apple, I like apple!",
-    },
-]
-
-interface ExpressionQuizProps {
-    fontSize: number
-}
-
-const ExpressionQuiz: React.FC<ExpressionQuizProps> = ({ fontSize }) => {
+const ExpressionQuiz: React.FC<ExpressionQuizProps> = ({ fontSize, videoId }) => {
     // 표현 퀴즈 상태 관리
     const [currentExpressionQuizIndex, setCurrentExpressionQuizIndex] = useState(0)
-    const expressionQuiz = expressionQuizMock[currentExpressionQuizIndex]
-    const expressionParts = expressionQuiz.sentence.split(/({})/g)
+    const [expressionQuizzes, setExpressionQuizzes] = useState<ExpressionQuizType[]>([])
+    const [isLoading, setIsLoading] = useState(true)
+
+    // API 호출
+    useEffect(() => {
+        const fetchExpressionQuiz = async () => {
+            try {
+                const { data, error } = await client.GET('/api/v1/videos/{videoId}/quiz/expressions', {
+                    params: {
+                        path: {
+                            videoId: videoId,
+                        },
+                    },
+                })
+
+                if (error) {
+                    console.error('표현 퀴즈 데이터 요청 실패:', error)
+                    return
+                }
+
+                console.log('표현 퀴즈 데이터:', data)
+                if (data?.data?.quiz) {
+                    setExpressionQuizzes(data.data.quiz as ExpressionQuizType[])
+                }
+            } catch (error) {
+                console.error('표현 퀴즈 데이터 요청 실패:', error)
+            } finally {
+                setIsLoading(false)
+            }
+        }
+
+        fetchExpressionQuiz()
+    }, [videoId])
+
+    const expressionQuiz = expressionQuizzes[currentExpressionQuizIndex]
+    const expressionParts = expressionQuiz?.question?.split(/({})/g) || []
     const expressionBlankCount = expressionParts.filter((part) => part === '{}').length
     const [expressionBlanks, setExpressionBlanks] = useState(Array(expressionBlankCount).fill(''))
     const [usedChoices, setUsedChoices] = useState<number[]>([])
     const [expressionResult, setExpressionResult] = useState<null | boolean>(null)
+
+    // expressionQuiz가 바뀔 때마다 상태 초기화
+    useEffect(() => {
+        if (!expressionQuiz) return
+        setExpressionBlanks(Array(expressionBlankCount).fill(''))
+        setUsedChoices([])
+        setExpressionResult(null)
+    }, [expressionQuiz?.expressionQuizItemId, expressionBlankCount])
 
     // 표현 퀴즈 - 빈칸에 단어 채우기
     const handleChoice = (choice: string, idx: number) => {
@@ -55,97 +81,132 @@ const ExpressionQuiz: React.FC<ExpressionQuizProps> = ({ fontSize }) => {
         setUsedChoices([...usedChoices, idx])
     }
 
-    // 표현 퀴즈 - 정답 제출
+    // 정답 제출
     const handleExpressionSubmit = () => {
+        // expressionBlanks의 원본을 보존하기 위해 복사본 사용
+        const blanksCopy = [...expressionBlanks]
         let userAnswer = expressionParts
             .map((part) => {
                 if (part === '{}') {
-                    return expressionBlanks.shift() || ''
+                    return blanksCopy.shift() || ''
                 }
                 return part
             })
             .join('')
-        const isCorrect = userAnswer === expressionQuiz.answer
+        const isCorrect = userAnswer === expressionQuiz.original
         setExpressionResult(isCorrect)
 
-        // 오답인 경우 잠시 후 자동으로 초기화
-        if (!isCorrect) {
+        // 오답인 경우에만 자동 초기화 (정답이면 절대 초기화 X)
+        if (isCorrect === false) {
             setTimeout(() => {
                 handleExpressionReset()
             }, 1500)
         }
     }
 
-    // 표현 퀴즈 - 초기화
+    // 초기화
     const handleExpressionReset = () => {
         setExpressionBlanks(Array(expressionBlankCount).fill(''))
         setUsedChoices([])
         setExpressionResult(null)
     }
 
-    // 표현 퀴즈 - 다음 퀴즈로 이동
+    // 다음 퀴즈로 이동
     const handleNextExpressionQuiz = () => {
-        setCurrentExpressionQuizIndex((prev) => (prev + 1) % expressionQuizMock.length)
+        setCurrentExpressionQuizIndex((prev) => (prev + 1) % expressionQuizzes.length)
         handleExpressionReset()
     }
 
-    // 표현 퀴즈 - 이전 퀴즈로 이동
+    // 이전 퀴즈로 이동
     const handlePrevExpressionQuiz = () => {
-        setCurrentExpressionQuizIndex((prev) => (prev - 1 + expressionQuizMock.length) % expressionQuizMock.length)
+        setCurrentExpressionQuizIndex((prev) => (prev - 1 + expressionQuizzes.length) % expressionQuizzes.length)
         handleExpressionReset()
+    }
+
+    if (isLoading) {
+        return (
+            <div className="w-full h-full flex items-center justify-center">
+                <div className="animate-pulse">로딩 중...</div>
+            </div>
+        )
+    }
+
+    if (expressionQuizzes.length === 0) {
+        return (
+            <div className="w-full h-full flex items-center justify-center">
+                <div>사용 가능한 표현 퀴즈가 없습니다.</div>
+            </div>
+        )
     }
 
     return (
         <div className="w-full h-full overflow-y-auto" style={{ fontSize: `${fontSize}px` }}>
             <div className="bg-white rounded-lg p-4 relative h-full flex flex-col">
                 <div className="mb-4">
-                    {expressionParts.map((part, idx) =>
-                        part === '{}' ? (
-                            <span key={idx} className="inline-block w-20 border-b-2 border-purple-400 mx-1 text-center">
-                                {expressionBlanks[expressionParts.slice(0, idx).filter((p) => p === '{}').length] ||
-                                    ' '}
-                            </span>
-                        ) : (
-                            <span key={idx} className="mx-1">
-                                {part}
-                            </span>
-                        ),
-                    )}
+                    {expressionQuiz &&
+                        expressionParts.map((part, idx) =>
+                            part === '{}' ? (
+                                <span
+                                    key={idx}
+                                    className={`inline-block w-20 border-b-2 border-purple-400 mx-1 text-center transition-colors duration-200 ${
+                                        expressionResult === true ? 'text-green-600 font-bold' : ''
+                                    }`}
+                                >
+                                    {expressionBlanks[expressionParts.slice(0, idx).filter((p) => p === '{}').length] ||
+                                        ' '}
+                                </span>
+                            ) : (
+                                <span key={idx} className="mx-1">
+                                    {part}
+                                </span>
+                            ),
+                        )}
                 </div>
 
                 {/* 버튼형 빈칸 채우기 퀴즈 */}
                 <div className="flex flex-wrap gap-2 mb-4">
-                    {expressionQuiz.choices.map((choice, idx) => (
-                        <button
-                            key={idx}
-                            className={`px-3 py-1 rounded bg-purple-200 ${
-                                usedChoices.includes(idx) ? 'opacity-50' : ''
-                            }`}
-                            onClick={() => handleChoice(choice, idx)}
-                            disabled={!usedChoices.includes(idx) && expressionBlanks.every((b) => b !== '')}
-                        >
-                            {choice}
-                        </button>
-                    ))}
+                    {expressionQuiz &&
+                        expressionQuiz.choices?.map((choice, idx) => (
+                            <button
+                                key={idx}
+                                className={`px-3 py-1 rounded bg-purple-200 ${
+                                    usedChoices.includes(idx) ? 'opacity-50' : ''
+                                }`}
+                                onClick={() => handleChoice(choice, idx)}
+                                disabled={
+                                    expressionResult !== null ||
+                                    (!usedChoices.includes(idx) && expressionBlanks.every((b) => b !== ''))
+                                }
+                            >
+                                {choice}
+                            </button>
+                        ))}
                 </div>
 
                 <div className="mt-auto pt-4 flex justify-between items-center">
                     <div className="flex gap-2 items-center">
                         <button
-                            className="px-4 py-1 bg-purple-500 text-white rounded text-sm"
+                            className="px-4 py-1 bg-red-400 text-white rounded text-sm"
+                            onClick={handleExpressionReset}
+                            disabled={expressionResult !== null}
+                        >
+                            초기화
+                        </button>
+                        <button
+                            className="px-4 py-1 bg-[#F3ECFF] text-[#6C2FFB] font-bold border border-[#E3D6FF] rounded text-sm"
                             onClick={handleExpressionSubmit}
                             disabled={expressionBlanks.includes('') || expressionResult !== null}
                         >
                             정답 확인
                         </button>
 
-                        {/* 정답/오답 메시지 */}
+                        {/* 정답/오답 이미지 */}
                         {expressionResult !== null && (
-                            <div className="ml-3 text-md font-bold">
+                            <div className="ml-3 text-md font-bold flex items-center">
                                 {expressionResult ? (
-                                    <span className="text-green-600">정답입니다!</span>
+                                    <img src="/assets/ok.svg" alt="정답" className="w-6 h-6" />
                                 ) : (
-                                    <span className="text-red-600">오답입니다!</span>
+                                    <img src="/assets/fail.svg" alt="오답" className="w-6 h-6" />
                                 )}
                             </div>
                         )}
@@ -156,7 +217,7 @@ const ExpressionQuiz: React.FC<ExpressionQuizProps> = ({ fontSize }) => {
                             &larr;
                         </button>
                         <span className="px-2">
-                            {currentExpressionQuizIndex + 1}/{expressionQuizMock.length}
+                            {currentExpressionQuizIndex + 1}/{expressionQuizzes.length}
                         </span>
                         <button onClick={handleNextExpressionQuiz} className="px-2 py-1 bg-gray-200 rounded">
                             &rarr;

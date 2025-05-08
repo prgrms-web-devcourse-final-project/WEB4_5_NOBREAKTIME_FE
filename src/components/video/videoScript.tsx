@@ -1,26 +1,8 @@
 'use client'
 
-import React, { useState } from 'react'
+import React, { useState, useEffect } from 'react'
 import Image from 'next/image'
-
-interface Keyword {
-    word: string
-    meaning: string
-    difficulity: number
-}
-
-interface SubtitleResult {
-    startTime: string
-    endTime: string
-    speaker: string
-    original: string
-    transcript: string
-    keywords: Keyword[]
-}
-
-interface AnalysisData {
-    subtitleResults: SubtitleResult[]
-}
+import { AnalysisData, SubtitleResult } from '@/types/video'
 
 interface Props {
     analysisData: AnalysisData | null
@@ -28,13 +10,33 @@ interface Props {
     showTranscript: boolean
     setShowTranscript: (show: boolean) => void
     isLoading: boolean
+    currentTime?: number
+    selectedSubtitle?: SubtitleResult | null
 }
 
-function VideoScript({ analysisData, onSubtitleClick, showTranscript, setShowTranscript, isLoading }: Props) {
+function VideoScript({
+    analysisData,
+    onSubtitleClick,
+    showTranscript,
+    setShowTranscript,
+    isLoading,
+    currentTime = 0,
+    selectedSubtitle: externalSelectedSubtitle,
+}: Props) {
     const [selectedIdx, setSelectedIdx] = useState(0)
 
+    // 외부에서 선택된 자막이 변경되면 인덱스 업데이트
+    useEffect(() => {
+        if (externalSelectedSubtitle && analysisData?.subtitleResults) {
+            const index = analysisData.subtitleResults.findIndex((subtitle) => subtitle === externalSelectedSubtitle)
+            if (index !== -1) {
+                setSelectedIdx(index)
+            }
+        }
+    }, [externalSelectedSubtitle, analysisData])
+
     return (
-        <div className="w-300 flex flex-col gap-2 rounded-lg bg-[var(--color-white)] p-4">
+        <div className="w-300 flex flex-col gap-2 rounded-lg bg-[var(--color-white)] p-4 h-full">
             {/* 스크립트 내용 */}
             <div className="flex justify-between items-center">
                 <h2 className="text-2xl font-bold w-full">📄 Transcript</h2>
@@ -46,7 +48,7 @@ function VideoScript({ analysisData, onSubtitleClick, showTranscript, setShowTra
                 </button>
             </div>
 
-            <div className="flex w-full h-90 rounded-lg p-2 flex-col gap-2 bg-[var(--color-sub-2)] overflow-hidden overflow-y-auto">
+            <div className="flex-grow flex w-full rounded-lg p-2 flex-col gap-2 bg-[var(--color-sub-2)] overflow-hidden overflow-y-auto">
                 {isLoading ? (
                     <div className="flex items-center justify-center h-full text-gray-500 bg-[var(--color-white)]">
                         <Image src="/character/loading-2.gif" alt="loading" width={300} height={300} />
@@ -58,12 +60,22 @@ function VideoScript({ analysisData, onSubtitleClick, showTranscript, setShowTra
                                 key={idx}
                                 onClick={() => {
                                     setSelectedIdx(idx)
-                                    onSubtitleClick?.(subtitle.startTime, subtitle)
+                                    subtitle.startTime && onSubtitleClick?.(subtitle.startTime, subtitle)
                                 }}
                                 className={
                                     selectedIdx === idx
                                         ? 'w-full font-bold bg-lime-200 text-black rounded px-1 py-1 cursor-pointer -ml-1'
                                         : 'w-full text-gray-400 cursor-pointer py-1 -ml-1'
+                                }
+                                ref={
+                                    selectedIdx === idx
+                                        ? (el) => {
+                                              // 선택된 자막으로 스크롤
+                                              if (el) {
+                                                  el.scrollIntoView({ behavior: 'smooth', block: 'center' })
+                                              }
+                                          }
+                                        : undefined
                                 }
                             >
                                 {subtitle.original}
