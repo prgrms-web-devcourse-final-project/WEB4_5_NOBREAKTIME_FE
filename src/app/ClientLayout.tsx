@@ -24,12 +24,12 @@ export function ClientLayout({ children }: React.ComponentProps<typeof NextTheme
     const fetchMember = () => {
         client
             .GET('/api/v1/members/me')
-            .then((res) => {
+            .then((res: any) => {
                 if (res.error) {
                     console.log(res.error)
                     // 로그인되지 않은 상태로 처리
                     setNoLoginMember()
-                } else if (res.data?.data) {
+                } else {
                     setLoginMember(res.data.data)
                 }
             })
