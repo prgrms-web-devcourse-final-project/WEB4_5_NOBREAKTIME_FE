@@ -1,62 +1,37 @@
 'use client'
+import { components } from '@/lib/backend/apiV1/schema'
 import Image from 'next/image'
-import { useRef } from 'react'
+import Link from 'next/link'
+
+type VideoHistoryResponse = components['schemas']['VideoHistoryResponse']
 
 interface WatchHistoryProps {
-    data: { id: number; title: string; thumbnail: string; watchedAt: string }[]
+    data: VideoHistoryResponse[]
 }
 
 export default function WatchHistory({ data }: WatchHistoryProps) {
-    const scrollRef = useRef<HTMLDivElement>(null)
-
-    const scroll = (direction: 'left' | 'right') => {
-        if (!scrollRef.current) return
-        scrollRef.current.scrollBy({
-            left: direction === 'left' ? -240 : 240,
-            behavior: 'smooth',
-        })
-    }
-
     return (
-        <div className="flex flex-row items-center gap-4 w-full h-full">
-            <button
-                onClick={() => scroll('left')}
-                className="flex justify-center items-center w-10 h-10 border-2 border-[var(--color-sub-2)] rounded-full"
-            >
-                <Image src="/assets/left.svg" alt="arrow-left" width={24} height={24} />
-            </button>
-
-            <div
-                ref={scrollRef}
-                className="flex flex-row gap-4 overflow-hidden scroll-smooth no-scrollbar"
-                style={{ width: '100%' }}
-            >
-                {data.map((item) => (
-                    <WatchHistoryCard
-                        key={item.id}
-                        title={item.title}
-                        thumbnail={item.thumbnail}
-                        watchedAt={item.watchedAt}
-                    />
-                ))}
-            </div>
-
-            <button
-                onClick={() => scroll('right')}
-                className="flex justify-center items-center w-10 h-10 border-2 border-[var(--color-sub-2)] rounded-full"
-            >
-                <Image src="/assets/right.svg" alt="arrow-right" width={24} height={24} />
-            </button>
+        <div className="flex flex-col gap-4 mt-4">
+            {data.map((video) => (
+                <Link
+                    key={`${video.videoId}-${video.createdAt}`}
+                    href={`/video-learning/${video.videoId}`}
+                    className="flex items-center gap-4 p-2 hover:bg-gray-50 rounded-lg cursor-pointer"
+                >
+                    <div className="relative w-32 h-20">
+                        <Image
+                            src={video.thumbnailUrl || '/assets/thumb.jpg'}
+                            alt={video.title || ''}
+                            fill
+                            className="object-cover rounded-lg"
+                        />
+                    </div>
+                    <div className="flex-1">
+                        <h4 className="font-semibold text-lg">{video.title}</h4>
+                        <p className="text-sm text-gray-500">{new Date(video.createdAt || '').toLocaleDateString()}</p>
+                    </div>
+                </Link>
+            ))}
         </div>
     )
 }
-
-const WatchHistoryCard = ({ title, thumbnail, watchedAt }: { title: string; thumbnail: string; watchedAt: string }) => (
-    <div className="flex flex-col justify-between w-[240px] h-[180px] bg-white rounded shadow p-2 shrink-0 border border-[var(--color-sub-2)]">
-        <Image src={thumbnail} alt={title} width={240} height={180} className="object-cover rounded" />
-        <div className="flex flex-col justify-center mt-1">
-            <p className="text-sm font-semibold text-gray-800 truncate">{title}</p>
-            <span className="text-xs text-gray-500">{watchedAt} 시청</span>
-        </div>
-    </div>
-)

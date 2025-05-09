@@ -1,10 +1,18 @@
+'use client'
+
 import DailySelector from '@/components/dashboard/dailySelector'
 import LearningHistory from '@/components/dashboard/learningHistory'
 import LevelBox from '@/components/dashboard/levelBox'
 import WatchHistory from '@/components/dashboard/watchHistory'
 import Header from '@/components/layout/header'
 import Nav from '@/components/layout/nav'
+import { components } from '@/lib/backend/apiV1/schema'
+import client from '@/lib/backend/client'
 import Image from 'next/image'
+import Link from 'next/link'
+import { useEffect, useState } from 'react'
+
+type VideoHistoryResponse = components['schemas']['VideoHistoryResponse']
 
 function Dashboard() {
     const userInfo = {
@@ -14,13 +22,22 @@ function Dashboard() {
         lastStudyDate: '2025-04-25 18:42',
     }
 
-    const watchHistoryList = [
-        { id: 1, title: '영어 회화 1편', thumbnail: '/assets/thumb.jpg', watchedAt: '2025-05-07' },
-        { id: 2, title: '영어 회화 2편', thumbnail: '/assets/thumb.jpg', watchedAt: '2025-05-06' },
-        { id: 3, title: '영어 회화 3편', thumbnail: '/assets/thumb.jpg', watchedAt: '2025-05-05' },
-        { id: 4, title: '문법 마스터', thumbnail: '/assets/thumb.jpg', watchedAt: '2025-05-04' },
-        { id: 5, title: '패턴 연습', thumbnail: '/assets/thumb.jpg', watchedAt: '2025-05-03' },
-    ]
+    const [watchHistoryList, setWatchHistoryList] = useState<VideoHistoryResponse[]>([])
+
+    useEffect(() => {
+        const fetchRecentVideos = async () => {
+            try {
+                const response = await client.GET('/api/v1/videohistory/videos/summary')
+                if (response.data?.data) {
+                    setWatchHistoryList(response.data.data)
+                }
+            } catch (error) {
+                console.error('Failed to fetch recent videos:', error)
+            }
+        }
+
+        fetchRecentVideos()
+    }, [])
 
     return (
         <div className="flex min-h-screen">
@@ -46,7 +63,7 @@ function Dashboard() {
                                     오늘도 함께 시작해볼까요?
                                 </p>
                                 <button className="mt-4 px-4 py-2 text-lg text-[var(--color-point)] bg-[var(--color-main)] rounded-full">
-                                    Today’s Study →
+                                    Today's Study →
                                 </button>
                             </div>
                             <Image
@@ -79,9 +96,11 @@ function Dashboard() {
                                         <h4 className="font-semibold mb-2 text-3xl">
                                             📺 최근 시청 영상 <small>({watchHistoryList.length})</small>
                                         </h4>
-                                        <button className="self-start mt-2 text-sm text-[var(--color-main)] font-bold">
-                                            + 더보기
-                                        </button>
+                                        <Link href="/video">
+                                            <button className="self-start mt-2 text-sm text-[var(--color-main)] font-bold">
+                                                + 더보기
+                                            </button>
+                                        </Link>
                                     </div>
                                     <WatchHistory data={watchHistoryList} />
                                 </div>
