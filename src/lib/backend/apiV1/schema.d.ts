@@ -4,67 +4,6 @@
  */
 
 export interface paths {
-    '/api/v1/members/me': {
-        parameters: {
-            query?: never
-            header?: never
-            path?: never
-            cookie?: never
-        }
-        /**
-         * 내 정보 조회
-         * @description 로그인한 사용자의 프로필 정보를 조회합니다.
-         *
-         *     모든 응답은 공통 래퍼 객체(RsData)에 감싸져 반환됩니다.
-         *     응답 예시:
-         *     {
-         *       "code": "200",
-         *       "message": "회원 정보가 수정되었습니다.",
-         *       "data": {
-         *         "email": "user@example.com",
-         *         "nickname": "cool_user"
-         *       }
-         *     }
-         */
-        get: operations['getMyProfile']
-        /**
-         * 회원 정보 변경
-         * @description 회원의 닉네임 / 이메일을 변경할 수 있습니다.
-         *
-         *     모든 응답은 공통 래퍼 객체(RsData)에 감싸져 반환됩니다.
-         *     응답 예시:
-         *     {
-         *       "code": "200",
-         *       "message": "회원 정보가 수정되었습니다.",
-         *       "data": {
-         *         "email": "user@example.com",
-         *         "nickname": "cool_user"
-         *       }
-         *     }
-         */
-        put: operations['changeMemberInformation']
-        post?: never
-        /**
-         * 회원 탈퇴
-         * @description 인증된 회원의 탈퇴 요청을 처리합니다.
-         *
-         *     모든 응답은 공통 래퍼 객체(RsData)에 감싸져 반환됩니다.
-         *     응답 예시:
-         *     {
-         *       "code": "200",
-         *       "message": "회원 정보가 수정되었습니다.",
-         *       "data": {
-         *         "email": "user@example.com",
-         *         "nickname": "cool_user"
-         *       }
-         *     }
-         */
-        delete: operations['delete']
-        options?: never
-        head?: never
-        patch?: never
-        trace?: never
-    }
     '/api/v1/words/save': {
         parameters: {
             query?: never
@@ -513,6 +452,37 @@ export interface paths {
         patch?: never
         trace?: never
     }
+    '/api/v1/dashboard/level': {
+        parameters: {
+            query?: never
+            header?: never
+            path?: never
+            cookie?: never
+        }
+        get?: never
+        put?: never
+        /**
+         * 학습 레벨 측정
+         * @description 최근 퀴즈 결과에 대한 학습 레벨을 측정합니다.
+         *
+         *     모든 응답은 공통 래퍼 객체(RsData)에 감싸져 반환됩니다.
+         *     응답 예시:
+         *     {
+         *       "code": "200",
+         *       "message": "회원 정보가 수정되었습니다.",
+         *       "data": {
+         *         "email": "user@example.com",
+         *         "nickname": "cool_user"
+         *       }
+         *     }
+         */
+        post: operations['levelCheck']
+        delete?: never
+        options?: never
+        head?: never
+        patch?: never
+        trace?: never
+    }
     '/api/v1/wordbooks/{wordbookId}': {
         parameters: {
             query?: never
@@ -619,6 +589,67 @@ export interface paths {
          *     }
          */
         patch: operations['updateUserLanguage']
+        trace?: never
+    }
+    '/api/v1/members/me': {
+        parameters: {
+            query?: never
+            header?: never
+            path?: never
+            cookie?: never
+        }
+        /**
+         * 내 정보 조회
+         * @description 로그인한 사용자의 프로필 정보를 조회합니다.
+         *
+         *     모든 응답은 공통 래퍼 객체(RsData)에 감싸져 반환됩니다.
+         *     응답 예시:
+         *     {
+         *       "code": "200",
+         *       "message": "회원 정보가 수정되었습니다.",
+         *       "data": {
+         *         "email": "user@example.com",
+         *         "nickname": "cool_user"
+         *       }
+         *     }
+         */
+        get: operations['getMyProfile']
+        put?: never
+        post?: never
+        /**
+         * 회원 탈퇴
+         * @description 인증된 회원의 탈퇴 요청을 처리합니다.
+         *
+         *     모든 응답은 공통 래퍼 객체(RsData)에 감싸져 반환됩니다.
+         *     응답 예시:
+         *     {
+         *       "code": "200",
+         *       "message": "회원 정보가 수정되었습니다.",
+         *       "data": {
+         *         "email": "user@example.com",
+         *         "nickname": "cool_user"
+         *       }
+         *     }
+         */
+        delete: operations['delete']
+        options?: never
+        head?: never
+        /**
+         * 회원 정보 변경
+         * @description 회원의 닉네임 / 이메일을 변경할 수 있습니다.
+         *
+         *     모든 응답은 공통 래퍼 객체(RsData)에 감싸져 반환됩니다.
+         *     응답 예시:
+         *     {
+         *       "code": "200",
+         *       "message": "회원 정보가 수정되었습니다.",
+         *       "data": {
+         *         "email": "user@example.com",
+         *         "nickname": "cool_user"
+         *       }
+         *     }
+         */
+        patch: operations['changeMemberInformation']
         trace?: never
     }
     '/api/v1/members/me/profile': {
@@ -1132,34 +1163,6 @@ export interface paths {
         patch?: never
         trace?: never
     }
-    '/api/v1/members/dashboard': {
-        parameters: {
-            query?: never
-            header?: never
-            path?: never
-            cookie?: never
-        }
-        /** @description
-         *
-         *     모든 응답은 공통 래퍼 객체(RsData)에 감싸져 반환됩니다.
-         *     응답 예시:
-         *     {
-         *       "code": "200",
-         *       "message": "회원 정보가 수정되었습니다.",
-         *       "data": {
-         *         "email": "user@example.com",
-         *         "nickname": "cool_user"
-         *       }
-         *     } */
-        get: operations['inDashboard']
-        put?: never
-        post?: never
-        delete?: never
-        options?: never
-        head?: never
-        patch?: never
-        trace?: never
-    }
     '/api/v1/expressionbooks/{expressionBookId}/words': {
         parameters: {
             query?: never
@@ -1347,32 +1350,6 @@ export interface paths {
 export type webhooks = Record<string, never>
 export interface components {
     schemas: {
-        /** @description 회원 정보 수정 요청 DTO */
-        ChangeInfoRequest: {
-            /**
-             * @description 회원 이메일
-             * @example user@example.com
-             */
-            nickname?: string
-            /**
-             * @description 회원 닉네임
-             * @example test_user
-             */
-            email?: string
-        }
-        /** @description 회원 정보 수정 응답 DTO */
-        ChangeInfoResponse: {
-            /**
-             * @description 회원 이메일
-             * @example user@example.com
-             */
-            nickname?: string
-            /**
-             * @description 회원 닉네임
-             * @example test_user
-             */
-            email?: string
-        }
         WordSearchRequest: {
             word?: string
         }
@@ -1477,6 +1454,15 @@ export interface components {
             expressionBookId?: number
             expressionIds?: number[]
         }
+        LevelCheckResponse: {
+            wordLevel?: string
+            expressionLevel?: string
+        }
+        RsDataLevelCheckResponse: {
+            code: string
+            msg: string
+            data?: components['schemas']['LevelCheckResponse']
+        }
         WordbookRenameRequest: {
             name?: string
         }
@@ -1489,6 +1475,32 @@ export interface components {
             /** Format: int64 */
             destinationWordbookId?: number
             words?: components['schemas']['WordMoveItem'][]
+        }
+        /** @description 회원 정보 수정 요청 DTO */
+        ChangeInfoRequest: {
+            /**
+             * @description 회원 이메일
+             * @example user@example.com
+             */
+            nickname?: string
+            /**
+             * @description 회원 닉네임
+             * @example test_user
+             */
+            email?: string
+        }
+        /** @description 회원 정보 수정 응답 DTO */
+        ChangeInfoResponse: {
+            /**
+             * @description 회원 이메일
+             * @example user@example.com
+             */
+            nickname?: string
+            /**
+             * @description 회원 닉네임
+             * @example test_user
+             */
+            email?: string
         }
         UpdateExpressionBookNameRequest: {
             newName?: string
@@ -1783,113 +1795,6 @@ export interface components {
 }
 export type $defs = Record<string, never>
 export interface operations {
-    getMyProfile: {
-        parameters: {
-            query?: never
-            header?: never
-            path?: never
-            cookie?: never
-        }
-        requestBody?: never
-        responses: {
-            /** @description 내 정보 확인 성공 */
-            200: {
-                headers: {
-                    [name: string]: unknown
-                }
-                content: {
-                    'application/json;charset=UTF-8': components['schemas']['UserProfileResponse']
-                }
-            }
-            /** @description Not Found */
-            404: {
-                headers: {
-                    [name: string]: unknown
-                }
-                content: {
-                    'application/json': unknown
-                }
-            }
-        }
-    }
-    changeMemberInformation: {
-        parameters: {
-            query: {
-                request: components['schemas']['ChangeInfoRequest']
-            }
-            header?: never
-            path?: never
-            cookie?: never
-        }
-        requestBody?: never
-        responses: {
-            /** @description 회원 정보가 성공적으로 수정되었습니다. */
-            200: {
-                headers: {
-                    [name: string]: unknown
-                }
-                content: {
-                    'application/json': components['schemas']['ChangeInfoResponse']
-                }
-            }
-            /** @description Not Found */
-            404: {
-                headers: {
-                    [name: string]: unknown
-                }
-                content: {
-                    'application/json': unknown
-                }
-            }
-            /** @description Conflict */
-            409: {
-                headers: {
-                    [name: string]: unknown
-                }
-                content: {
-                    'application/json': unknown
-                }
-            }
-        }
-    }
-    delete: {
-        parameters: {
-            query?: never
-            header?: never
-            path?: never
-            cookie?: never
-        }
-        requestBody?: never
-        responses: {
-            /** @description 회원 탈퇴가 완료되었습니다. */
-            200: {
-                headers: {
-                    [name: string]: unknown
-                }
-                content: {
-                    'application/json;charset=UTF-8': components['schemas']['RsDataVoid']
-                }
-            }
-            /** @description Not Found */
-            404: {
-                headers: {
-                    [name: string]: unknown
-                }
-                content: {
-                    'application/json': unknown
-                }
-            }
-            /** @description Gone */
-            410: {
-                headers: {
-                    [name: string]: unknown
-                }
-                content: {
-                    'application/json': unknown
-                }
-            }
-        }
-    }
     savedWord: {
         parameters: {
             query?: never
@@ -2491,6 +2396,53 @@ export interface operations {
             }
         }
     }
+    levelCheck: {
+        parameters: {
+            query?: never
+            header?: never
+            path?: never
+            cookie?: never
+        }
+        requestBody?: never
+        responses: {
+            /** @description 학습 레벨이 측정되었습니다. */
+            200: {
+                headers: {
+                    [name: string]: unknown
+                }
+                content: {
+                    'application/json;charset=UTF-8': components['schemas']['RsDataLevelCheckResponse']
+                }
+            }
+            /** @description Bad Request */
+            400: {
+                headers: {
+                    [name: string]: unknown
+                }
+                content: {
+                    'application/json': unknown
+                }
+            }
+            /** @description Not Found */
+            404: {
+                headers: {
+                    [name: string]: unknown
+                }
+                content: {
+                    'application/json': unknown
+                }
+            }
+            /** @description Internal Server Error */
+            500: {
+                headers: {
+                    [name: string]: unknown
+                }
+                content: {
+                    'application/json': unknown
+                }
+            }
+        }
+    }
     deleteWordbook: {
         parameters: {
             query?: never
@@ -2621,6 +2573,113 @@ export interface operations {
                 }
                 content: {
                     'application/json;charset=UTF-8': components['schemas']['RsDataObject']
+                }
+            }
+            /** @description Not Found */
+            404: {
+                headers: {
+                    [name: string]: unknown
+                }
+                content: {
+                    'application/json': unknown
+                }
+            }
+            /** @description Conflict */
+            409: {
+                headers: {
+                    [name: string]: unknown
+                }
+                content: {
+                    'application/json': unknown
+                }
+            }
+        }
+    }
+    getMyProfile: {
+        parameters: {
+            query?: never
+            header?: never
+            path?: never
+            cookie?: never
+        }
+        requestBody?: never
+        responses: {
+            /** @description 내 정보 확인 성공 */
+            200: {
+                headers: {
+                    [name: string]: unknown
+                }
+                content: {
+                    'application/json;charset=UTF-8': components['schemas']['UserProfileResponse']
+                }
+            }
+            /** @description Not Found */
+            404: {
+                headers: {
+                    [name: string]: unknown
+                }
+                content: {
+                    'application/json': unknown
+                }
+            }
+        }
+    }
+    delete: {
+        parameters: {
+            query?: never
+            header?: never
+            path?: never
+            cookie?: never
+        }
+        requestBody?: never
+        responses: {
+            /** @description 회원 탈퇴가 완료되었습니다. */
+            200: {
+                headers: {
+                    [name: string]: unknown
+                }
+                content: {
+                    'application/json;charset=UTF-8': components['schemas']['RsDataVoid']
+                }
+            }
+            /** @description Not Found */
+            404: {
+                headers: {
+                    [name: string]: unknown
+                }
+                content: {
+                    'application/json': unknown
+                }
+            }
+            /** @description Gone */
+            410: {
+                headers: {
+                    [name: string]: unknown
+                }
+                content: {
+                    'application/json': unknown
+                }
+            }
+        }
+    }
+    changeMemberInformation: {
+        parameters: {
+            query: {
+                request: components['schemas']['ChangeInfoRequest']
+            }
+            header?: never
+            path?: never
+            cookie?: never
+        }
+        requestBody?: never
+        responses: {
+            /** @description 회원 정보가 성공적으로 수정되었습니다. */
+            200: {
+                headers: {
+                    [name: string]: unknown
+                }
+                content: {
+                    'application/json': components['schemas']['ChangeInfoResponse']
                 }
             }
             /** @description Not Found */
@@ -3263,26 +3322,6 @@ export interface operations {
                 }
                 content: {
                     'application/json': unknown
-                }
-            }
-        }
-    }
-    inDashboard: {
-        parameters: {
-            query?: never
-            header?: never
-            path?: never
-            cookie?: never
-        }
-        requestBody?: never
-        responses: {
-            /** @description OK */
-            200: {
-                headers: {
-                    [name: string]: unknown
-                }
-                content: {
-                    'application/json;charset=UTF-8': components['schemas']['RsDataObject']
                 }
             }
         }
