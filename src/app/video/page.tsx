@@ -1,6 +1,6 @@
 'use client'
 
-import { useState, useEffect } from 'react'
+import { useState, useEffect, useRef } from 'react'
 import DashboardLayout from '../dashboardLayout'
 import VideoIcon from '@/components/icon/videoIcon'
 import Search from '@/components/common/search'
@@ -8,26 +8,43 @@ import { useRouter } from 'next/navigation'
 import { VideoData } from '@/types/video'
 import client from '@/lib/backend/client'
 
+// 카테고리 타입 정의
+type Category = {
+    id: number
+    label: string
+}
+
+// 카테고리 상수 정의
+const CATEGORIES = {
+    ALL: { id: 0, label: '전체' },
+    SONG: { id: 10, label: '노래' },
+    DRAMA: { id: 36, label: '드라마' },
+    MOVIE: { id: 30, label: '영화' },
+    NEW: { id: -1, label: '새로온 맞춤 동영상' },
+} as const
+
 function Video() {
     const url = process.env.NEXT_PUBLIC_MOCK_URL
     const router = useRouter()
+    const isFirstRender = useRef(true)
 
-    const [selectedCategory, setSelectedCategory] = useState<string>('전체') // 선택된 카테고리 상태 추가
-
+    const [selectedCategory, setSelectedCategory] = useState<Category>(CATEGORIES.ALL)
+    const [searchKeyword, setSearchKeyword] = useState<string>('')
     const [videoList, setVideoList] = useState<VideoData[]>([])
     const [isLoading, setIsLoading] = useState(true)
     const [error, setError] = useState<string | null>(null)
 
-    // api/v1/video/list 호출 -- 검색어, 카테고리 미추가 (추후 추가)
+    // api/v1/video/list 호출
     useEffect(() => {
         const loadVideos = async () => {
             try {
                 setIsLoading(true)
-                // openapi-fetch 클라이언트 사용
                 const { data, error } = await client.GET('/api/v1/videos/list', {
                     params: {
                         query: {
                             maxResults: 10,
+                            ...(selectedCategory.id !== 0 && { category: String(selectedCategory.id) }),
+                            ...(searchKeyword && { q: searchKeyword.trim().toLowerCase() }),
                         },
                     },
                 })
@@ -49,61 +66,51 @@ function Video() {
                 setIsLoading(false)
             }
         }
+
+        // 첫 렌더링 시에는 실행하지 않음
+        if (isFirstRender.current) {
+            isFirstRender.current = false
+            return
+        }
+
         loadVideos()
-    }, [selectedCategory])
+    }, [selectedCategory, searchKeyword])
 
-    const handleSearch = (keyword: string) => {
-        const trimmed = keyword.trim().toLowerCase()
-
-        if (!trimmed) {
-            // 1. 검색어 비었을 경우: 전체 리스트
-            setIsLoading(true)
-            client
-                .GET('/api/v1/videos/list', {
+    // 컴포넌트 마운트 시 최초 1회 데이터 로드
+    useEffect(() => {
+        const loadInitialVideos = async () => {
+            try {
+                setIsLoading(true)
+                const { data, error } = await client.GET('/api/v1/videos/list', {
                     params: {
                         query: {
-                            category: '전체',
                             maxResults: 10,
                         },
                     },
                 })
-                .then(({ data }) => {
-                    if (data?.data) {
-                        setVideoList(data.data)
-                    }
-                })
-                .catch((error) => {
+
+                if (error) {
                     console.error('API 오류:', error)
-                    setVideoList([])
-                })
-                .finally(() => setIsLoading(false))
-            return
+                    throw new Error('비디오 리스트를 불러오는데 실패했습니다.')
+                }
+
+                if (data?.data) {
+                    // @ts-ignore - 타입 에러 무시
+                    setVideoList(data.data)
+                }
+            } catch (err) {
+                setError('비디오 리스트를 불러오는데 실패했습니다.')
+                console.error(err)
+            } finally {
+                setIsLoading(false)
+            }
         }
 
-        // 검색어가 있는 경우 서버에 검색 요청
-        setIsLoading(true)
-        client
-            .GET('/api/v1/videos/list', {
-                params: {
-                    query: {
-                        q: trimmed,
-                        category: selectedCategory,
-                        maxResults: 10,
-                    },
-                },
-            })
-            .then(({ data }) => {
-                if (data?.data) {
-                    setVideoList(data.data)
-                } else {
-                    setVideoList([])
-                }
-            })
-            .catch((error) => {
-                console.error('API 오류:', error)
-                setVideoList([])
-            })
-            .finally(() => setIsLoading(false))
+        loadInitialVideos()
+    }, [])
+
+    const handleSearch = (keyword: string) => {
+        setSearchKeyword(keyword)
     }
 
     // 비디오 클릭 핸들러
@@ -121,8 +128,8 @@ function Video() {
     }
 
     // 카테고리 버튼 동작
-    const handleCategoryClick = (category: string) => {
-        if (selectedCategory === category) return
+    const handleCategoryClick = (category: (typeof CATEGORIES)[keyof typeof CATEGORIES]) => {
+        if (selectedCategory.id === category.id) return
         setSelectedCategory(category)
     }
 
@@ -135,17 +142,17 @@ function Video() {
 
                     {/* 카테고리 버튼들 */}
                     <div className="flex gap-2">
-                        {['전체', '노래', '드라마', '영화', '새로온 맞춤 동영상'].map((label) => (
+                        {Object.values(CATEGORIES).map((category) => (
                             <button
-                                key={label}
-                                onClick={() => handleCategoryClick(label)}
+                                key={category.id}
+                                onClick={() => handleCategoryClick(category)}
                                 className={`px-3 py-1 rounded text-sm font-medium ${
-                                    selectedCategory === label
+                                    selectedCategory.id === category.id
                                         ? 'bg-[var(--color-main)] text-white'
                                         : 'bg-[var(--color-sub-1)] text-white'
                                 }`}
                             >
-                                {label}
+                                {category.label}
                             </button>
                         ))}
                     </div>
