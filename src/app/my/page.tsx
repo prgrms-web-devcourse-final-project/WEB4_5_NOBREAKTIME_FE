@@ -1,29 +1,24 @@
 'use client'
 
+import { useGlobalLoginMember } from '@/stores/auth/loginMember'
 import Image from 'next/image'
-import DashboardLayout from '../dashboardLayout'
 import { useState } from 'react'
+import DashboardLayout from '../dashboardLayout'
 
 function My() {
-    const [profileImage, setProfileImage] = useState('/assets/user.svg')
+    const { loginMember } = useGlobalLoginMember()
+    const [profileImage, setProfileImage] = useState(loginMember?.profileImage || '/assets/user.svg')
 
-    const user = {
-        social: 'kakao',
-        language: '영어',
-        nickname: '홍길동',
-        level: 1,
-    }
-
-    const socialIcons: Record<string, string> = {
-        kakao: '/logo/kakao.png',
-        naver: '/logo/naver.png',
-        google: '/logo/google.png',
+    const getSocialIcon = (email: string) => {
+        if (email.includes('@kakao.com')) return '/logo/kakao.png'
+        if (email.includes('@naver.com')) return '/logo/naver.png'
+        if (email.includes('@gmail.com')) return '/logo/google.png'
     }
 
     const languageFlags: Record<string, string> = {
-        영어: '/assets/america.svg',
-        일본어: '/assets/japan.svg',
-        중국어: '/assets/china.svg',
+        ENGLISH: '/assets/america.svg',
+        JAPANESE: '/assets/japan.svg',
+        NONE: '/assets/china.svg',
     }
 
     const handleImageChange = (e: React.ChangeEvent<HTMLInputElement>) => {
@@ -33,6 +28,13 @@ function My() {
             setProfileImage(imageUrl)
         }
     }
+
+    if (!loginMember) {
+        return null
+    }
+
+    const language = loginMember.language || 'NONE'
+    const socialIcon = getSocialIcon(loginMember.email || '')
 
     return (
         <DashboardLayout title="내 페이지" icon="user">
@@ -61,20 +63,16 @@ function My() {
                             className="hidden"
                             onChange={handleImageChange}
                         />
-                        <div className="absolute -top-2 -right-2 bg-white rounded-full p-1 shadow-md">
-                            <Image
-                                src={socialIcons[user.social]}
-                                alt={user.social}
-                                width={30}
-                                height={30}
-                                className="rounded-full"
-                            />
-                        </div>
+                        {socialIcon && (
+                            <div className="absolute -top-2 -right-2 bg-white rounded-full p-1 shadow-md">
+                                <Image src={socialIcon} alt="social" width={30} height={30} className="rounded-full" />
+                            </div>
+                        )}
                     </div>
                     <div className="flex flex-col gap-2">
-                        <h2 className="text-2xl font-bold text-gray-800">{user.nickname}</h2>
-                        <span className="text-sm text-gray-500">Lv.{user.level}</span>
-                        <span className="text-sm text-gray-500">연결된 계정: {user.social}</span>
+                        <h2 className="text-2xl font-bold text-gray-800">{loginMember.nickname}</h2>
+                        <span className="text-sm text-gray-500">{loginMember.email}</span>
+                        <span className="text-sm text-gray-500">구독: {loginMember.subscription}</span>
                     </div>
                 </div>
 
@@ -83,10 +81,18 @@ function My() {
                     <div className="flex flex-col gap-1">
                         <span className="text-sm text-[var(--color-black)] mb-4">선택한 언어</span>
                         <div className="flex items-center gap-3">
-                            <span className="text-lg font-semibold text-[var(--color-main)]">{user.language}</span>
+                            <span className="text-lg font-semibold text-[var(--color-main)]">
+                                {language === 'ENGLISH'
+                                    ? '영어'
+                                    : language === 'JAPANESE'
+                                    ? '일본어'
+                                    : language === 'NONE'
+                                    ? '중국어'
+                                    : '미설정'}
+                            </span>
                             <Image
-                                src={languageFlags[user.language]}
-                                alt={`${user.language} 국기`}
+                                src={languageFlags[language]}
+                                alt={`${language} 국기`}
                                 width={40}
                                 height={40}
                                 className="rounded-full shadow-sm"

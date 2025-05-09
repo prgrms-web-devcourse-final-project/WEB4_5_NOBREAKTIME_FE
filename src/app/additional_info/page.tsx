@@ -7,32 +7,26 @@ import Link from 'next/link'
 import { useRouter } from 'next/navigation'
 import { useState } from 'react'
 
+type Language = 'ENGLISH' | 'JAPANESE' | 'NONE'
+
 const LANGUAGES = [
-    { code: 'en', label: 'English', image: '/assets/america.svg' },
-    { code: 'ja', label: '日本語', image: '/assets/japan.svg' },
-    { code: 'zh', label: '中文', image: '/assets/china.svg' },
+    { code: 'ENGLISH' as Language, label: 'English', image: '/assets/america.svg' },
+    { code: 'JAPANESE' as Language, label: '日本語', image: '/assets/japan.svg' },
+    { code: 'NONE' as Language, label: '中文', image: '/assets/china.svg' },
 ]
 
 export default function LanguagePage() {
     const router = useRouter()
-    const [selectedLang, setSelectedLang] = useState<string | null>(null)
+    const [selectedLang, setSelectedLang] = useState<Language | null>(null)
 
     const handleStart = async () => {
         if (!selectedLang) return
-
-        const languageMap = {
-            en: 'ENGLISH',
-            ja: 'JAPANESE',
-            zh: 'NONE',
-        } as const
-
-        const apiLanguage = languageMap[selectedLang as keyof typeof languageMap]
 
         try {
             const { error } = await client.PATCH('/api/v1/members/update-language', {
                 params: {
                     query: {
-                        language: apiLanguage,
+                        language: selectedLang,
                     },
                 },
             })

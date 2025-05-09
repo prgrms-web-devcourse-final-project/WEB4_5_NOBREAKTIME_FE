@@ -1,12 +1,18 @@
 'use client'
-import Search from '@/components/common/search'
-import DashboardLayout from '../dashboardLayout'
-import GrammarIcon from '@/components/icon/grammarIcon'
-import LearningCard from '@/components/learning/learningCard'
 import DropdownCheckBox from '@/components/common/dropdownCheckBox'
+import Search from '@/components/common/search'
+import GrammarIcon from '@/components/icon/grammarIcon'
 import GrammarCard from '@/components/learning/grammarCard'
+import LearningCard from '@/components/learning/learningCard'
+import DashboardLayout from '../dashboardLayout'
 
 function Grammar() {
+    const wordbooks = [
+        { id: 1, name: '기초 문법', language: 'ENGLISH' },
+        { id: 2, name: '중급 문법', language: 'ENGLISH' },
+        { id: 3, name: '고급 문법', language: 'ENGLISH' },
+    ]
+
     return (
         <DashboardLayout title="Grammar Learning" icon={<GrammarIcon />}>
             <div className="w-300 m-auto">
@@ -20,6 +26,7 @@ function Grammar() {
                         { text: '내 {title}장에서 톡톡 랜덤 등장!', strong: ['랜덤'] },
                         { text: '반복과 호기심 학습을 한번에!', strong: ['반복', '호기심'] },
                     ]}
+                    wordbooks={wordbooks}
                 />
             </div>
 
@@ -27,7 +34,7 @@ function Grammar() {
                 {/* 상단 타이틀 */}
                 <div className="flex justify-between">
                     <h1 className="text-2xl font-bold">📚 내 문장</h1>
-                    <DropdownCheckBox />
+                    <DropdownCheckBox wordbooks={wordbooks} />
                 </div>
 
                 {/* 카드 리스트 */}

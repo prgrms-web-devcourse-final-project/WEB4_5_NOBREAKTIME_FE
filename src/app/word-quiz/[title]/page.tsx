@@ -1,9 +1,10 @@
 'use client'
 
+import DashboardLayout from '@/app/dashboardLayout'
 import WordIcon from '@/components/icon/wordIcon'
 import Image from 'next/image'
+import { useParams } from 'next/navigation'
 import { useEffect, useRef, useState } from 'react'
-import DashboardLayout from '../dashboardLayout'
 
 const wordQuizList = [
     { word: 'abandon', meaning: '버리다', stars: 2 },
