@@ -4,13 +4,35 @@ import client from '@/lib/backend/client'
 import { useState } from 'react'
 
 type LevelCheckResponse = components['schemas']['LevelCheckResponse']
+type StatisticResponse = components['schemas']['StatisticResponse']
 
-export default function LevelBox() {
+interface LevelBoxProps {
+    statistics: StatisticResponse | null
+    onStatisticsUpdate: (statistics: StatisticResponse) => void
+}
+
+export default function LevelBox({ statistics, onStatisticsUpdate }: LevelBoxProps) {
     const [isLoading, setIsLoading] = useState(false)
     const [levelData, setLevelData] = useState<LevelCheckResponse>({
         wordLevel: 'NONE',
         expressionLevel: 'NONE',
     })
+
+    const formatDateTime = (dateString: string | undefined) => {
+        if (!dateString) return '측정 전'
+        const date = new Date(dateString)
+        return date
+            .toLocaleString('ko-KR', {
+                year: 'numeric',
+                month: '2-digit',
+                day: '2-digit',
+                hour: '2-digit',
+                minute: '2-digit',
+                hour12: false,
+            })
+            .replace(/\. /g, '-')
+            .replace('.', '')
+    }
 
     const handleReMeasure = async () => {
         try {
@@ -18,6 +40,13 @@ export default function LevelBox() {
             const response = await client.POST('/api/v1/dashboard/level')
             if (response.data?.data) {
                 setLevelData(response.data.data)
+
+                // 레벨 재측정 후 통계 정보 다시 받아오기
+                const statisticsResponse = await client.GET('/api/v1/dashboard/statistics')
+                if (statisticsResponse.data?.data) {
+                    onStatisticsUpdate(statisticsResponse.data.data)
+                }
+
                 alert('레벨이 재측정되었습니다.')
             }
         } catch (error) {
@@ -63,7 +92,7 @@ export default function LevelBox() {
                 className="flex flex-col items-center m-auto text-sm text-[var(--color-white)] w-[200px] bg-[var(--color-warning)] rounded-full px-2 py-1 hover:bg-opacity-90 disabled:opacity-50"
             >
                 {isLoading ? '측정 중...' : '레벨 재측정'}
-                <small>기준 2025-05-09 1</small>
+                <small>기준: {formatDateTime(statistics?.levelStatus?.lastUpdated)}</small>
             </button>
         </div>
     )

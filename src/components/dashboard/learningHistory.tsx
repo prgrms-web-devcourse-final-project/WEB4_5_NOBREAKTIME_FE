@@ -1,11 +1,33 @@
+import { components } from '@/lib/backend/apiV1/schema'
+import client from '@/lib/backend/client'
 import Image from 'next/image'
+import { useEffect, useState } from 'react'
+
+type LearningHistoryResponse = components['schemas']['LearningHistoryResponse']
 
 export default function LearningHistory() {
+    const [history, setHistory] = useState<LearningHistoryResponse | null>(null)
+
+    useEffect(() => {
+        const fetchHistory = async () => {
+            try {
+                const response = await client.GET('/api/v1/dashboard/calendar')
+                if (response.data?.data) {
+                    setHistory(response.data.data)
+                }
+            } catch (error) {
+                console.error('Failed to fetch learning history:', error)
+            }
+        }
+
+        fetchHistory()
+    }, [])
+
     const learningHistory = [
-        { id: 'total', icon: '/assets/time.svg', time: '2h 12m' },
-        { id: 'video', icon: '/assets/fluent_video.svg', time: '1h 30m' },
-        { id: 'word', icon: '/assets/tabler_abc.svg', time: '30m' },
-        { id: 'quiz', icon: '/assets/quiz.svg', time: '12m' },
+        { id: 'total', icon: '/assets/time.svg', time: history?.today?.learningTime || '0h 0m' },
+        { id: 'video', icon: '/assets/fluent_video.svg', time: `${history?.today?.videoCount || 0}개` },
+        { id: 'word', icon: '/assets/tabler_abc.svg', time: `${history?.today?.addedWordCount || 0}개` },
+        { id: 'quiz', icon: '/assets/quiz.svg', time: `${history?.today?.quizCount || 0}개` },
     ]
 
     return (

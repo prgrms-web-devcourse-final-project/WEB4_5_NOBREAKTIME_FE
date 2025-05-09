@@ -60,10 +60,7 @@ function Dashboard() {
                         <div className="h-80 bg-white rounded-2xl flex justify-between items-center px-8 py-6 shadow-md border-2 border-[var(--color-sub-2)]">
                             <div>
                                 <h2 className="text-5xl font-bold text-[var(--color-black)] mb-2">
-                                    반가워요,{' '}
-                                    <span className="text-[var(--color-point)]">
-                                        {userInfo?.userName || loginMember.nickname}
-                                    </span>
+                                    반가워요, <span className="text-[var(--color-point)]">{userInfo?.userName}</span>
                                     님!
                                 </h2>
                                 <p className="text-[var(--color-black)] text-xl mt-4">
@@ -103,7 +100,10 @@ function Dashboard() {
                             {/* 레벨 현황 */}
                             <div className="flex flex-col bg-white p-6 rounded-2xl border-2 border-[var(--color-sub-2)] shadow-md">
                                 <h3 className="text-3xl font-bold mb-4">🎓 나의 Level은?</h3>
-                                <LevelBox />
+                                <LevelBox
+                                    statistics={userInfo}
+                                    onStatisticsUpdate={(newStatistics) => setUserInfo(newStatistics)}
+                                />
                                 <div className="flex flex-1 flex-col ">
                                     <div className="flex justify-between">
                                         <h4 className="font-semibold mb-2 text-3xl">
