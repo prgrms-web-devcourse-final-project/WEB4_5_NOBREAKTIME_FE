@@ -2,14 +2,19 @@
 
 import { useEffect, useRef, useState } from 'react'
 
-export default function DropdownCheckBox() {
+interface Wordbook {
+    id: number
+    name: string
+    language: string
+}
+
+interface Props {
+    wordbooks: Wordbook[]
+}
+
+export default function DropdownCheckBox({ wordbooks }: Props) {
     const [isOpen, setIsOpen] = useState(false)
-    const [checkedItems, setCheckedItems] = useState({
-        '새로운 단어장': false,
-        '영화 단어장': false,
-        '드라마 단어장': false,
-        '노래 단어장': false,
-    })
+    const [checkedItems, setCheckedItems] = useState<Record<string, boolean>>({})
 
     const dropdownRef = useRef<HTMLDivElement>(null)
 
@@ -26,7 +31,7 @@ export default function DropdownCheckBox() {
         }
     }, [])
 
-    const handleCheckboxChange = (key: keyof typeof checkedItems) => {
+    const handleCheckboxChange = (key: string) => {
         setCheckedItems((prev) => ({
             ...prev,
             [key]: !prev[key],
@@ -69,27 +74,27 @@ export default function DropdownCheckBox() {
                     tabIndex={-1}
                 >
                     <div className="py-1" role="none">
-                        {Object.entries(checkedItems).map(([label, checked]) => (
+                        {wordbooks.map((wordbook) => (
                             <label
-                                key={label}
+                                key={wordbook.id}
                                 className="flex items-center justify-between px-4 py-2 text-sm text-gray-700 hover:bg-gray-100 cursor-pointer"
                                 role="menuitem"
                             >
-                                <span>{label}</span>
+                                <span>{wordbook.name}</span>
 
                                 <input
                                     type="checkbox"
-                                    checked={checked}
-                                    onChange={() => handleCheckboxChange(label as keyof typeof checkedItems)}
+                                    checked={checkedItems[wordbook.name] || false}
+                                    onChange={() => handleCheckboxChange(wordbook.name)}
                                     className="sr-only"
                                 />
 
                                 <span
                                     className={`w-5 h-5 flex items-center justify-center rounded border border-[var(--color-main)] ${
-                                        checked ? 'bg-[var(--color-main)] text-white' : 'bg-white'
+                                        checkedItems[wordbook.name] ? 'bg-[var(--color-main)] text-white' : 'bg-white'
                                     }`}
                                 >
-                                    {checked && (
+                                    {checkedItems[wordbook.name] && (
                                         <svg
                                             className="w-4 h-4"
                                             fill="none"

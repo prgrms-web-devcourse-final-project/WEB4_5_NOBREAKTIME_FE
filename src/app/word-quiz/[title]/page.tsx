@@ -1,10 +1,9 @@
 'use client'
 
-import { useState, useEffect } from 'react'
-import { useParams } from 'next/navigation'
-import DashboardLayout from '../../dashboardLayout'
 import WordIcon from '@/components/icon/wordIcon'
 import Image from 'next/image'
+import { useEffect, useRef, useState } from 'react'
+import DashboardLayout from '../dashboardLayout'
 
 const wordQuizList = [
     { word: 'abandon', meaning: '버리다', stars: 2 },
@@ -21,10 +20,13 @@ export default function WordQuiz() {
     const [index, setIndex] = useState(0)
     const [mode, setMode] = useState<QuizMode>('word')
     const [hiddenPart, setHiddenPart] = useState<'word' | 'meaning' | null>(null)
-    const [userInput, setUserInput] = useState('')
+    const [userInput, setUserInput] = useState<string[] | string>([])
     const [hintCount, setHintCount] = useState(0)
     const [isCorrect, setIsCorrect] = useState<null | boolean>(null)
-    const maxHint = 3
+    const [hintIndices, setHintIndices] = useState<number[]>([])
+    const [initialHintIndex, setInitialHintIndex] = useState<number | null>(null)
+    const maxHint = 2
+    const inputRefs = useRef<(HTMLInputElement | null)[]>([])
 
     const current = wordQuizList[index]
 
@@ -38,11 +40,29 @@ export default function WordQuiz() {
         // eslint-disable-next-line react-hooks/exhaustive-deps
     }, [mode])
 
+    useEffect(() => {
+        const answer = getAnswer()
+        if (isMeaningMode) {
+            setUserInput('')
+        } else {
+            const newInput = Array(answer.length).fill('')
+            // 랜덤으로 한 글자 선택
+            const randomIndex = Math.floor(Math.random() * answer.length)
+            newInput[randomIndex] = answer[randomIndex]
+            setUserInput(newInput)
+            setHintIndices([randomIndex])
+            setInitialHintIndex(randomIndex)
+        }
+        inputRefs.current = inputRefs.current.slice(0, answer.length)
+    }, [index, mode, hiddenPart])
+
     const resetState = (newIndex: number, resetMode = false) => {
         setIndex(newIndex)
-        setUserInput('')
+        setUserInput(isMeaningMode ? '' : [])
         setHintCount(0)
         setIsCorrect(null)
+        setHintIndices([])
+        setInitialHintIndex(null)
         if (mode === 'random' || resetMode) {
             setHiddenPart(Math.random() > 0.5 ? 'word' : 'meaning')
         } else {
@@ -59,31 +79,91 @@ export default function WordQuiz() {
     }
 
     const handleHint = () => {
+        if (isMeaningMode) return
+
         const answer = getAnswer()
-        if (hintCount >= maxHint || userInput.length >= answer.length || isCorrect) return
+        if (hintCount >= maxHint || (userInput as string[]).join('').length >= answer.length || isCorrect) return
 
+        const newInput = [...(userInput as string[])]
         for (let i = 0; i < answer.length; i++) {
-            if (userInput[i] !== answer[i]) {
-                const nextInput = userInput.slice(0, i) + answer[i] + userInput.slice(i + 1)
-                const padded = nextInput.padEnd(answer.length, '')
-                setUserInput(padded)
+            if (newInput[i] !== answer[i]) {
+                newInput[i] = answer[i]
+                setUserInput(newInput)
                 setHintCount((prev) => prev + 1)
+                setHintIndices((prev) => [...prev, i])
 
-                if (padded === answer) setIsCorrect(true)
+                // 힌트를 2회 이상 사용하면 틀린 것으로 처리하고 모든 글자를 빨간색으로 표시
+                if (hintCount + 1 >= maxHint) {
+                    setIsCorrect(false)
+                    // 나머지 글자들도 모두 보여줌
+                    for (let j = i + 1; j < answer.length; j++) {
+                        newInput[j] = answer[j]
+                        setHintIndices((prev) => [...prev, j])
+                    }
+                    setUserInput(newInput)
+                } else if (newInput.join('') === answer) {
+                    setIsCorrect(true)
+                }
                 return
             }
         }
     }
 
-    const handleInputChange = (e: React.ChangeEvent<HTMLInputElement>) => {
-        const value = e.target.value.slice(0, getAnswer().length)
-        setUserInput(value)
-
-        // 자동 채점
-        if (value.length === getAnswer().length) {
-            setIsCorrect(value === getAnswer())
+    const handleInputChange = (e: React.ChangeEvent<HTMLInputElement>, index?: number) => {
+        if (isMeaningMode) {
+            setUserInput(e.target.value)
+            // 자동 채점
+            if (e.target.value === current.meaning) {
+                setIsCorrect(true)
+            } else {
+                setIsCorrect(null)
+            }
         } else {
-            setIsCorrect(null)
+            // 힌트로 보여준 글자는 변경할 수 없음
+            if (hintIndices.includes(index!)) return
+
+            const value = e.target.value.slice(-1).toLowerCase()
+            const newInput = [...(userInput as string[])]
+            newInput[index!] = value
+            setUserInput(newInput)
+
+            // 자동으로 다음 입력칸으로 이동
+            if (value) {
+                // 다음 입력 가능한 칸 찾기
+                let nextIndex = index! + 1
+                while (nextIndex < getAnswer().length && hintIndices.includes(nextIndex)) {
+                    nextIndex++
+                }
+                if (nextIndex < getAnswer().length) {
+                    inputRefs.current[nextIndex]?.focus()
+                }
+            }
+
+            // 자동 채점
+            const currentAnswer = newInput.join('')
+            if (currentAnswer.length === getAnswer().length) {
+                const isAnswerCorrect = currentAnswer === getAnswer()
+                setIsCorrect(isAnswerCorrect)
+                if (!isAnswerCorrect) {
+                    // 오답일 경우 정답으로 채우기
+                    setUserInput(getAnswer().split(''))
+                }
+            } else {
+                setIsCorrect(null)
+            }
+        }
+    }
+
+    const handleKeyDown = (e: React.KeyboardEvent<HTMLInputElement>, index: number) => {
+        if (e.key === 'Backspace' && !userInput[index] && index > 0) {
+            // 이전 입력 가능한 칸 찾기
+            let prevIndex = index - 1
+            while (prevIndex >= 0 && hintIndices.includes(prevIndex)) {
+                prevIndex--
+            }
+            if (prevIndex >= 0) {
+                inputRefs.current[prevIndex]?.focus()
+            }
         }
     }
 
@@ -145,13 +225,31 @@ export default function WordQuiz() {
                 </div>
 
                 {isWordMode ? (
-                    <input
-                        type="text"
-                        value={userInput}
-                        onChange={handleInputChange}
-                        placeholder="단어를 입력하세요"
-                        className="text-4xl font-bold text-center border-b border-gray-300 focus:outline-none"
-                    />
+                    <div className="flex gap-2">
+                        {Array.from({ length: getAnswer().length }).map((_, i) => (
+                            <input
+                                key={i}
+                                ref={(el) => {
+                                    inputRefs.current[i] = el
+                                }}
+                                type="text"
+                                maxLength={1}
+                                value={userInput[i] || ''}
+                                onChange={(e) => handleInputChange(e, i)}
+                                onKeyDown={(e) => handleKeyDown(e, i)}
+                                className={`w-12 h-12 text-2xl text-center border-b-2 border-gray-300 focus:outline-none focus:border-[var(--color-main)] ${
+                                    isCorrect === true
+                                        ? 'text-green-500'
+                                        : hintCount >= maxHint || isCorrect === false
+                                        ? 'text-red-500'
+                                        : hintIndices.includes(i) && i !== initialHintIndex && hintCount < maxHint
+                                        ? 'text-yellow-500'
+                                        : ''
+                                }`}
+                                readOnly={hintIndices.includes(i) || isCorrect !== null}
+                            />
+                        ))}
+                    </div>
                 ) : (
                     <p className="text-4xl font-bold text-center">{current.word}</p>
                 )}
@@ -159,10 +257,12 @@ export default function WordQuiz() {
                 {isMeaningMode ? (
                     <input
                         type="text"
-                        value={userInput}
+                        value={userInput as string}
                         onChange={handleInputChange}
                         placeholder="뜻을 입력하세요"
-                        className="text-lg text-center border-b border-gray-300 focus:outline-none"
+                        className={`w-96 text-2xl text-center border-b-2 border-gray-300 focus:outline-none focus:border-[var(--color-main)] ${
+                            isCorrect === true ? 'text-green-500' : isCorrect === false ? 'text-red-500' : ''
+                        }`}
                     />
                 ) : (
                     <span className="text-2xl">{current.meaning}</span>

@@ -6,11 +6,19 @@ interface Description {
     strong: string[]
 }
 
+interface Wordbook {
+    id: number
+    name: string
+    language: string
+}
+
 interface Props {
     title: string
     descriptions: Description[]
+    wordbooks: Wordbook[]
 }
-export default function LearningCard({ title, descriptions }: Props) {
+
+export default function LearningCard({ title, descriptions, wordbooks }: Props) {
     return (
         <div className="flex gap-4 border border-[var(--color-main)] rounded-lg shadow-lg p-6">
             <Image src="/character/character-word.png" alt="word" width={300} height={300} />
@@ -38,7 +46,7 @@ export default function LearningCard({ title, descriptions }: Props) {
                 })}
             </div>
 
-            <Card />
+            <Card wordbooks={wordbooks} />
         </div>
     )
 }

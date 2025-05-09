@@ -1,101 +1,51 @@
 'use client'
 
-import { useState } from 'react'
-import { useParams } from 'next/navigation'
 import DashboardLayout from '@/app/dashboardLayout'
 import WordIcon from '@/components/icon/wordIcon'
 import Image from 'next/image'
+import { useSearchParams } from 'next/navigation'
+import { useEffect, useState } from 'react'
 
-const wordList = [
-    {
-        word: 'abandon',
-        meaning: '버리다',
-        meanings: '포기하다, 버려두다, 떠나다',
-        example: 'He abandoned his car in the snow.',
-        exampleMeaning: '그는 눈 속에 차를 버려두었다.',
-        stars: 2,
-    },
-    {
-        word: 'benefit',
-        meaning: '이익',
-        meanings: '혜택, 이득',
-        example: 'The project will benefit the community.',
-        exampleMeaning: '이 프로젝트는 지역 사회에 이익이 될 것이다.',
-        stars: 4,
-    },
-    {
-        word: 'challenge',
-        meaning: '도전',
-        meanings: '난제, 어려운 문제',
-        example: 'She accepted the challenge.',
-        exampleMeaning: '그녀는 도전을 받아들였다.',
-        stars: 1,
-    },
-    {
-        word: 'develop',
-        meaning: '개발하다',
-        meanings: '발전시키다, 성장하다',
-        example: 'The company developed a new app.',
-        exampleMeaning: '회사는 새로운 앱을 개발했다.',
-        stars: 3,
-    },
-    {
-        word: 'enhance',
-        meaning: '향상시키다',
-        meanings: '개선하다, 강화하다',
-        example: 'This feature enhances performance.',
-        exampleMeaning: '이 기능은 성능을 향상시킨다.',
-        stars: 5,
-    },
-    {
-        word: 'focus',
-        meaning: '집중하다',
-        meanings: '초점을 맞추다, 주력하다',
-        example: 'Try to focus on your work.',
-        exampleMeaning: '일에 집중해보세요.',
-        stars: 2,
-    },
-    {
-        word: 'generate',
-        meaning: '생성하다',
-        meanings: '만들어내다, 일으키다',
-        example: 'The engine generates power.',
-        exampleMeaning: '엔진은 동력을 생성한다.',
-        stars: 4,
-    },
-    {
-        word: 'highlight',
-        meaning: '강조하다',
-        meanings: '부각시키다, 하이라이트',
-        example: 'The speaker highlighted the key points.',
-        exampleMeaning: '연설자는 핵심을 강조했다.',
-        stars: 1,
-    },
-    {
-        word: 'influence',
-        meaning: '영향',
-        meanings: '영향을 미치다, 작용하다',
-        example: 'Parents influence their children.',
-        exampleMeaning: '부모는 자녀에게 영향을 준다.',
-        stars: 3,
-    },
-    {
-        word: 'justify',
-        meaning: '정당화하다',
-        meanings: '변명하다, 해명하다',
-        example: 'Can you justify your decision?',
-        exampleMeaning: '당신의 결정을 정당화할 수 있나요?',
-        stars: 5,
-    },
-]
+interface Word {
+    word: string
+    pos: string
+    meaning: string
+    difficulty: string
+    exampleSentence: string
+    translatedSentence: string
+    videoId: string
+    subtitleId: number
+    createdAt: string
+}
 
 export default function WordLearningPage() {
-    const params = useParams()
-    const selectedTitle = (params.title as string) || '제목 없음'
+    const searchParams = useSearchParams()
+    const selectedId = searchParams.get('id')
+    const selectedTitle = searchParams.get('title') || '제목 없음'
 
+    const [words, setWords] = useState<Word[]>([])
     const [index, setIndex] = useState(0)
-    const wordItem = wordList.length
-    const current = wordList[index]
+    const wordItem = words.length
+    const [isLoading, setIsLoading] = useState(true)
+
+    useEffect(() => {
+        const fetchWords = async () => {
+            try {
+                const response = await fetch(`${process.env.NEXT_PUBLIC_MOCK_URL}/api/v1/wordbooks/{wordbookId}/words`)
+                const data = await response.json()
+                console.log(data)
+                setWords(data.data)
+                setIsLoading(false)
+            } catch (error) {
+                console.error('단어 데이터를 가져오는데 실패했습니다:', error)
+                setIsLoading(false)
+            }
+        }
+
+        if (selectedId) {
+            fetchWords()
+        }
+    }, [selectedId])
 
     const handlePrev = () => {
         if (index > 0) setIndex(index - 1)
@@ -126,6 +76,28 @@ export default function WordLearningPage() {
         speechSynthesis.speak(utterance)
     }
 
+    if (isLoading) {
+        return (
+            <DashboardLayout title="Word Learning" icon={<WordIcon />}>
+                <div className="flex items-center justify-center h-full">
+                    <p className="text-2xl">로딩 중...</p>
+                </div>
+            </DashboardLayout>
+        )
+    }
+
+    if (words.length === 0) {
+        return (
+            <DashboardLayout title="Word Learning" icon={<WordIcon />}>
+                <div className="flex items-center justify-center h-full">
+                    <p className="text-2xl">단어가 없습니다.</p>
+                </div>
+            </DashboardLayout>
+        )
+    }
+
+    const current = words[index]
+
     return (
         <DashboardLayout
             title="Word Learning"
@@ -140,7 +112,9 @@ export default function WordLearningPage() {
 
             <div className="flex flex-col items-center justify-center bg-[var(--color-white)] w-180 h-full gap-8 p-12">
                 <div className="text-yellow-400 text-xl">
-                    {Array.from({ length: current.stars }).map((_, i) => (
+                    {Array.from({
+                        length: current.difficulty === 'EASY' ? 1 : current.difficulty === 'MEDIUM' ? 2 : 3,
+                    }).map((_, i) => (
                         <span key={i}>⭐</span>
                     ))}
                 </div>
@@ -152,12 +126,13 @@ export default function WordLearningPage() {
                     <span className="text-lg">{current.meaning}</span>
                 </button>
 
-                <p className="text-lg text-center">{current.meanings}</p>
+                <p className="text-lg text-center">
+                    [{current.pos}] {current.meaning}
+                </p>
 
                 <div>
-                    <p className="text-md text-center">{highlightWord(current.example, current.word)}</p>
-
-                    <p className="text-md text-center">{current.exampleMeaning}</p>
+                    <p className="text-md text-center">{highlightWord(current.exampleSentence, current.word)}</p>
+                    <p className="text-md text-center">{current.translatedSentence}</p>
                 </div>
 
                 <div className="flex gap-2 w-full">
