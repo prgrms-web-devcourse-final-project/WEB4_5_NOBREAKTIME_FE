@@ -8,23 +8,31 @@ import Header from '@/components/layout/header'
 import Nav from '@/components/layout/nav'
 import { components } from '@/lib/backend/apiV1/schema'
 import client from '@/lib/backend/client'
+import { useGlobalLoginMember } from '@/stores/auth/loginMember'
 import Image from 'next/image'
 import Link from 'next/link'
 import { useEffect, useState } from 'react'
 
 type VideoHistoryResponse = components['schemas']['VideoHistoryResponse']
+type StatisticResponse = components['schemas']['StatisticResponse']
 
 function Dashboard() {
-    const userInfo = {
-        name: '홍길동',
-        level: 1,
-        totalStudyCount: 7,
-        lastStudyDate: '2025-04-25 18:42',
-    }
-
+    const { loginMember } = useGlobalLoginMember()
+    const [userInfo, setUserInfo] = useState<StatisticResponse | null>(null)
     const [watchHistoryList, setWatchHistoryList] = useState<VideoHistoryResponse[]>([])
 
     useEffect(() => {
+        const fetchStatistics = async () => {
+            try {
+                const response = await client.GET('/api/v1/dashboard/statistics')
+                if (response.data?.data) {
+                    setUserInfo(response.data.data)
+                }
+            } catch (error) {
+                console.error('Failed to fetch statistics:', error)
+            }
+        }
+
         const fetchRecentVideos = async () => {
             try {
                 const response = await client.GET('/api/v1/videohistory/videos/summary')
@@ -36,6 +44,7 @@ function Dashboard() {
             }
         }
 
+        fetchStatistics()
         fetchRecentVideos()
     }, [])
 
@@ -51,12 +60,16 @@ function Dashboard() {
                         <div className="h-80 bg-white rounded-2xl flex justify-between items-center px-8 py-6 shadow-md border-2 border-[var(--color-sub-2)]">
                             <div>
                                 <h2 className="text-5xl font-bold text-[var(--color-black)] mb-2">
-                                    반가워요, <span className="text-[var(--color-point)]">{userInfo.name}</span>님!
+                                    반가워요,{' '}
+                                    <span className="text-[var(--color-point)]">
+                                        {userInfo?.userName || loginMember.nickname}
+                                    </span>
+                                    님!
                                 </h2>
                                 <p className="text-[var(--color-black)] text-xl mt-4">
                                     지금까지 총{' '}
                                     <span className="text-[var(--color-point)] font-bold">
-                                        {userInfo.totalStudyCount}개
+                                        {userInfo?.watchedVideoCount || 0}개
                                     </span>
                                     의 영상을 시청하셨군요.
                                     <br />
