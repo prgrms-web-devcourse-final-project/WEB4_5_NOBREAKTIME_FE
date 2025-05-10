@@ -53,11 +53,11 @@ export default function DashboardPage() {
                 <h3 className="text-2xl font-bold text-[var(--color-black)]">Dashboard</h3>
             </div>
 
-            <div className="flex flex-1 px-12 py-4 overflow-hidden">
+            <div className="flex flex-1 gap-6 h-[calc(100vh-8rem)]">
                 {/* 본문 좌측: 인사말 + 목표 + 레벨 */}
-                <section className="flex-1 flex flex-col gap-6 overflow-auto border-r-2 border-[var(--color-sub-2)] pr-4">
+                <section className="flex-1 flex flex-col gap-6 border-r-2 border-[var(--color-sub-2)] pr-4 min-h-0 overflow-y-auto">
                     {/* 인사말 + 오늘의 학습 */}
-                    <div className="h-80 bg-white rounded-2xl flex justify-between items-center px-8 py-6 shadow-md border-2 border-[var(--color-sub-2)]">
+                    <div className="h-[320px] bg-white rounded-2xl flex justify-between items-center px-8 py-6 shadow-md border-2 border-[var(--color-sub-2)]">
                         <div>
                             <h2 className="text-5xl font-bold text-[var(--color-black)] mb-2">
                                 반가워요, <span className="text-[var(--color-point)]">{userInfo?.userName}</span>
@@ -72,7 +72,7 @@ export default function DashboardPage() {
                                 <br />
                                 오늘도 함께 시작해볼까요?
                             </p>
-                            <Link href="/word">
+                            <Link href="/dashboard/word-learning">
                                 <button className="mt-4 px-4 py-2 text-lg text-[var(--color-point)] bg-[var(--color-main)] rounded-full">
                                     Today's Study →
                                 </button>
@@ -88,9 +88,9 @@ export default function DashboardPage() {
                     </div>
 
                     {/* 목표 / 레벨 */}
-                    <div className="flex-1 grid grid-cols-2 gap-6">
+                    <div className="flex-1 grid grid-cols-2 gap-6 min-h-0">
                         {/* 하루 목표 */}
-                        <div className="flex flex-col bg-white p-6 rounded-2xl border-2 border-[var(--color-sub-2)] shadow-md">
+                        <div className="flex flex-col bg-white p-6 rounded-2xl border-2 border-[var(--color-sub-2)] shadow-md h-[calc(100vh-28rem)]">
                             <h3 className="text-3xl font-bold mb-4">👊 나의 하루 목표는?</h3>
                             <div className="flex flex-col h-full ">
                                 <DailyGoal />
@@ -100,7 +100,7 @@ export default function DashboardPage() {
                         </div>
 
                         {/* 레벨 현황 */}
-                        <div className="flex flex-col bg-white p-6 rounded-2xl border-2 border-[var(--color-sub-2)] shadow-md">
+                        <div className="flex flex-col bg-white p-6 rounded-2xl border-2 border-[var(--color-sub-2)] shadow-md h-[calc(100vh-28rem)]">
                             <h3 className="text-3xl font-bold mb-4">🎓 나의 Level은?</h3>
                             <LevelBox
                                 statistics={userInfo}
@@ -111,7 +111,7 @@ export default function DashboardPage() {
                                     <h4 className="font-semibold mb-2 text-3xl">
                                         📺 최근 시청 영상 <small>({watchHistoryList.length})</small>
                                     </h4>
-                                    <Link href="/video">
+                                    <Link href="/dashboard/video-learning">
                                         <button className="self-start mt-2 text-sm text-[var(--color-main)] font-bold">
                                             + 더보기
                                         </button>
@@ -124,9 +124,9 @@ export default function DashboardPage() {
                 </section>
 
                 {/* 우측 패널 */}
-                <section className="flex flex-col w-100 space-y-6 pl-4">
+                <section className="w-[400px] flex flex-col gap-6 pl-4 min-h-0 overflow-y-auto">
                     {/* 캘린더 */}
-                    <div className="flex-1 bg-[var(--color-white)] rounded-2xl p-6 shadow-md flex flex-col">
+                    <div className="flex-1 bg-[var(--color-white)] rounded-2xl p-6 shadow-md flex flex-col h-[calc(100vh-28rem)]">
                         <h3 className="text-lg font-bold mb-2">Calendar</h3>
                         <div className="flex-1">
                             <Calendar
@@ -161,7 +161,7 @@ export default function DashboardPage() {
                     </div>
 
                     {/* 학습 기록 */}
-                    <div className="flex-1 bg-white rounded-2xl p-6 shadow-md">
+                    <div className="flex-1 bg-white rounded-2xl p-6 shadow-md h-[calc(100vh-28rem)]">
                         <h3 className="text-lg font-bold mb-3">Learning History</h3>
                         <LearningHistory />
                     </div>
