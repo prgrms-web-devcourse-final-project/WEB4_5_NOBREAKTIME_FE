@@ -5,7 +5,7 @@ const nextConfig: NextConfig = {
         ignoreDuringBuilds: true,
     },
     images: {
-        domains: ['team07-mallang-bucket.s3.ap-northeast-2.amazonaws.com'],
+        domains: ['i.ytimg.com', 'team07-mallang-bucket.s3.ap-northeast-2.amazonaws.com'],
     },
 }
 
