@@ -12,8 +12,14 @@ export default function Header() {
         <header className="flex items-center justify-end h-16 px-6 relative">
             <div className="flex items-center gap-4">
                 {/* 프로필 아이콘 */}
-                <div className="w-10 h-10 rounded-full bg-[var(--color-main)] flex items-center justify-center">
-                    <Image src="/assets/user.svg" alt="user" width={40} height={40} />
+                <div className="w-6 h-6 rounded-full bg-[var(--color-main)] flex items-center justify-center overflow-hidden">
+                    <Image
+                        src={loginMember.profileImage ?? '/assets/user.svg'}
+                        alt="user"
+                        width={24}
+                        height={24}
+                        className="rounded-full object-cover w-full h-full"
+                    />
                 </div>
 
                 {/* 이름 + 레벨 + 드롭다운 */}
