@@ -15,7 +15,7 @@ export default function WatchHistory({ data }: WatchHistoryProps) {
             {data.map((video) => (
                 <Link
                     key={`${video.videoId}-${video.createdAt}`}
-                    href={`/video-learning/${video.videoId}`}
+                    href={`/dashboard/video-learning/${video.videoId}`}
                     className="flex-shrink-0 w-64 hover:bg-gray-50 rounded-lg cursor-pointer"
                 >
                     <div className="relative w-full aspect-video mb-2">

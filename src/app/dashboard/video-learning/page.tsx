@@ -123,7 +123,7 @@ export default function VideoLearningPage() {
         // thumbnailUrl이 있는 경우에만 추가
         const thumbnailParam = video.thumbnailUrl ? `&thumbnail=${encodeURIComponent(video.thumbnailUrl)}` : ''
 
-        router.push(`/video-learning/${video.videoId}?${queryParams}${thumbnailParam}`)
+        router.push(`/dashboard/video-learning/${video.videoId}?${queryParams}${thumbnailParam}`)
     }
 
     // 카테고리 버튼 동작
