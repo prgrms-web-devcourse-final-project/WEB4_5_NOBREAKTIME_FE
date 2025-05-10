@@ -73,9 +73,11 @@ function Dashboard() {
                                     <br />
                                     오늘도 함께 시작해볼까요?
                                 </p>
-                                <button className="mt-4 px-4 py-2 text-lg text-[var(--color-point)] bg-[var(--color-main)] rounded-full">
-                                    Today's Study →
-                                </button>
+                                <Link href="/word">
+                                    <button className="mt-4 px-4 py-2 text-lg text-[var(--color-point)] bg-[var(--color-main)] rounded-full">
+                                        Today's Study →
+                                    </button>
+                                </Link>
                             </div>
                             <Image
                                 src="/character/character.png"
