@@ -56,7 +56,13 @@ export function ClientLayout({ children }: React.ComponentProps<typeof NextTheme
     // }
 
     return (
-        <NextThemesProvider attribute="class" defaultTheme="system" enableSystem disableTransitionOnChange>
+        <NextThemesProvider
+            attribute="class"
+            defaultTheme="light"
+            forcedTheme="light"
+            enableSystem={false}
+            disableTransitionOnChange
+        >
             <LoginMemberContext value={loginMemberContextValue}>
                 <main>{children}</main>
             </LoginMemberContext>
