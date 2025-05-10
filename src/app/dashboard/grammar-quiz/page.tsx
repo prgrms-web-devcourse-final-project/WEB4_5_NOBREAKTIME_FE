@@ -1,7 +1,6 @@
 'use client'
 
-import DashboardLayout from '@/app/dashboardLayout'
-import WordIcon from '@/components/icon/wordIcon'
+import GrammarIcon from '@/components/icon/grammarIcon'
 import Image from 'next/image'
 import { useParams } from 'next/navigation'
 import { useEffect, useState } from 'react'
@@ -110,114 +109,118 @@ export default function GrammarQuiz() {
     const isMeaningMode = mode === 'meaning' || (mode === 'random' && hiddenPart === 'meaning')
 
     return (
-        <DashboardLayout
-            title="문장 퀴즈"
-            icon={<WordIcon />}
-            className="bg-image p-20 flex flex-col gap-4 items-center"
-        >
-            <h1 className="text-5xl font-bold text-[var(--color-black)]">{selectedTitle} 문장 퀴즈</h1>
-
-            <div className="flex flex-row justify-between gap-4 w-180">
-                <div className="bg-[var(--color-main)] text-[var(--color-point)] px-4 py-2 rounded-sm">
-                    {index + 1} / {grammarQuizList.length}
-                </div>
-
-                <div className="flex gap-2">
-                    {(['sentence', 'meaning', 'random'] as QuizMode[]).map((m) => {
-                        const isActive = mode === m
-                        return (
-                            <label
-                                key={m}
-                                className={`
-                                    cursor-pointer px-4 py-2 rounded-md border text-sm
-                                    ${
-                                        isActive
-                                            ? 'bg-[var(--color-main)] text-[var(--color-point)] border-[var(--color-main)]'
-                                            : 'bg-[var(--color-sub-2)] text-[var(--color-main)] border-[var(--color-main)] border-2 hover:bg-[var(--color-sub-1)]'
-                                    }
-                                `}
-                            >
-                                <input
-                                    type="radio"
-                                    className="hidden"
-                                    checked={mode === m}
-                                    onChange={() => setMode(m)}
-                                />
-                                <span>{m === 'sentence' ? '문장' : m === 'meaning' ? '뜻' : '랜덤'}</span>
-                            </label>
-                        )
-                    })}
-                </div>
+        <>
+            <div className="flex items-center gap-2">
+                <span className="text-[var(--color-main)]">
+                    <GrammarIcon />
+                </span>
+                <h3 className="text-2xl font-bold text-[var(--color-black)]">Grammar Quiz</h3>
             </div>
+            <div className="bg-image p-20 flex flex-col gap-4 items-center">
+                <h1 className="text-5xl font-bold text-[var(--color-black)]">{selectedTitle} 문장 퀴즈</h1>
 
-            <div className="flex flex-col items-center justify-center bg-[var(--color-white)] w-180 h-full gap-8 p-12">
-                <div className="text-yellow-400 text-xl">
-                    {Array.from({ length: current.stars }).map((_, i) => (
-                        <span key={i}>⭐</span>
-                    ))}
+                <div className="flex flex-row justify-between gap-4 w-180">
+                    <div className="bg-[var(--color-main)] text-[var(--color-point)] px-4 py-2 rounded-sm">
+                        {index + 1} / {grammarQuizList.length}
+                    </div>
+
+                    <div className="flex gap-2">
+                        {(['sentence', 'meaning', 'random'] as QuizMode[]).map((m) => {
+                            const isActive = mode === m
+                            return (
+                                <label
+                                    key={m}
+                                    className={`
+                                        cursor-pointer px-4 py-2 rounded-md border text-sm
+                                        ${
+                                            isActive
+                                                ? 'bg-[var(--color-main)] text-[var(--color-point)] border-[var(--color-main)]'
+                                                : 'bg-[var(--color-sub-2)] text-[var(--color-main)] border-[var(--color-main)] border-2 hover:bg-[var(--color-sub-1)]'
+                                        }
+                                    `}
+                                >
+                                    <input
+                                        type="radio"
+                                        className="hidden"
+                                        checked={mode === m}
+                                        onChange={() => setMode(m)}
+                                    />
+                                    <span>{m === 'sentence' ? '문장' : m === 'meaning' ? '뜻' : '랜덤'}</span>
+                                </label>
+                            )
+                        })}
+                    </div>
                 </div>
 
-                {isSentenceMode ? (
-                    <div className="relative w-full">
+                <div className="flex flex-col items-center justify-center bg-[var(--color-white)] w-180 h-full gap-8 p-12">
+                    <div className="text-yellow-400 text-xl">
+                        {Array.from({ length: current.stars }).map((_, i) => (
+                            <span key={i}>⭐</span>
+                        ))}
+                    </div>
+
+                    {isSentenceMode ? (
+                        <div className="relative w-full">
+                            <input
+                                type="text"
+                                value={userInput}
+                                onChange={handleInputChange}
+                                placeholder="문장을 입력하세요"
+                                className="text-2xl font-bold text-center border-b border-gray-300 focus:outline-none w-full pr-6"
+                            />
+                            <span className="absolute right-4 top-1/2 -translate-y-1/2 text-2xl font-bold select-none pointer-events-none">
+                                .
+                            </span>
+                        </div>
+                    ) : (
+                        <p className="text-2xl font-bold text-center">{current.sentence}</p>
+                    )}
+
+                    {isMeaningMode ? (
                         <input
                             type="text"
                             value={userInput}
                             onChange={handleInputChange}
-                            placeholder="문장을 입력하세요"
-                            className="text-2xl font-bold text-center border-b border-gray-300 focus:outline-none w-full pr-6"
+                            placeholder="뜻을 입력하세요"
+                            className="text-lg text-center border-b border-gray-300 focus:outline-none"
                         />
-                        <span className="absolute right-4 top-1/2 -translate-y-1/2 text-2xl font-bold select-none pointer-events-none">
-                            .
-                        </span>
-                    </div>
-                ) : (
-                    <p className="text-2xl font-bold text-center">{current.sentence}</p>
-                )}
+                    ) : (
+                        <span className="text-xl text-gray-700">{current.meaning}</span>
+                    )}
 
-                {isMeaningMode ? (
-                    <input
-                        type="text"
-                        value={userInput}
-                        onChange={handleInputChange}
-                        placeholder="뜻을 입력하세요"
-                        className="text-lg text-center border-b border-gray-300 focus:outline-none"
-                    />
-                ) : (
-                    <span className="text-xl text-gray-700">{current.meaning}</span>
-                )}
+                    {isHidden && (
+                        <div className="flex flex-col items-center gap-2">
+                            <button
+                                className="w-18 h-18 disabled:opacity-50"
+                                onClick={handleHint}
+                                disabled={hintCount >= maxHint || isCorrect === true}
+                            >
+                                <Image src={getResultIcon()} alt="result" width={80} height={80} />
+                            </button>
+                            <p className="text-sm text-gray-500">
+                                힌트 사용: {hintCount} / {maxHint}
+                            </p>
+                        </div>
+                    )}
 
-                {isHidden && (
-                    <div className="flex flex-col items-center gap-2">
+                    <div className="flex gap-2 w-full">
                         <button
-                            className="w-18 h-18 disabled:opacity-50"
-                            onClick={handleHint}
-                            disabled={hintCount >= maxHint || isCorrect === true}
+                            onClick={handlePrev}
+                            className="flex-1 flex items-center justify-center bg-[var(--color-sub-2)] border-[var(--color-main)] border-2 rounded-sm disabled:opacity-50"
+                            disabled={index === 0}
                         >
-                            <Image src={getResultIcon()} alt="result" width={80} height={80} />
+                            <Image src="/assets/left.svg" alt="left" width={40} height={40} />
                         </button>
-                        <p className="text-sm text-gray-500">
-                            힌트 사용: {hintCount} / {maxHint}
-                        </p>
+                        <button
+                            onClick={handleNext}
+                            className="flex-1 flex items-center justify-center bg-[var(--color-sub-2)] border-[var(--color-main)] border-2 rounded-sm disabled:opacity-50"
+                            disabled={index === grammarQuizList.length - 1}
+                        >
+                            <Image src="/assets/right.svg" alt="right" width={40} height={40} />
+                        </button>
                     </div>
-                )}
-
-                <div className="flex gap-2 w-full">
-                    <button
-                        onClick={handlePrev}
-                        className="flex-1 flex items-center justify-center bg-[var(--color-sub-2)] border-[var(--color-main)] border-2 rounded-sm disabled:opacity-50"
-                        disabled={index === 0}
-                    >
-                        <Image src="/assets/left.svg" alt="left" width={40} height={40} />
-                    </button>
-                    <button
-                        onClick={handleNext}
-                        className="flex-1 flex items-center justify-center bg-[var(--color-sub-2)] border-[var(--color-main)] border-2 rounded-sm disabled:opacity-50"
-                        disabled={index === grammarQuizList.length - 1}
-                    >
-                        <Image src="/assets/right.svg" alt="right" width={40} height={40} />
-                    </button>
                 </div>
             </div>
-        </DashboardLayout>
+        </>
     )
 }

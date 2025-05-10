@@ -1,11 +1,10 @@
 'use client'
 
-import DashboardLayout from '@/app/dashboardLayout'
 import WordIcon from '@/components/icon/wordIcon'
+import client from '@/lib/backend/client'
 import Image from 'next/image'
 import { useParams, useSearchParams } from 'next/navigation'
 import { useEffect, useRef, useState } from 'react'
-import client from '@/lib/backend/client'
 
 interface Word {
     word: string
@@ -230,21 +229,33 @@ export default function WordQuiz() {
     // 로딩 중이거나 데이터가 없을 때 처리
     if (isLoading) {
         return (
-            <DashboardLayout title="Word Quiz" icon={<WordIcon />}>
+            <>
+                <div className="flex items-center gap-2">
+                    <span className="text-[var(--color-main)]">
+                        <WordIcon />
+                    </span>
+                    <h3 className="text-2xl font-bold text-[var(--color-black)]">Word Quiz</h3>
+                </div>
                 <div className="flex items-center justify-center h-full">
                     <p className="text-2xl">로딩 중...</p>
                 </div>
-            </DashboardLayout>
+            </>
         )
     }
 
     if (words.length === 0) {
         return (
-            <DashboardLayout title="Word Quiz" icon={<WordIcon />}>
+            <>
+                <div className="flex items-center gap-2">
+                    <span className="text-[var(--color-main)]">
+                        <WordIcon />
+                    </span>
+                    <h3 className="text-2xl font-bold text-[var(--color-black)]">Word Quiz</h3>
+                </div>
                 <div className="flex items-center justify-center h-full">
                     <p className="text-2xl">퀴즈를 위한 단어가 없습니다.</p>
                 </div>
-            </DashboardLayout>
+            </>
         )
     }
 
@@ -257,25 +268,28 @@ export default function WordQuiz() {
     const isMeaningMode = mode === 'meaning' || (mode === 'random' && hiddenPart === 'meaning')
 
     return (
-        <DashboardLayout
-            title="Word Quiz"
-            icon={<WordIcon />}
-            className="bg-image p-20 flex flex-col gap-4 items-center"
-        >
-            <h1 className="text-5xl font-bold text-[var(--color-black)]">{selectedTitle} 단어장 퀴즈</h1>
+        <>
+            <div className="flex items-center gap-2">
+                <span className="text-[var(--color-main)]">
+                    <WordIcon />
+                </span>
+                <h3 className="text-2xl font-bold text-[var(--color-black)]">Word Quiz</h3>
+            </div>
+            <div className="bg-image p-20 flex flex-col gap-4 items-center">
+                <h1 className="text-5xl font-bold text-[var(--color-black)]">{selectedTitle} 단어장 퀴즈</h1>
 
-            <div className="flex flex-row justify-between gap-4 w-180">
-                <div className="bg-[var(--color-main)] text-[var(--color-point)] px-4 py-2 rounded-sm">
-                    {index + 1} / {words.length}
-                </div>
+                <div className="flex flex-row justify-between gap-4 w-180">
+                    <div className="bg-[var(--color-main)] text-[var(--color-point)] px-4 py-2 rounded-sm">
+                        {index + 1} / {words.length}
+                    </div>
 
-                <div className="flex gap-2">
-                    {(['word', 'meaning', 'random'] as QuizMode[]).map((m) => {
-                        const isActive = mode === m
-                        return (
-                            <label
-                                key={m}
-                                className={`
+                    <div className="flex gap-2">
+                        {(['word', 'meaning', 'random'] as QuizMode[]).map((m) => {
+                            const isActive = mode === m
+                            return (
+                                <label
+                                    key={m}
+                                    className={`
           cursor-pointer px-4 py-2 rounded-md border text-sm
           ${
               isActive
@@ -283,103 +297,104 @@ export default function WordQuiz() {
                   : 'bg-[var(--color-sub-2)] text-[var(--color-main)] border-[var(--color-main)] border-2 hover:bg-[var(--color-sub-1)]'
           }
         `}
-                            >
-                                <input
-                                    type="radio"
-                                    className="hidden"
-                                    checked={mode === m}
-                                    onChange={() => setMode(m)}
-                                />
-                                <span>{m === 'word' ? '영단어' : m === 'meaning' ? '뜻' : '랜덤'}</span>
-                            </label>
-                        )
-                    })}
-                </div>
-            </div>
-
-            <div className="flex flex-col items-center justify-center bg-[var(--color-white)] w-180 h-full gap-8 p-12">
-                <div className="text-yellow-400 text-xl">
-                    {Array.from({ length: wordDifficulty }).map((_, i) => (
-                        <span key={i}>⭐</span>
-                    ))}
+                                >
+                                    <input
+                                        type="radio"
+                                        className="hidden"
+                                        checked={mode === m}
+                                        onChange={() => setMode(m)}
+                                    />
+                                    <span>{m === 'word' ? '영단어' : m === 'meaning' ? '뜻' : '랜덤'}</span>
+                                </label>
+                            )
+                        })}
+                    </div>
                 </div>
 
-                {isWordMode ? (
-                    <div className="flex gap-2">
-                        {Array.from({ length: getAnswer().length }).map((_, i) => (
-                            <input
-                                key={i}
-                                ref={(el) => {
-                                    inputRefs.current[i] = el
-                                }}
-                                type="text"
-                                maxLength={1}
-                                value={userInput[i] || ''}
-                                onChange={(e) => handleInputChange(e, i)}
-                                onKeyDown={(e) => handleKeyDown(e, i)}
-                                className={`w-12 h-12 text-2xl text-center border-b-2 border-gray-300 focus:outline-none focus:border-[var(--color-main)] ${
-                                    isCorrect === true
-                                        ? 'text-green-500'
-                                        : hintCount >= maxHint || isCorrect === false
-                                        ? 'text-red-500'
-                                        : hintIndices.includes(i) && i !== initialHintIndex && hintCount < maxHint
-                                        ? 'text-yellow-500'
-                                        : ''
-                                }`}
-                                readOnly={hintIndices.includes(i) || isCorrect !== null}
-                            />
+                <div className="flex flex-col items-center justify-center bg-[var(--color-white)] w-180 h-full gap-8 p-12">
+                    <div className="text-yellow-400 text-xl">
+                        {Array.from({ length: wordDifficulty }).map((_, i) => (
+                            <span key={i}>⭐</span>
                         ))}
                     </div>
-                ) : (
-                    <p className="text-4xl font-bold text-center">{current.word}</p>
-                )}
 
-                {isMeaningMode ? (
-                    <input
-                        type="text"
-                        value={userInput as string}
-                        onChange={handleInputChange}
-                        placeholder="뜻을 입력하세요"
-                        className={`w-96 text-2xl text-center border-b-2 border-gray-300 focus:outline-none focus:border-[var(--color-main)] ${
-                            isCorrect === true ? 'text-green-500' : isCorrect === false ? 'text-red-500' : ''
-                        }`}
-                    />
-                ) : (
-                    <span className="text-2xl">{current.meaning}</span>
-                )}
+                    {isWordMode ? (
+                        <div className="flex gap-2">
+                            {Array.from({ length: getAnswer().length }).map((_, i) => (
+                                <input
+                                    key={i}
+                                    ref={(el) => {
+                                        inputRefs.current[i] = el
+                                    }}
+                                    type="text"
+                                    maxLength={1}
+                                    value={userInput[i] || ''}
+                                    onChange={(e) => handleInputChange(e, i)}
+                                    onKeyDown={(e) => handleKeyDown(e, i)}
+                                    className={`w-12 h-12 text-2xl text-center border-b-2 border-gray-300 focus:outline-none focus:border-[var(--color-main)] ${
+                                        isCorrect === true
+                                            ? 'text-green-500'
+                                            : hintCount >= maxHint || isCorrect === false
+                                            ? 'text-red-500'
+                                            : hintIndices.includes(i) && i !== initialHintIndex && hintCount < maxHint
+                                            ? 'text-yellow-500'
+                                            : ''
+                                    }`}
+                                    readOnly={hintIndices.includes(i) || isCorrect !== null}
+                                />
+                            ))}
+                        </div>
+                    ) : (
+                        <p className="text-4xl font-bold text-center">{current.word}</p>
+                    )}
 
-                {isHidden && (
-                    <div className="flex flex-col items-center gap-2">
+                    {isMeaningMode ? (
+                        <input
+                            type="text"
+                            value={userInput as string}
+                            onChange={handleInputChange}
+                            placeholder="뜻을 입력하세요"
+                            className={`w-96 text-2xl text-center border-b-2 border-gray-300 focus:outline-none focus:border-[var(--color-main)] ${
+                                isCorrect === true ? 'text-green-500' : isCorrect === false ? 'text-red-500' : ''
+                            }`}
+                        />
+                    ) : (
+                        <span className="text-2xl">{current.meaning}</span>
+                    )}
+
+                    {isHidden && (
+                        <div className="flex flex-col items-center gap-2">
+                            <button
+                                className="w-18 h-18 disabled:opacity-50"
+                                onClick={handleHint}
+                                disabled={hintCount >= maxHint || isCorrect === true}
+                            >
+                                <Image src={getResultIcon()} alt="result" width={80} height={80} />
+                            </button>
+                            <p className="text-sm text-gray-500">
+                                힌트 사용: {hintCount} / {maxHint}
+                            </p>
+                        </div>
+                    )}
+
+                    <div className="flex gap-2 w-full">
                         <button
-                            className="w-18 h-18 disabled:opacity-50"
-                            onClick={handleHint}
-                            disabled={hintCount >= maxHint || isCorrect === true}
+                            onClick={handlePrev}
+                            className="flex-1 flex items-center justify-center bg-[var(--color-sub-2)] border-[var(--color-main)] border-2 rounded-sm disabled:opacity-50"
+                            disabled={index === 0}
                         >
-                            <Image src={getResultIcon()} alt="result" width={80} height={80} />
+                            <Image src="/assets/left.svg" alt="left" width={40} height={40} />
                         </button>
-                        <p className="text-sm text-gray-500">
-                            힌트 사용: {hintCount} / {maxHint}
-                        </p>
+                        <button
+                            onClick={handleNext}
+                            className="flex-1 flex items-center justify-center bg-[var(--color-sub-2)] border-[var(--color-main)] border-2 rounded-sm disabled:opacity-50"
+                            disabled={index === words.length - 1}
+                        >
+                            <Image src="/assets/right.svg" alt="right" width={40} height={40} />
+                        </button>
                     </div>
-                )}
-
-                <div className="flex gap-2 w-full">
-                    <button
-                        onClick={handlePrev}
-                        className="flex-1 flex items-center justify-center bg-[var(--color-sub-2)] border-[var(--color-main)] border-2 rounded-sm disabled:opacity-50"
-                        disabled={index === 0}
-                    >
-                        <Image src="/assets/left.svg" alt="left" width={40} height={40} />
-                    </button>
-                    <button
-                        onClick={handleNext}
-                        className="flex-1 flex items-center justify-center bg-[var(--color-sub-2)] border-[var(--color-main)] border-2 rounded-sm disabled:opacity-50"
-                        disabled={index === words.length - 1}
-                    >
-                        <Image src="/assets/right.svg" alt="right" width={40} height={40} />
-                    </button>
                 </div>
             </div>
-        </DashboardLayout>
+        </>
     )
 }

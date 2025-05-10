@@ -1,6 +1,5 @@
 'use client'
 
-import DashboardLayout from '@/app/dashboardLayout'
 import VideoIcon from '@/components/icon/videoIcon'
 import VideoLearning from '@/components/video/videoLearning'
 import client from '@/lib/backend/client'
@@ -68,14 +67,20 @@ function VideoLearningPage({ params }: { params: Promise<{ videoId: string }> })
     }
 
     return (
-        <DashboardLayout title="Video Learning" icon={<VideoIcon />}>
+        <>
+            <div className="flex items-center gap-2">
+                <span className="text-[var(--color-main)]">
+                    <VideoIcon />
+                </span>
+                <h3 className="text-2xl font-bold text-[var(--color-black)]">Video Learning</h3>
+            </div>
             <VideoLearning
                 video={videoData || { videoId, title: '', description: '', thumbnailUrl: undefined }}
                 analysisData={analysisData}
                 onBack={handleBack}
                 isLoading={isLoading}
             />
-        </DashboardLayout>
+        </>
     )
 }
 
