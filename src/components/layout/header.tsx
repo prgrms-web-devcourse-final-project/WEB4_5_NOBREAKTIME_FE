@@ -7,6 +7,7 @@ import { useEffect, useRef, useState } from 'react'
 export default function Header() {
     const { loginMember, logoutAndHome } = useGlobalLoginMember()
     const [isDropdownOpen, setIsDropdownOpen] = useState(false)
+    const [profileImg, setProfileImg] = useState(loginMember.profileImage ?? '/assets/user.svg')
     const dropdownRef = useRef<HTMLDivElement>(null)
 
     useEffect(() => {
@@ -28,11 +29,12 @@ export default function Header() {
                 {/* 프로필 아이콘 */}
                 <div className="w-6 h-6 rounded-full bg-[var(--color-main)] flex items-center justify-center overflow-hidden">
                     <Image
-                        src={loginMember.profileImage ?? '/assets/user.svg'}
-                        alt="user"
+                        src={profileImg}
+                        alt="profile image"
                         width={24}
                         height={24}
                         className="rounded-full object-cover w-full h-full"
+                        onError={() => setProfileImg('/assets/user.svg')}
                     />
                 </div>
 
