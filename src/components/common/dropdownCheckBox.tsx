@@ -10,13 +10,29 @@ interface Wordbook {
 
 interface Props {
     wordbooks: Wordbook[]
+    onWordbookSelect?: (ids: number[]) => void
 }
 
-export default function DropdownCheckBox({ wordbooks }: Props) {
+export default function DropdownCheckBox({ wordbooks, onWordbookSelect }: Props) {
     const [isOpen, setIsOpen] = useState(false)
-    const [checkedItems, setCheckedItems] = useState<Record<string, boolean>>({})
+    const [checkedItems, setCheckedItems] = useState<Record<number, boolean>>({})
 
     const dropdownRef = useRef<HTMLDivElement>(null)
+
+    useEffect(() => {
+        // 초기에 모든 워드북을 선택된 상태로 설정하되, 자동 선택 코드 제거
+        if (wordbooks.length > 0 && Object.keys(checkedItems).length === 0) {
+            const initialCheckedItems: Record<number, boolean> = {}
+            wordbooks.forEach((wordbook) => {
+                initialCheckedItems[wordbook.id] = true
+            })
+            setCheckedItems(initialCheckedItems)
+
+            // 선택된 모든 워드북 ID 전달
+            const allIds = wordbooks.map((book) => book.id)
+            onWordbookSelect?.(allIds)
+        }
+    }, [wordbooks, checkedItems, onWordbookSelect])
 
     useEffect(() => {
         const handleClickOut = (event: MouseEvent) => {
@@ -31,11 +47,23 @@ export default function DropdownCheckBox({ wordbooks }: Props) {
         }
     }, [])
 
-    const handleCheckboxChange = (key: string) => {
-        setCheckedItems((prev) => ({
-            ...prev,
-            [key]: !prev[key],
-        }))
+    const handleCheckboxChange = (id: number) => {
+        const newCheckedItems = {
+            ...checkedItems,
+            [id]: !checkedItems[id],
+        }
+        setCheckedItems(newCheckedItems)
+
+        // 선택된 워드북 IDs 모아서 부모 컴포넌트에 전달
+        const selectedIds = Object.entries(newCheckedItems)
+            .filter(([_, isChecked]) => isChecked)
+            .map(([id]) => Number(id))
+
+        onWordbookSelect?.(selectedIds)
+    }
+
+    const getSelectedCount = () => {
+        return Object.values(checkedItems).filter(Boolean).length
     }
 
     return (
@@ -49,7 +77,7 @@ export default function DropdownCheckBox({ wordbooks }: Props) {
                     aria-expanded={isOpen}
                     aria-haspopup="true"
                 >
-                    단어장 선택
+                    단어장 선택 ({getSelectedCount()})
                     <svg
                         className="-mr-1 size-5 text-gray-400"
                         viewBox="0 0 20 20"
@@ -84,17 +112,17 @@ export default function DropdownCheckBox({ wordbooks }: Props) {
 
                                 <input
                                     type="checkbox"
-                                    checked={checkedItems[wordbook.name] || false}
-                                    onChange={() => handleCheckboxChange(wordbook.name)}
+                                    checked={checkedItems[wordbook.id] || false}
+                                    onChange={() => handleCheckboxChange(wordbook.id)}
                                     className="sr-only"
                                 />
 
                                 <span
                                     className={`w-5 h-5 flex items-center justify-center rounded border border-[var(--color-main)] ${
-                                        checkedItems[wordbook.name] ? 'bg-[var(--color-main)] text-white' : 'bg-white'
+                                        checkedItems[wordbook.id] ? 'bg-[var(--color-main)] text-white' : 'bg-white'
                                     }`}
                                 >
-                                    {checkedItems[wordbook.name] && (
+                                    {checkedItems[wordbook.id] && (
                                         <svg
                                             className="w-4 h-4"
                                             fill="none"

@@ -5,6 +5,8 @@ import WordIcon from '@/components/icon/wordIcon'
 import Image from 'next/image'
 import { useSearchParams } from 'next/navigation'
 import { useEffect, useState } from 'react'
+import { useParams } from 'next/navigation'
+import client from '@/lib/backend/client'
 
 interface Word {
     word: string
@@ -20,7 +22,8 @@ interface Word {
 
 export default function WordLearningPage() {
     const searchParams = useSearchParams()
-    const selectedId = searchParams.get('id')
+    const params = useParams()
+    const selectedId = params.id as string
     const selectedTitle = searchParams.get('title') || '제목 없음'
 
     const [words, setWords] = useState<Word[]>([])
@@ -31,10 +34,30 @@ export default function WordLearningPage() {
     useEffect(() => {
         const fetchWords = async () => {
             try {
-                const response = await fetch(`${process.env.NEXT_PUBLIC_MOCK_URL}/api/v1/wordbooks/{wordbookId}/words`)
-                const data = await response.json()
-                console.log(data)
-                setWords(data.data)
+                const { data } = await client.GET('/api/v1/wordbooks/{wordbookId}/words', {
+                    params: {
+                        path: {
+                            wordbookId: Number(selectedId),
+                        },
+                    },
+                })
+
+                if (data?.data) {
+                    // 타입 안전하게 처리
+                    const apiWords = data.data.map((item: any) => ({
+                        word: item.word || '',
+                        pos: item.pos || '',
+                        meaning: item.meaning || '',
+                        difficulty: item.difficulty || 'EASY',
+                        exampleSentence: item.exampleSentence || '',
+                        translatedSentence: item.translatedSentence || '',
+                        videoId: item.videoId || '',
+                        subtitleId: item.subtitleId || 0,
+                        createdAt: item.createdAt || '',
+                    }))
+
+                    setWords(apiWords)
+                }
                 setIsLoading(false)
             } catch (error) {
                 console.error('단어 데이터를 가져오는데 실패했습니다:', error)
@@ -53,6 +76,10 @@ export default function WordLearningPage() {
 
     const handleNext = () => {
         if (index < wordItem - 1) setIndex(index + 1)
+    }
+
+    const handleGoToFirst = () => {
+        setIndex(0)
     }
 
     function highlightWord(sentence: string, word: string) {
@@ -102,7 +129,7 @@ export default function WordLearningPage() {
         <DashboardLayout
             title="Word Learning"
             icon={<WordIcon />}
-            className="bg-image p-20 flex flex-col gap-4 items-center"
+            className="bg-image p-20 flex flex-col gap-4 items-center relative"
         >
             <h1 className="text-5xl font-bold text-[var(--color-black)]">{selectedTitle} 단어장 학습</h1>
 
@@ -152,6 +179,28 @@ export default function WordLearningPage() {
                     </button>
                 </div>
             </div>
+
+            <button
+                onClick={handleGoToFirst}
+                className="absolute bottom-8 right-8 w-14 h-14 bg-[var(--color-point)] rounded-full flex items-center justify-center shadow-lg hover:opacity-90 transition-opacity disabled:opacity-50 disabled:cursor-not-allowed"
+                title="처음 단어로 이동"
+                disabled={index === 0}
+            >
+                <svg
+                    xmlns="http://www.w3.org/2000/svg"
+                    fill="none"
+                    viewBox="0 0 24 24"
+                    strokeWidth={1.5}
+                    stroke="white"
+                    className="w-8 h-8"
+                >
+                    <path
+                        strokeLinecap="round"
+                        strokeLinejoin="round"
+                        d="M18.75 19.5l-7.5-7.5 7.5-7.5m-6 15L5.25 12l7.5-7.5"
+                    />
+                </svg>
+            </button>
         </DashboardLayout>
     )
 }

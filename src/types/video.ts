@@ -33,11 +33,20 @@ export interface WordQuizType {
     meaning?: string
     sentence?: string
     sentenceMeaning?: string
+    isCorrect?: boolean
+}
+
+export interface WordQuizResult {
+    word: string
+    meaning?: string
+    isCorrect: boolean
 }
 
 export interface WordQuizProps {
     fontSize: number
     videoId: string
+    onQuizResult?: (results: WordQuizResult[]) => void
+    wordQuizData?: WordQuizType[]
 }
 
 export interface ExpressionQuizType {

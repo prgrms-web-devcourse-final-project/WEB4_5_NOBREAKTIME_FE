@@ -3,21 +3,30 @@
 import DashboardLayout from '@/app/dashboardLayout'
 import WordIcon from '@/components/icon/wordIcon'
 import Image from 'next/image'
-import { useParams } from 'next/navigation'
+import { useParams, useSearchParams } from 'next/navigation'
 import { useEffect, useRef, useState } from 'react'
+import client from '@/lib/backend/client'
 
-const wordQuizList = [
-    { word: 'abandon', meaning: '버리다', stars: 2 },
-    { word: 'benefit', meaning: '이익', stars: 3 },
-    { word: 'focus', meaning: '집중하다', stars: 1 },
-]
+interface Word {
+    word: string
+    pos: string
+    meaning: string
+    difficulty: string
+    exampleSentence: string
+    translatedSentence: string
+}
 
 type QuizMode = 'word' | 'meaning' | 'random'
 
 export default function WordQuiz() {
     const params = useParams()
-    const selectedTitle = (params.title as string) || '제목 없음'
+    const searchParams = useSearchParams()
+    const selectedId = params.id as string
+    const selectedTitle = searchParams.get('title') || '제목 없음'
 
+    // 모든 상태 관련 훅을 맨 위에 배치
+    const [words, setWords] = useState<Word[]>([])
+    const [isLoading, setIsLoading] = useState(true)
     const [index, setIndex] = useState(0)
     const [mode, setMode] = useState<QuizMode>('word')
     const [hiddenPart, setHiddenPart] = useState<'word' | 'meaning' | null>(null)
@@ -29,37 +38,18 @@ export default function WordQuiz() {
     const maxHint = 2
     const inputRefs = useRef<(HTMLInputElement | null)[]>([])
 
-    const current = wordQuizList[index]
+    // 함수들도 상태 훅 다음에 정의
+    const getAnswer = () => {
+        // 단어가 없을 때 빈 문자열 반환
+        if (!words.length || index >= words.length) return ''
 
-    const getAnswer = () =>
-        mode === 'word' || (mode === 'random' && hiddenPart === 'word') ? current.word : current.meaning
-
-    const isHidden = mode !== 'random' ? true : !!hiddenPart
-
-    useEffect(() => {
-        resetState(index, true)
-        // eslint-disable-next-line react-hooks/exhaustive-deps
-    }, [mode])
-
-    useEffect(() => {
-        const answer = getAnswer()
-        if (isMeaningMode) {
-            setUserInput('')
-        } else {
-            const newInput = Array(answer.length).fill('')
-            // 랜덤으로 한 글자 선택
-            const randomIndex = Math.floor(Math.random() * answer.length)
-            newInput[randomIndex] = answer[randomIndex]
-            setUserInput(newInput)
-            setHintIndices([randomIndex])
-            setInitialHintIndex(randomIndex)
-        }
-        inputRefs.current = inputRefs.current.slice(0, answer.length)
-    }, [index, mode, hiddenPart])
+        const current = words[index]
+        return mode === 'word' || (mode === 'random' && hiddenPart === 'word') ? current.word : current.meaning
+    }
 
     const resetState = (newIndex: number, resetMode = false) => {
         setIndex(newIndex)
-        setUserInput(isMeaningMode ? '' : [])
+        setUserInput(mode === 'meaning' || (mode === 'random' && hiddenPart === 'meaning') ? '' : [])
         setHintCount(0)
         setIsCorrect(null)
         setHintIndices([])
@@ -76,7 +66,7 @@ export default function WordQuiz() {
     }
 
     const handleNext = () => {
-        if (index < wordQuizList.length - 1) resetState(index + 1)
+        if (index < words.length - 1) resetState(index + 1)
     }
 
     const handleHint = () => {
@@ -111,6 +101,8 @@ export default function WordQuiz() {
     }
 
     const handleInputChange = (e: React.ChangeEvent<HTMLInputElement>, index?: number) => {
+        if (!words.length) return
+
         if (isMeaningMode) {
             setUserInput(e.target.value)
             // 자동 채점
@@ -174,6 +166,93 @@ export default function WordQuiz() {
         return '/assets/hint.svg'
     }
 
+    // 서버에서 단어 데이터 가져오기
+    useEffect(() => {
+        const fetchQuizWords = async () => {
+            try {
+                setIsLoading(true)
+                const { data } = await client.GET('/api/v1/wordbooks/{wordbookId}/words', {
+                    params: {
+                        path: {
+                            wordbookId: Number(selectedId),
+                        },
+                    },
+                })
+
+                if (data?.data) {
+                    // 타입 안전하게 처리
+                    const apiWords = data.data.map((item: any) => ({
+                        word: item.word || '',
+                        pos: item.pos || '',
+                        meaning: item.meaning || '',
+                        difficulty: item.difficulty || 'EASY',
+                        exampleSentence: item.exampleSentence || '',
+                        translatedSentence: item.translatedSentence || '',
+                    }))
+
+                    setWords(apiWords)
+                }
+                setIsLoading(false)
+            } catch (error) {
+                console.error('퀴즈 데이터를 가져오는데 실패했습니다:', error)
+                setIsLoading(false)
+            }
+        }
+
+        if (selectedId) {
+            fetchQuizWords()
+        }
+    }, [selectedId])
+
+    useEffect(() => {
+        resetState(index, true)
+        // eslint-disable-next-line react-hooks/exhaustive-deps
+    }, [mode])
+
+    useEffect(() => {
+        if (!words.length) return
+
+        const answer = getAnswer()
+        if (isMeaningMode) {
+            setUserInput('')
+        } else {
+            const newInput = Array(answer.length).fill('')
+            // 랜덤으로 한 글자 선택
+            const randomIndex = Math.floor(Math.random() * answer.length)
+            newInput[randomIndex] = answer[randomIndex]
+            setUserInput(newInput)
+            setHintIndices([randomIndex])
+            setInitialHintIndex(randomIndex)
+        }
+        inputRefs.current = inputRefs.current.slice(0, answer.length)
+    }, [index, mode, hiddenPart, words.length])
+
+    // 로딩 중이거나 데이터가 없을 때 처리
+    if (isLoading) {
+        return (
+            <DashboardLayout title="Word Quiz" icon={<WordIcon />}>
+                <div className="flex items-center justify-center h-full">
+                    <p className="text-2xl">로딩 중...</p>
+                </div>
+            </DashboardLayout>
+        )
+    }
+
+    if (words.length === 0) {
+        return (
+            <DashboardLayout title="Word Quiz" icon={<WordIcon />}>
+                <div className="flex items-center justify-center h-full">
+                    <p className="text-2xl">퀴즈를 위한 단어가 없습니다.</p>
+                </div>
+            </DashboardLayout>
+        )
+    }
+
+    // 컴포넌트 렌더링 부분 전에 필요한 계산 수행
+    const current = words[index]
+    const wordDifficulty = current.difficulty === 'EASY' ? 1 : current.difficulty === 'MEDIUM' ? 2 : 3
+
+    const isHidden = mode !== 'random' ? true : !!hiddenPart
     const isWordMode = mode === 'word' || (mode === 'random' && hiddenPart === 'word')
     const isMeaningMode = mode === 'meaning' || (mode === 'random' && hiddenPart === 'meaning')
 
@@ -187,7 +266,7 @@ export default function WordQuiz() {
 
             <div className="flex flex-row justify-between gap-4 w-180">
                 <div className="bg-[var(--color-main)] text-[var(--color-point)] px-4 py-2 rounded-sm">
-                    {index + 1} / {wordQuizList.length}
+                    {index + 1} / {words.length}
                 </div>
 
                 <div className="flex gap-2">
@@ -220,7 +299,7 @@ export default function WordQuiz() {
 
             <div className="flex flex-col items-center justify-center bg-[var(--color-white)] w-180 h-full gap-8 p-12">
                 <div className="text-yellow-400 text-xl">
-                    {Array.from({ length: current.stars }).map((_, i) => (
+                    {Array.from({ length: wordDifficulty }).map((_, i) => (
                         <span key={i}>⭐</span>
                     ))}
                 </div>
@@ -295,7 +374,7 @@ export default function WordQuiz() {
                     <button
                         onClick={handleNext}
                         className="flex-1 flex items-center justify-center bg-[var(--color-sub-2)] border-[var(--color-main)] border-2 rounded-sm disabled:opacity-50"
-                        disabled={index === wordQuizList.length - 1}
+                        disabled={index === words.length - 1}
                     >
                         <Image src="/assets/right.svg" alt="right" width={40} height={40} />
                     </button>

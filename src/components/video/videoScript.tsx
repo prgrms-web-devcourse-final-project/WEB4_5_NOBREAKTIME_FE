@@ -35,6 +35,42 @@ function VideoScript({
         }
     }, [externalSelectedSubtitle, analysisData])
 
+    // 현재 시간에 맞는 자막 찾기 (중복 체크용)
+    const getCurrentSubtitleIdx = () => {
+        if (!analysisData?.subtitleResults || !analysisData.subtitleResults.length) return -1
+
+        const subtitles = analysisData.subtitleResults
+        for (let i = 0; i < subtitles.length; i++) {
+            const subtitle = subtitles[i]
+            const nextSubtitle = subtitles[i + 1]
+
+            if (!subtitle.startTime) continue
+
+            const startSeconds = parseTimeToSeconds(subtitle.startTime)
+            const endSeconds = nextSubtitle?.startTime ? parseTimeToSeconds(nextSubtitle.startTime) : startSeconds + 10 // 마지막 자막은 10초 지속으로 가정
+
+            if (currentTime >= startSeconds && currentTime < endSeconds) {
+                return i
+            }
+        }
+
+        return -1
+    }
+
+    // 타임스탬프 문자열을 초 단위로 변환
+    const parseTimeToSeconds = (time: string) => {
+        const [h, m, s] = time.split(':')
+        return parseInt(h) * 3600 + parseInt(m) * 60 + parseFloat(s)
+    }
+
+    // 현재 재생 시간에 맞는 자막 자동 선택 (인덱스만 업데이트)
+    useEffect(() => {
+        const currentIdx = getCurrentSubtitleIdx()
+        if (currentIdx !== -1 && currentIdx !== selectedIdx) {
+            setSelectedIdx(currentIdx)
+        }
+    }, [currentTime])
+
     return (
         <div className="w-300 flex flex-col gap-2 rounded-lg bg-[var(--color-white)] p-4 h-full">
             {/* 스크립트 내용 */}
@@ -60,7 +96,10 @@ function VideoScript({
                                 key={idx}
                                 onClick={() => {
                                     setSelectedIdx(idx)
-                                    subtitle.startTime && onSubtitleClick?.(subtitle.startTime, subtitle)
+                                    // 자막 시작 시간이 있을 때만 클릭 핸들러 호출
+                                    if (subtitle.startTime) {
+                                        onSubtitleClick?.(subtitle.startTime, subtitle)
+                                    }
                                 }}
                                 className={
                                     selectedIdx === idx

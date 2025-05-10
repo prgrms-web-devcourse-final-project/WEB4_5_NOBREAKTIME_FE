@@ -16,9 +16,10 @@ interface Props {
     title: string
     descriptions: Description[]
     wordbooks: Wordbook[]
+    isLoading?: boolean
 }
 
-export default function LearningCard({ title, descriptions, wordbooks }: Props) {
+export default function LearningCard({ title, descriptions, wordbooks, isLoading = false }: Props) {
     return (
         <div className="flex gap-4 border border-[var(--color-main)] rounded-lg shadow-lg p-6">
             <Image src="/character/character-word.png" alt="word" width={300} height={300} />
@@ -46,7 +47,7 @@ export default function LearningCard({ title, descriptions, wordbooks }: Props) 
                 })}
             </div>
 
-            <Card wordbooks={wordbooks} />
+            <Card wordbooks={wordbooks} isLoading={isLoading} />
         </div>
     )
 }

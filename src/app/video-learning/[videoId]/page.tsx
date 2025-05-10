@@ -7,14 +7,13 @@ import VideoIcon from '@/components/icon/videoIcon'
 import VideoLearning from '@/components/video/videoLearning'
 import client from '@/lib/backend/client'
 import { AnalysisData, VideoData } from '@/types/video'
-import { mockAnalysisData } from './mock'
 
 function VideoLearningPage({ params }: { params: Promise<{ videoId: string }> }) {
     const router = useRouter()
     const { videoId } = use(params)
     const url = process.env.NEXT_PUBLIC_API_URL
     const [videoData, setVideoData] = useState<VideoData | null>(null)
-    const [analysisData, setAnalysisData] = useState<AnalysisData | null>(mockAnalysisData)
+    const [analysisData, setAnalysisData] = useState<AnalysisData | null>(null)
     const [isLoading, setIsLoading] = useState(true)
 
     // 비디오 상세 정보 요청 및 분석 데이터 요청
