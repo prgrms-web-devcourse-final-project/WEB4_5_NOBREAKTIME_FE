@@ -1350,6 +1350,16 @@ export interface paths {
 export type webhooks = Record<string, never>
 export interface components {
     schemas: {
+        ErrorResponse: {
+            /** Format: date-time */
+            timestamp?: string
+            /** Format: int32 */
+            status?: number
+            code?: string
+            message?: string
+            errors?: string[]
+            path?: string
+        }
         WordSearchRequest: {
             word?: string
         }
@@ -1817,6 +1827,15 @@ export interface operations {
                     'application/json;charset=UTF-8': components['schemas']['RsDataWordSearchResponse']
                 }
             }
+            /** @description Forbidden */
+            403: {
+                headers: {
+                    [name: string]: unknown
+                }
+                content: {
+                    'application/json;charset=UTF-8': components['schemas']['ErrorResponse']
+                }
+            }
             /** @description Internal Server Error */
             500: {
                 headers: {
@@ -1846,6 +1865,15 @@ export interface operations {
                     'application/json;charset=UTF-8': components['schemas']['RsDataListWordbookResponse']
                 }
             }
+            /** @description Forbidden */
+            403: {
+                headers: {
+                    [name: string]: unknown
+                }
+                content: {
+                    'application/json;charset=UTF-8': components['schemas']['ErrorResponse']
+                }
+            }
             /** @description Not Found */
             404: {
                 headers: {
@@ -1853,6 +1881,15 @@ export interface operations {
                 }
                 content: {
                     'application/json': unknown
+                }
+            }
+            /** @description Internal Server Error */
+            500: {
+                headers: {
+                    [name: string]: unknown
+                }
+                content: {
+                    'application/json;charset=UTF-8': components['schemas']['ErrorResponse']
                 }
             }
         }
@@ -1906,6 +1943,15 @@ export interface operations {
                     'application/json': unknown
                 }
             }
+            /** @description Internal Server Error */
+            500: {
+                headers: {
+                    [name: string]: unknown
+                }
+                content: {
+                    'application/json;charset=UTF-8': components['schemas']['ErrorResponse']
+                }
+            }
         }
     }
     getWords: {
@@ -1935,6 +1981,15 @@ export interface operations {
                 }
                 content: {
                     'application/json': unknown
+                }
+            }
+            /** @description Internal Server Error */
+            500: {
+                headers: {
+                    [name: string]: unknown
+                }
+                content: {
+                    'application/json;charset=UTF-8': components['schemas']['ErrorResponse']
                 }
             }
         }
@@ -1972,6 +2027,15 @@ export interface operations {
                     'application/json': unknown
                 }
             }
+            /** @description Internal Server Error */
+            500: {
+                headers: {
+                    [name: string]: unknown
+                }
+                content: {
+                    'application/json;charset=UTF-8': components['schemas']['ErrorResponse']
+                }
+            }
         }
     }
     addWordCustom: {
@@ -2005,6 +2069,15 @@ export interface operations {
                 }
                 content: {
                     'application/json': unknown
+                }
+            }
+            /** @description Internal Server Error */
+            500: {
+                headers: {
+                    [name: string]: unknown
+                }
+                content: {
+                    'application/json;charset=UTF-8': components['schemas']['ErrorResponse']
                 }
             }
         }
@@ -2049,6 +2122,15 @@ export interface operations {
                     'application/json': unknown
                 }
             }
+            /** @description Internal Server Error */
+            500: {
+                headers: {
+                    [name: string]: unknown
+                }
+                content: {
+                    'application/json;charset=UTF-8': components['schemas']['ErrorResponse']
+                }
+            }
         }
     }
     saveWordbookTotalQuizResult: {
@@ -2073,6 +2155,15 @@ export interface operations {
                     'application/json;charset=UTF-8': components['schemas']['RsDataVoid']
                 }
             }
+            /** @description Forbidden */
+            403: {
+                headers: {
+                    [name: string]: unknown
+                }
+                content: {
+                    'application/json;charset=UTF-8': components['schemas']['ErrorResponse']
+                }
+            }
             /** @description Not Found */
             404: {
                 headers: {
@@ -2080,6 +2171,15 @@ export interface operations {
                 }
                 content: {
                     'application/json': unknown
+                }
+            }
+            /** @description Internal Server Error */
+            500: {
+                headers: {
+                    [name: string]: unknown
+                }
+                content: {
+                    'application/json;charset=UTF-8': components['schemas']['ErrorResponse']
                 }
             }
         }
@@ -2106,6 +2206,15 @@ export interface operations {
                     'application/json;charset=UTF-8': components['schemas']['RsDataVoid']
                 }
             }
+            /** @description Forbidden */
+            403: {
+                headers: {
+                    [name: string]: unknown
+                }
+                content: {
+                    'application/json;charset=UTF-8': components['schemas']['ErrorResponse']
+                }
+            }
             /** @description Not Found */
             404: {
                 headers: {
@@ -2113,6 +2222,15 @@ export interface operations {
                 }
                 content: {
                     'application/json': unknown
+                }
+            }
+            /** @description Internal Server Error */
+            500: {
+                headers: {
+                    [name: string]: unknown
+                }
+                content: {
+                    'application/json;charset=UTF-8': components['schemas']['ErrorResponse']
                 }
             }
         }
@@ -2146,6 +2264,24 @@ export interface operations {
                     'application/json;charset=UTF-8': components['schemas']['RsDataBoolean']
                 }
             }
+            /** @description Forbidden */
+            403: {
+                headers: {
+                    [name: string]: unknown
+                }
+                content: {
+                    'application/json;charset=UTF-8': components['schemas']['ErrorResponse']
+                }
+            }
+            /** @description Internal Server Error */
+            500: {
+                headers: {
+                    [name: string]: unknown
+                }
+                content: {
+                    'application/json;charset=UTF-8': components['schemas']['ErrorResponse']
+                }
+            }
         }
     }
     checkEmail: {
@@ -2177,6 +2313,15 @@ export interface operations {
                     'application/json;charset=UTF-8': components['schemas']['RsDataObject']
                 }
             }
+            /** @description Forbidden */
+            403: {
+                headers: {
+                    [name: string]: unknown
+                }
+                content: {
+                    'application/json;charset=UTF-8': components['schemas']['ErrorResponse']
+                }
+            }
             /** @description Not Found */
             404: {
                 headers: {
@@ -2193,6 +2338,15 @@ export interface operations {
                 }
                 content: {
                     'application/json': unknown
+                }
+            }
+            /** @description Internal Server Error */
+            500: {
+                headers: {
+                    [name: string]: unknown
+                }
+                content: {
+                    'application/json;charset=UTF-8': components['schemas']['ErrorResponse']
                 }
             }
         }
@@ -2215,6 +2369,15 @@ export interface operations {
                     'application/json;charset=UTF-8': components['schemas']['RsDataListExpressionBookResponse']
                 }
             }
+            /** @description Forbidden */
+            403: {
+                headers: {
+                    [name: string]: unknown
+                }
+                content: {
+                    'application/json;charset=UTF-8': components['schemas']['ErrorResponse']
+                }
+            }
             /** @description Not Found */
             404: {
                 headers: {
@@ -2222,6 +2385,15 @@ export interface operations {
                 }
                 content: {
                     'application/json': unknown
+                }
+            }
+            /** @description Internal Server Error */
+            500: {
+                headers: {
+                    [name: string]: unknown
+                }
+                content: {
+                    'application/json;charset=UTF-8': components['schemas']['ErrorResponse']
                 }
             }
         }
@@ -2275,6 +2447,15 @@ export interface operations {
                     'application/json': unknown
                 }
             }
+            /** @description Internal Server Error */
+            500: {
+                headers: {
+                    [name: string]: unknown
+                }
+                content: {
+                    'application/json;charset=UTF-8': components['schemas']['ErrorResponse']
+                }
+            }
         }
     }
     saveExpression: {
@@ -2299,6 +2480,15 @@ export interface operations {
                 }
                 content: {
                     'application/json;charset=UTF-8': components['schemas']['RsDataObject']
+                }
+            }
+            /** @description Forbidden */
+            403: {
+                headers: {
+                    [name: string]: unknown
+                }
+                content: {
+                    'application/json;charset=UTF-8': components['schemas']['ErrorResponse']
                 }
             }
             /** @description Not Found */
@@ -2343,6 +2533,15 @@ export interface operations {
                     'application/json;charset=UTF-8': components['schemas']['RsDataVoid']
                 }
             }
+            /** @description Forbidden */
+            403: {
+                headers: {
+                    [name: string]: unknown
+                }
+                content: {
+                    'application/json;charset=UTF-8': components['schemas']['ErrorResponse']
+                }
+            }
             /** @description Not Found */
             404: {
                 headers: {
@@ -2350,6 +2549,15 @@ export interface operations {
                 }
                 content: {
                     'application/json': unknown
+                }
+            }
+            /** @description Internal Server Error */
+            500: {
+                headers: {
+                    [name: string]: unknown
+                }
+                content: {
+                    'application/json;charset=UTF-8': components['schemas']['ErrorResponse']
                 }
             }
         }
@@ -2394,6 +2602,15 @@ export interface operations {
                     'application/json': unknown
                 }
             }
+            /** @description Internal Server Error */
+            500: {
+                headers: {
+                    [name: string]: unknown
+                }
+                content: {
+                    'application/json;charset=UTF-8': components['schemas']['ErrorResponse']
+                }
+            }
         }
     }
     levelCheck: {
@@ -2421,6 +2638,15 @@ export interface operations {
                 }
                 content: {
                     'application/json': unknown
+                }
+            }
+            /** @description Forbidden */
+            403: {
+                headers: {
+                    [name: string]: unknown
+                }
+                content: {
+                    'application/json;charset=UTF-8': components['schemas']['ErrorResponse']
                 }
             }
             /** @description Not Found */
@@ -2472,6 +2698,15 @@ export interface operations {
                     'application/json': unknown
                 }
             }
+            /** @description Internal Server Error */
+            500: {
+                headers: {
+                    [name: string]: unknown
+                }
+                content: {
+                    'application/json;charset=UTF-8': components['schemas']['ErrorResponse']
+                }
+            }
         }
     }
     renameWordbook: {
@@ -2505,6 +2740,15 @@ export interface operations {
                 }
                 content: {
                     'application/json': unknown
+                }
+            }
+            /** @description Internal Server Error */
+            500: {
+                headers: {
+                    [name: string]: unknown
+                }
+                content: {
+                    'application/json;charset=UTF-8': components['schemas']['ErrorResponse']
                 }
             }
         }
@@ -2549,6 +2793,15 @@ export interface operations {
                     'application/json': unknown
                 }
             }
+            /** @description Internal Server Error */
+            500: {
+                headers: {
+                    [name: string]: unknown
+                }
+                content: {
+                    'application/json;charset=UTF-8': components['schemas']['ErrorResponse']
+                }
+            }
         }
     }
     updateUserLanguage: {
@@ -2575,6 +2828,15 @@ export interface operations {
                     'application/json;charset=UTF-8': components['schemas']['RsDataObject']
                 }
             }
+            /** @description Forbidden */
+            403: {
+                headers: {
+                    [name: string]: unknown
+                }
+                content: {
+                    'application/json;charset=UTF-8': components['schemas']['ErrorResponse']
+                }
+            }
             /** @description Not Found */
             404: {
                 headers: {
@@ -2591,6 +2853,15 @@ export interface operations {
                 }
                 content: {
                     'application/json': unknown
+                }
+            }
+            /** @description Internal Server Error */
+            500: {
+                headers: {
+                    [name: string]: unknown
+                }
+                content: {
+                    'application/json;charset=UTF-8': components['schemas']['ErrorResponse']
                 }
             }
         }
@@ -2613,6 +2884,15 @@ export interface operations {
                     'application/json;charset=UTF-8': components['schemas']['UserProfileResponse']
                 }
             }
+            /** @description Forbidden */
+            403: {
+                headers: {
+                    [name: string]: unknown
+                }
+                content: {
+                    'application/json;charset=UTF-8': components['schemas']['ErrorResponse']
+                }
+            }
             /** @description Not Found */
             404: {
                 headers: {
@@ -2620,6 +2900,15 @@ export interface operations {
                 }
                 content: {
                     'application/json': unknown
+                }
+            }
+            /** @description Internal Server Error */
+            500: {
+                headers: {
+                    [name: string]: unknown
+                }
+                content: {
+                    'application/json;charset=UTF-8': components['schemas']['ErrorResponse']
                 }
             }
         }
@@ -2642,6 +2931,15 @@ export interface operations {
                     'application/json;charset=UTF-8': components['schemas']['RsDataVoid']
                 }
             }
+            /** @description Forbidden */
+            403: {
+                headers: {
+                    [name: string]: unknown
+                }
+                content: {
+                    'application/json;charset=UTF-8': components['schemas']['ErrorResponse']
+                }
+            }
             /** @description Not Found */
             404: {
                 headers: {
@@ -2658,6 +2956,15 @@ export interface operations {
                 }
                 content: {
                     'application/json': unknown
+                }
+            }
+            /** @description Internal Server Error */
+            500: {
+                headers: {
+                    [name: string]: unknown
+                }
+                content: {
+                    'application/json;charset=UTF-8': components['schemas']['ErrorResponse']
                 }
             }
         }
@@ -2682,6 +2989,15 @@ export interface operations {
                     'application/json': components['schemas']['ChangeInfoResponse']
                 }
             }
+            /** @description Forbidden */
+            403: {
+                headers: {
+                    [name: string]: unknown
+                }
+                content: {
+                    'application/json;charset=UTF-8': components['schemas']['ErrorResponse']
+                }
+            }
             /** @description Not Found */
             404: {
                 headers: {
@@ -2698,6 +3014,15 @@ export interface operations {
                 }
                 content: {
                     'application/json': unknown
+                }
+            }
+            /** @description Internal Server Error */
+            500: {
+                headers: {
+                    [name: string]: unknown
+                }
+                content: {
+                    'application/json;charset=UTF-8': components['schemas']['ErrorResponse']
                 }
             }
         }
@@ -2736,6 +3061,15 @@ export interface operations {
                     'application/json': unknown
                 }
             }
+            /** @description Forbidden */
+            403: {
+                headers: {
+                    [name: string]: unknown
+                }
+                content: {
+                    'application/json;charset=UTF-8': components['schemas']['ErrorResponse']
+                }
+            }
             /** @description Not Found */
             404: {
                 headers: {
@@ -2743,6 +3077,15 @@ export interface operations {
                 }
                 content: {
                     'application/json': unknown
+                }
+            }
+            /** @description Internal Server Error */
+            500: {
+                headers: {
+                    [name: string]: unknown
+                }
+                content: {
+                    'application/json;charset=UTF-8': components['schemas']['ErrorResponse']
                 }
             }
         }
@@ -2783,6 +3126,15 @@ export interface operations {
                 }
                 content: {
                     'application/json': unknown
+                }
+            }
+            /** @description Internal Server Error */
+            500: {
+                headers: {
+                    [name: string]: unknown
+                }
+                content: {
+                    'application/json;charset=UTF-8': components['schemas']['ErrorResponse']
                 }
             }
         }
@@ -2829,6 +3181,15 @@ export interface operations {
                     'application/json': unknown
                 }
             }
+            /** @description Internal Server Error */
+            500: {
+                headers: {
+                    [name: string]: unknown
+                }
+                content: {
+                    'application/json;charset=UTF-8': components['schemas']['ErrorResponse']
+                }
+            }
         }
     }
     moveExpressionsBetweenBooks: {
@@ -2871,6 +3232,15 @@ export interface operations {
                     'application/json': unknown
                 }
             }
+            /** @description Internal Server Error */
+            500: {
+                headers: {
+                    [name: string]: unknown
+                }
+                content: {
+                    'application/json;charset=UTF-8': components['schemas']['ErrorResponse']
+                }
+            }
         }
     }
     updateGoal: {
@@ -2895,6 +3265,15 @@ export interface operations {
                     'application/json;charset=UTF-8': components['schemas']['RsDataVoid']
                 }
             }
+            /** @description Forbidden */
+            403: {
+                headers: {
+                    [name: string]: unknown
+                }
+                content: {
+                    'application/json;charset=UTF-8': components['schemas']['ErrorResponse']
+                }
+            }
             /** @description Not Found */
             404: {
                 headers: {
@@ -2902,6 +3281,15 @@ export interface operations {
                 }
                 content: {
                     'application/json': unknown
+                }
+            }
+            /** @description Internal Server Error */
+            500: {
+                headers: {
+                    [name: string]: unknown
+                }
+                content: {
+                    'application/json;charset=UTF-8': components['schemas']['ErrorResponse']
                 }
             }
         }
@@ -2926,6 +3314,15 @@ export interface operations {
                     'application/json;charset=UTF-8': components['schemas']['RsDataWordSearchResponse']
                 }
             }
+            /** @description Forbidden */
+            403: {
+                headers: {
+                    [name: string]: unknown
+                }
+                content: {
+                    'application/json;charset=UTF-8': components['schemas']['ErrorResponse']
+                }
+            }
             /** @description Not Found */
             404: {
                 headers: {
@@ -2933,6 +3330,15 @@ export interface operations {
                 }
                 content: {
                     'application/json': unknown
+                }
+            }
+            /** @description Internal Server Error */
+            500: {
+                headers: {
+                    [name: string]: unknown
+                }
+                content: {
+                    'application/json;charset=UTF-8': components['schemas']['ErrorResponse']
                 }
             }
         }
@@ -2975,6 +3381,15 @@ export interface operations {
                     'application/json': unknown
                 }
             }
+            /** @description Internal Server Error */
+            500: {
+                headers: {
+                    [name: string]: unknown
+                }
+                content: {
+                    'application/json;charset=UTF-8': components['schemas']['ErrorResponse']
+                }
+            }
         }
     }
     getWordbookItems: {
@@ -3015,6 +3430,15 @@ export interface operations {
                     'application/json': unknown
                 }
             }
+            /** @description Internal Server Error */
+            500: {
+                headers: {
+                    [name: string]: unknown
+                }
+                content: {
+                    'application/json;charset=UTF-8': components['schemas']['ErrorResponse']
+                }
+            }
         }
     }
     searchWords: {
@@ -3037,6 +3461,15 @@ export interface operations {
                     'application/json;charset=UTF-8': components['schemas']['RsDataListWordResponse']
                 }
             }
+            /** @description Forbidden */
+            403: {
+                headers: {
+                    [name: string]: unknown
+                }
+                content: {
+                    'application/json;charset=UTF-8': components['schemas']['ErrorResponse']
+                }
+            }
             /** @description Not Found */
             404: {
                 headers: {
@@ -3044,6 +3477,15 @@ export interface operations {
                 }
                 content: {
                     'application/json': unknown
+                }
+            }
+            /** @description Internal Server Error */
+            500: {
+                headers: {
+                    [name: string]: unknown
+                }
+                content: {
+                    'application/json;charset=UTF-8': components['schemas']['ErrorResponse']
                 }
             }
         }
@@ -3075,6 +3517,24 @@ export interface operations {
                     'application/json': unknown
                 }
             }
+            /** @description Forbidden */
+            403: {
+                headers: {
+                    [name: string]: unknown
+                }
+                content: {
+                    'application/json;charset=UTF-8': components['schemas']['ErrorResponse']
+                }
+            }
+            /** @description Internal Server Error */
+            500: {
+                headers: {
+                    [name: string]: unknown
+                }
+                content: {
+                    'application/json;charset=UTF-8': components['schemas']['ErrorResponse']
+                }
+            }
         }
     }
     videoAnalysis: {
@@ -3095,6 +3555,15 @@ export interface operations {
                 }
                 content: {
                     'application/json;charset=UTF-8': components['schemas']['RsDataAnalyzeVideoResponse']
+                }
+            }
+            /** @description Forbidden */
+            403: {
+                headers: {
+                    [name: string]: unknown
+                }
+                content: {
+                    'application/json;charset=UTF-8': components['schemas']['ErrorResponse']
                 }
             }
             /** @description Internal Server Error */
@@ -3128,6 +3597,15 @@ export interface operations {
                     'application/json;charset=UTF-8': components['schemas']['RsDataVideoLearningWordQuizListResponse']
                 }
             }
+            /** @description Forbidden */
+            403: {
+                headers: {
+                    [name: string]: unknown
+                }
+                content: {
+                    'application/json;charset=UTF-8': components['schemas']['ErrorResponse']
+                }
+            }
             /** @description Not Found */
             404: {
                 headers: {
@@ -3135,6 +3613,15 @@ export interface operations {
                 }
                 content: {
                     'application/json': unknown
+                }
+            }
+            /** @description Internal Server Error */
+            500: {
+                headers: {
+                    [name: string]: unknown
+                }
+                content: {
+                    'application/json;charset=UTF-8': components['schemas']['ErrorResponse']
                 }
             }
         }
@@ -3159,6 +3646,15 @@ export interface operations {
                     'application/json;charset=UTF-8': components['schemas']['RsDataVideoLearningExpressionQuizListResponse']
                 }
             }
+            /** @description Forbidden */
+            403: {
+                headers: {
+                    [name: string]: unknown
+                }
+                content: {
+                    'application/json;charset=UTF-8': components['schemas']['ErrorResponse']
+                }
+            }
             /** @description Not Found */
             404: {
                 headers: {
@@ -3166,6 +3662,15 @@ export interface operations {
                 }
                 content: {
                     'application/json': unknown
+                }
+            }
+            /** @description Internal Server Error */
+            500: {
+                headers: {
+                    [name: string]: unknown
+                }
+                content: {
+                    'application/json;charset=UTF-8': components['schemas']['ErrorResponse']
                 }
             }
         }
@@ -3199,6 +3704,15 @@ export interface operations {
                 }
                 content: {
                     'application/json': unknown
+                }
+            }
+            /** @description Forbidden */
+            403: {
+                headers: {
+                    [name: string]: unknown
+                }
+                content: {
+                    'application/json;charset=UTF-8': components['schemas']['ErrorResponse']
                 }
             }
             /** @description Not Found */
@@ -3239,6 +3753,15 @@ export interface operations {
                     'application/json;charset=UTF-8': components['schemas']['RsDataListVideoHistoryResponse']
                 }
             }
+            /** @description Forbidden */
+            403: {
+                headers: {
+                    [name: string]: unknown
+                }
+                content: {
+                    'application/json;charset=UTF-8': components['schemas']['ErrorResponse']
+                }
+            }
             /** @description Not Found */
             404: {
                 headers: {
@@ -3275,6 +3798,15 @@ export interface operations {
                 }
                 content: {
                     'application/json;charset=UTF-8': components['schemas']['RsDataListVideoHistoryResponse']
+                }
+            }
+            /** @description Forbidden */
+            403: {
+                headers: {
+                    [name: string]: unknown
+                }
+                content: {
+                    'application/json;charset=UTF-8': components['schemas']['ErrorResponse']
                 }
             }
             /** @description Not Found */
@@ -3324,6 +3856,24 @@ export interface operations {
                     'application/json': unknown
                 }
             }
+            /** @description Forbidden */
+            403: {
+                headers: {
+                    [name: string]: unknown
+                }
+                content: {
+                    'application/json;charset=UTF-8': components['schemas']['ErrorResponse']
+                }
+            }
+            /** @description Internal Server Error */
+            500: {
+                headers: {
+                    [name: string]: unknown
+                }
+                content: {
+                    'application/json;charset=UTF-8': components['schemas']['ErrorResponse']
+                }
+            }
         }
     }
     getExpressionsByBook: {
@@ -3362,6 +3912,15 @@ export interface operations {
                 }
                 content: {
                     'application/json': unknown
+                }
+            }
+            /** @description Internal Server Error */
+            500: {
+                headers: {
+                    [name: string]: unknown
+                }
+                content: {
+                    'application/json;charset=UTF-8': components['schemas']['ErrorResponse']
                 }
             }
         }
@@ -3404,6 +3963,15 @@ export interface operations {
                     'application/json': unknown
                 }
             }
+            /** @description Internal Server Error */
+            500: {
+                headers: {
+                    [name: string]: unknown
+                }
+                content: {
+                    'application/json;charset=UTF-8': components['schemas']['ErrorResponse']
+                }
+            }
         }
     }
     searchExpressions: {
@@ -3426,6 +3994,24 @@ export interface operations {
                     'application/json;charset=UTF-8': components['schemas']['RsDataListExpressionResponse']
                 }
             }
+            /** @description Forbidden */
+            403: {
+                headers: {
+                    [name: string]: unknown
+                }
+                content: {
+                    'application/json;charset=UTF-8': components['schemas']['ErrorResponse']
+                }
+            }
+            /** @description Internal Server Error */
+            500: {
+                headers: {
+                    [name: string]: unknown
+                }
+                content: {
+                    'application/json;charset=UTF-8': components['schemas']['ErrorResponse']
+                }
+            }
         }
     }
     statistics: {
@@ -3446,6 +4032,15 @@ export interface operations {
                     'application/json;charset=UTF-8': components['schemas']['RsDataStatisticResponse']
                 }
             }
+            /** @description Forbidden */
+            403: {
+                headers: {
+                    [name: string]: unknown
+                }
+                content: {
+                    'application/json;charset=UTF-8': components['schemas']['ErrorResponse']
+                }
+            }
             /** @description Not Found */
             404: {
                 headers: {
@@ -3453,6 +4048,15 @@ export interface operations {
                 }
                 content: {
                     'application/json': unknown
+                }
+            }
+            /** @description Internal Server Error */
+            500: {
+                headers: {
+                    [name: string]: unknown
+                }
+                content: {
+                    'application/json;charset=UTF-8': components['schemas']['ErrorResponse']
                 }
             }
         }
@@ -3475,6 +4079,15 @@ export interface operations {
                     'application/json;charset=UTF-8': components['schemas']['RsDataLearningHistoryResponse']
                 }
             }
+            /** @description Forbidden */
+            403: {
+                headers: {
+                    [name: string]: unknown
+                }
+                content: {
+                    'application/json;charset=UTF-8': components['schemas']['ErrorResponse']
+                }
+            }
             /** @description Not Found */
             404: {
                 headers: {
@@ -3482,6 +4095,15 @@ export interface operations {
                 }
                 content: {
                     'application/json': unknown
+                }
+            }
+            /** @description Internal Server Error */
+            500: {
+                headers: {
+                    [name: string]: unknown
+                }
+                content: {
+                    'application/json;charset=UTF-8': components['schemas']['ErrorResponse']
                 }
             }
         }
@@ -3504,6 +4126,24 @@ export interface operations {
                 }
                 content: {
                     'application/json;charset=UTF-8': string
+                }
+            }
+            /** @description Forbidden */
+            403: {
+                headers: {
+                    [name: string]: unknown
+                }
+                content: {
+                    'application/json;charset=UTF-8': components['schemas']['ErrorResponse']
+                }
+            }
+            /** @description Internal Server Error */
+            500: {
+                headers: {
+                    [name: string]: unknown
+                }
+                content: {
+                    'application/json;charset=UTF-8': components['schemas']['ErrorResponse']
                 }
             }
         }
