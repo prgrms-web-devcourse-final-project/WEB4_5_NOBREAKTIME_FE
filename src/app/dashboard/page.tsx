@@ -1,6 +1,6 @@
 'use client'
 
-import DailySelector from '@/components/dashboard/dailySelector'
+import DailyGoal from '@/components/dashboard/DailyGoal'
 import LearningHistory from '@/components/dashboard/learningHistory'
 import LevelBox from '@/components/dashboard/levelBox'
 import WatchHistory from '@/components/dashboard/watchHistory'
@@ -92,9 +92,9 @@ function Dashboard() {
                             <div className="flex flex-col bg-white p-6 rounded-2xl border-2 border-[var(--color-sub-2)] shadow-md">
                                 <h3 className="text-3xl font-bold mb-4">👊 나의 하루 목표는?</h3>
                                 <div className="flex flex-col h-full ">
-                                    <DailySelector />
+                                    <DailyGoal />
                                     {/* TODO: 목표 달성 표시 그래프 영역 */}
-                                    <div className="flex-1 bg-gray-100 rounded-lg bg-gray-200"></div>
+                                    <div className="flex-1 rounded-lg"></div>
                                 </div>
                             </div>
 
