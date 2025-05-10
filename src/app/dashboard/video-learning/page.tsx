@@ -1,6 +1,5 @@
 'use client'
 
-import DashboardLayout from '@/app/dashboardLayout'
 import Search from '@/components/common/search'
 import VideoIcon from '@/components/icon/videoIcon'
 import client from '@/lib/backend/client'
@@ -23,7 +22,7 @@ const CATEGORIES = {
     NEW: { id: -1, label: '새로온 맞춤 동영상' },
 } as const
 
-function Video() {
+export default function VideoLearningPage() {
     const url = process.env.NEXT_PUBLIC_MOCK_URL
     const router = useRouter()
     const isFirstRender = useRef(true)
@@ -134,8 +133,15 @@ function Video() {
     }
 
     return (
-        <DashboardLayout title="Video Learning" icon={<VideoIcon />}>
-            <>
+        <>
+            <div className="flex items-center gap-2">
+                <span className="text-[var(--color-main)]">
+                    <VideoIcon />
+                </span>
+                <h3 className="text-2xl font-bold text-[var(--color-black)]">Video Learning</h3>
+            </div>
+
+            <div className="flex flex-col gap-6 bg-[var(--color-sub-2)] p-6 rounded-lg h-[calc(100vh-200px)]">
                 {/* 검색 + 필터 */}
                 <div className="flex items-center gap-4 w-full mb-4">
                     <Search onSearch={handleSearch} placeholder="video search..." />
@@ -191,9 +197,7 @@ function Video() {
                         <div className="text-gray-500 text-center mt-10">검색 결과가 없습니다.</div>
                     )}
                 </div>
-            </>
-        </DashboardLayout>
+            </div>
+        </>
     )
 }
-
-export default Video

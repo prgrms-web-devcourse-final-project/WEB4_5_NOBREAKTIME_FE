@@ -1,6 +1,5 @@
 'use client'
 
-import DashboardLayout from '@/app/dashboardLayout'
 import DropdownCheckBox from '@/components/common/dropdownCheckBox'
 import Search from '@/components/common/search'
 import WordIcon from '@/components/icon/wordIcon'
@@ -25,7 +24,7 @@ interface Word {
     difficulty: string
 }
 
-function Word() {
+export default function WordLearningPage() {
     const [wordbooks, setWordbooks] = useState<Wordbook[]>([])
     const [isLoading, setIsLoading] = useState(true)
     const [selectedWordbookIds, setSelectedWordbookIds] = useState<number[]>([])
@@ -227,84 +226,95 @@ function Word() {
     }
 
     return (
-        <DashboardLayout title="Word Learning" icon={<WordIcon />}>
-            <div className="w-300 m-auto">
-                <Search onSearch={handleSearch} placeholder="단어 또는 뜻 검색..." />
-            </div>
-            <div className="flex-1 ">
-                <LearningCard
-                    title="단어"
-                    descriptions={[
-                        { text: '내 {title}장에서 톡톡 랜덤 등장!', strong: ['랜덤'] },
-                        { text: '반복과 호기심 학습을 한번에!', strong: ['반복', '호기심'] },
-                    ]}
-                    wordbooks={wordbooks}
-                    isLoading={isLoading}
-                />
+        <>
+            <div className="flex items-center gap-2">
+                <span className="text-[var(--color-main)]">
+                    <WordIcon />
+                </span>
+                <h3 className="text-2xl font-bold text-[var(--color-black)]">Word Learning</h3>
             </div>
 
-            <div className="flex flex-col flex-1 gap-2 h-full overflow-hidden" ref={resultRef}>
-                {/* 상단 타이틀 */}
-                <div className="flex justify-between items-center">
-                    <h1 className="text-2xl font-bold">
-                        📚 내 단어장
-                        {searchKeyword && (
-                            <span className="ml-2 text-sm text-[var(--color-point)]">'{searchKeyword}' 검색 결과</span>
-                        )}
-                    </h1>
-                    <div className="flex items-center gap-2">
-                        <DropdownCheckBox wordbooks={wordbooks} onWordbookSelect={handleWordbookSelect} />
-                        <button
-                            onClick={openAddModal}
-                            className="flex items-center gap-1 bg-[var(--color-main)] text-white px-3 py-2 rounded-md text-sm font-medium hover:bg-opacity-90 transition-colors"
-                        >
-                            <svg
-                                xmlns="http://www.w3.org/2000/svg"
-                                fill="none"
-                                viewBox="0 0 24 24"
-                                strokeWidth={1.5}
-                                stroke="currentColor"
-                                className="w-5 h-5"
-                            >
-                                <path strokeLinecap="round" strokeLinejoin="round" d="M12 4.5v15m7.5-7.5h-15" />
-                            </svg>
-                            단어 추가
-                        </button>
-                        <button
-                            onClick={toggleEditMode}
-                            className={`flex items-center gap-1 ${
-                                isEditMode
-                                    ? 'bg-[var(--color-point)] text-white'
-                                    : 'bg-white text-[var(--color-main)] border border-[var(--color-main)]'
-                            } px-3 py-2 rounded-md text-sm font-medium hover:bg-opacity-90 transition-colors`}
-                        >
-                            <svg
-                                xmlns="http://www.w3.org/2000/svg"
-                                fill="none"
-                                viewBox="0 0 24 24"
-                                strokeWidth={1.5}
-                                stroke="currentColor"
-                                className="w-5 h-5"
-                            >
-                                <path
-                                    strokeLinecap="round"
-                                    strokeLinejoin="round"
-                                    d="M16.862 4.487l1.687-1.688a1.875 1.875 0 112.652 2.652L10.582 16.07a4.5 4.5 0 01-1.897 1.13L6 18l.8-2.685a4.5 4.5 0 011.13-1.897l8.932-8.931zm0 0L19.5 7.125M18 14v4.75A2.25 2.25 0 0115.75 21H5.25A2.25 2.25 0 013 18.75V8.25A2.25 2.25 0 015.25 6H10"
-                                />
-                            </svg>
-                            {isEditMode ? '편집 완료' : '단어 편집'}
-                        </button>
-                    </div>
+            <div className="flex flex-col gap-6 bg-[var(--color-sub-2)] p-6 rounded-lg h-[calc(100vh-200px)]">
+                <div className="w-300 m-auto">
+                    <Search onSearch={handleSearch} placeholder="단어 또는 뜻 검색..." />
+                </div>
+                <div className="flex-1">
+                    <LearningCard
+                        title="단어"
+                        descriptions={[
+                            { text: '내 {title}장에서 톡톡 랜덤 등장!', strong: ['랜덤'] },
+                            { text: '반복과 호기심 학습을 한번에!', strong: ['반복', '호기심'] },
+                        ]}
+                        wordbooks={wordbooks}
+                        isLoading={isLoading}
+                    />
                 </div>
 
-                {/* 카드 리스트 */}
-                <div className="flex-1 overflow-y-auto p-2">
-                    <WordCard
-                        selectedWordbookIds={selectedWordbookIds}
-                        searchKeyword={searchKeyword}
-                        isEditMode={isEditMode}
-                        onDeleteWord={handleDeleteWord}
-                    />
+                <div className="flex flex-col flex-1 gap-2 h-full overflow-hidden" ref={resultRef}>
+                    {/* 상단 타이틀 */}
+                    <div className="flex justify-between items-center">
+                        <h1 className="text-2xl font-bold">
+                            📚 내 단어장
+                            {searchKeyword && (
+                                <span className="ml-2 text-sm text-[var(--color-point)]">
+                                    '{searchKeyword}' 검색 결과
+                                </span>
+                            )}
+                        </h1>
+                        <div className="flex items-center gap-2">
+                            <DropdownCheckBox wordbooks={wordbooks} onWordbookSelect={handleWordbookSelect} />
+                            <button
+                                onClick={openAddModal}
+                                className="flex items-center gap-1 bg-[var(--color-main)] text-white px-3 py-2 rounded-md text-sm font-medium hover:bg-opacity-90 transition-colors"
+                            >
+                                <svg
+                                    xmlns="http://www.w3.org/2000/svg"
+                                    fill="none"
+                                    viewBox="0 0 24 24"
+                                    strokeWidth={1.5}
+                                    stroke="currentColor"
+                                    className="w-5 h-5"
+                                >
+                                    <path strokeLinecap="round" strokeLinejoin="round" d="M12 4.5v15m7.5-7.5h-15" />
+                                </svg>
+                                단어 추가
+                            </button>
+                            <button
+                                onClick={toggleEditMode}
+                                className={`flex items-center gap-1 ${
+                                    isEditMode
+                                        ? 'bg-[var(--color-point)] text-white'
+                                        : 'bg-white text-[var(--color-main)] border border-[var(--color-main)]'
+                                } px-3 py-2 rounded-md text-sm font-medium hover:bg-opacity-90 transition-colors`}
+                            >
+                                <svg
+                                    xmlns="http://www.w3.org/2000/svg"
+                                    fill="none"
+                                    viewBox="0 0 24 24"
+                                    strokeWidth={1.5}
+                                    stroke="currentColor"
+                                    className="w-5 h-5"
+                                >
+                                    <path
+                                        strokeLinecap="round"
+                                        strokeLinejoin="round"
+                                        d="M16.862 4.487l1.687-1.688a1.875 1.875 0 112.652 2.652L10.582 16.07a4.5 4.5 0 01-1.897 1.13L6 18l.8-2.685a4.5 4.5 0 011.13-1.897l8.932-8.931zm0 0L19.5 7.125M18 14v4.75A2.25 2.25 0 0115.75 21H5.25A2.25 2.25 0 013 18.75V8.25A2.25 2.25 0 015.25 6H10"
+                                    />
+                                </svg>
+                                {isEditMode ? '편집 완료' : '단어 편집'}
+                            </button>
+                        </div>
+                    </div>
+
+                    {/* 카드 리스트 */}
+                    <div className="flex-1 overflow-y-auto p-2">
+                        <WordCard
+                            selectedWordbookIds={selectedWordbookIds}
+                            searchKeyword={searchKeyword}
+                            isEditMode={isEditMode}
+                            onDeleteWord={handleDeleteWord}
+                        />
+                    </div>
                 </div>
             </div>
 
@@ -445,8 +455,6 @@ function Word() {
                     </div>
                 </div>
             )}
-        </DashboardLayout>
+        </>
     )
 }
-
-export default Word
