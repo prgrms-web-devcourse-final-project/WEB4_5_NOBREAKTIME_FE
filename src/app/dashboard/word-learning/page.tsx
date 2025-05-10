@@ -1,14 +1,13 @@
 'use client'
 
-import { useEffect, useRef, useState } from 'react'
+import DashboardLayout from '@/app/dashboardLayout'
+import DropdownCheckBox from '@/components/common/dropdownCheckBox'
 import Search from '@/components/common/search'
-import DashboardLayout from '../dashboardLayout'
 import WordIcon from '@/components/icon/wordIcon'
 import LearningCard from '@/components/learning/learningCard'
-import DropdownCheckBox from '@/components/common/dropdownCheckBox'
 import WordCard from '@/components/learning/wordCard'
 import client from '@/lib/backend/client'
-import Image from 'next/image'
+import { useEffect, useRef, useState } from 'react'
 
 interface Wordbook {
     id: number

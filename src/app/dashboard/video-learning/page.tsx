@@ -1,12 +1,12 @@
 'use client'
 
-import { useState, useEffect, useRef } from 'react'
-import DashboardLayout from '../dashboardLayout'
-import VideoIcon from '@/components/icon/videoIcon'
+import DashboardLayout from '@/app/dashboardLayout'
 import Search from '@/components/common/search'
-import { useRouter } from 'next/navigation'
-import { VideoData } from '@/types/video'
+import VideoIcon from '@/components/icon/videoIcon'
 import client from '@/lib/backend/client'
+import { VideoData } from '@/types/video'
+import { useRouter } from 'next/navigation'
+import { useEffect, useRef, useState } from 'react'
 
 // 카테고리 타입 정의
 type Category = {

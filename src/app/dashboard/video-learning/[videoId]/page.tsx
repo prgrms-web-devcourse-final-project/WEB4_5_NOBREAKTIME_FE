@@ -1,12 +1,12 @@
 'use client'
 
-import { useRouter } from 'next/navigation'
-import { use, useState, useEffect } from 'react'
-import DashboardLayout from '../../dashboardLayout'
+import DashboardLayout from '@/app/dashboardLayout'
 import VideoIcon from '@/components/icon/videoIcon'
 import VideoLearning from '@/components/video/videoLearning'
 import client from '@/lib/backend/client'
 import { AnalysisData, VideoData } from '@/types/video'
+import { useRouter } from 'next/navigation'
+import { use, useEffect, useState } from 'react'
 
 function VideoLearningPage({ params }: { params: Promise<{ videoId: string }> }) {
     const router = useRouter()

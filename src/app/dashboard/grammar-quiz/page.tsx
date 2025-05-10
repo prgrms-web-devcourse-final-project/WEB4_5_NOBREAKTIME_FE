@@ -1,10 +1,10 @@
 'use client'
 
-import { useState, useEffect } from 'react'
-import DashboardLayout from '../dashboardLayout'
+import DashboardLayout from '@/app/dashboardLayout'
 import WordIcon from '@/components/icon/wordIcon'
 import Image from 'next/image'
 import { useParams } from 'next/navigation'
+import { useEffect, useState } from 'react'
 
 const grammarQuizList = [
     { sentence: 'I abandoned my plan.', meaning: '나는 내 계획을 버렸다.', stars: 2 },

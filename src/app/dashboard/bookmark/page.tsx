@@ -1,6 +1,6 @@
 'use client'
 
-import DashboardLayout from '../dashboardLayout'
+import DashboardLayout from '@/app/dashboardLayout'
 import BookmarkIcon from '@/components/icon/bookmarkIcon'
 
 type VideoData = {

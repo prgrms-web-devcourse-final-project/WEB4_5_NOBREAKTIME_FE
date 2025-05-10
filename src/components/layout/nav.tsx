@@ -26,29 +26,39 @@ function Nav() {
                     icon={<DashboardIcon />}
                     label="Dashboard"
                     href="/dashboard"
-                    active={pathname.startsWith('/dashboard')}
+                    active={pathname === '/dashboard'}
                 />
             </div>
             <div className="flex flex-col items-center gap-1">
                 <NavItem
                     icon={<BookmarkIcon />}
                     label="Bookmark"
-                    href="/bookmark"
-                    active={pathname.startsWith('/bookmark')}
+                    href="/dashboard/bookmark"
+                    active={pathname === '/dashboard/bookmark'}
                 />
             </div>
             <div className="flex flex-col items-center gap-1">
-                <NavItem icon={<VideoIcon />} label="Video" href="/video" active={pathname.startsWith('/video')} />
+                <NavItem
+                    icon={<VideoIcon />}
+                    label="Video"
+                    href="/dashboard/video-learning"
+                    active={pathname === '/dashboard/video-learning'}
+                />
             </div>
             <div className="flex flex-col items-center gap-1">
-                <NavItem icon={<AbcIcon />} label="Word" href="/word" active={pathname.startsWith('/word')} />
+                <NavItem
+                    icon={<AbcIcon />}
+                    label="Word"
+                    href="/dashboard/word-learning"
+                    active={pathname === '/dashboard/word-learning'}
+                />
             </div>
             <div className="flex flex-col items-center gap-1">
                 <NavItem
                     icon={<QuestionIcon />}
                     label="Grammar"
-                    href="/grammar"
-                    active={pathname.startsWith('/grammar')}
+                    href="/dashboard/grammar"
+                    active={pathname === '/dashboard/grammar'}
                 />
             </div>
         </nav>

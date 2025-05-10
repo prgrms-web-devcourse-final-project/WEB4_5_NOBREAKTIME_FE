@@ -1,10 +1,10 @@
 'use client'
+import DashboardLayout from '@/app/dashboardLayout'
 import DropdownCheckBox from '@/components/common/dropdownCheckBox'
 import Search from '@/components/common/search'
 import GrammarIcon from '@/components/icon/grammarIcon'
 import GrammarCard from '@/components/learning/grammarCard'
 import LearningCard from '@/components/learning/learningCard'
-import DashboardLayout from '../dashboardLayout'
 
 function Grammar() {
     const wordbooks = [
