@@ -3,6 +3,7 @@
 import React, { useState, useEffect } from 'react'
 import client from '@/lib/backend/client'
 import { ExpressionQuizType, ExpressionQuizProps } from '@/types/video'
+import Image from 'next/image'
 
 const ExpressionQuiz: React.FC<ExpressionQuizProps> = ({ fontSize, videoId }) => {
     // 표현 퀴즈 상태 관리
@@ -126,7 +127,7 @@ const ExpressionQuiz: React.FC<ExpressionQuizProps> = ({ fontSize, videoId }) =>
     if (isLoading) {
         return (
             <div className="w-full h-full flex items-center justify-center">
-                <div className="animate-pulse">로딩 중...</div>
+                <Image src="/character/loading-1.gif" alt="loading" width={300} height={300} />
             </div>
         )
     }

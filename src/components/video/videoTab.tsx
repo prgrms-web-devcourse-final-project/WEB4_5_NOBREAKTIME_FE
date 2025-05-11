@@ -52,7 +52,7 @@ function VideoTab({
     }
 
     return (
-        <div className="flex flex-row w-full justify-center items-center h-[180px] bg-[var(--color-white)] rounded-lg">
+        <div className="flex flex-row w-full justify-center items-center h-[180px] bg-[var(--color-white)] rounded-lg border-2 border-[var(--color-sub-1)]">
             {/* 좌측 탭 목록 */}
             <div className="flex justify-center items-center w-50 h-[80%] p-2">
                 <ul className="w-full h-full flex flex-col border-r-2 border-[var(--color-main)] px-2">

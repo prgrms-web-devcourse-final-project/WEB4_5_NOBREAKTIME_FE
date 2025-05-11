@@ -79,9 +79,9 @@ export default function LevelBox({ statistics, onStatisticsUpdate }: LevelBoxPro
                 {categories.map(({ label, key }) => {
                     const level = levelData[key as keyof LevelCheckResponse] || 'NONE'
                     return (
-                        <div key={key} className="flex flex-1 justify-center gap-8 items-center">
-                            <span className="text-lg">{label}</span>
-                            <span className={`${levelColor[level]} text-3xl font-bold`}>{level}</span>
+                        <div key={key} className="flex flex-1 justify-center gap-4 items-center">
+                            <span className="text-lg whitespace-nowrap">{label}</span>
+                            <span className={`${levelColor[level]} text-2xl font-bold`}>{level}</span>
                         </div>
                     )
                 })}

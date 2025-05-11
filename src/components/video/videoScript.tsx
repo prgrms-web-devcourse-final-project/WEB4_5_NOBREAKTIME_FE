@@ -72,7 +72,7 @@ function VideoScript({
     }, [currentTime])
 
     return (
-        <div className="w-300 flex flex-col gap-2 rounded-lg bg-[var(--color-white)] p-4 h-full">
+        <div className="w-full flex flex-col gap-2 rounded-lg bg-[var(--color-white)] p-4 h-full">
             {/* 스크립트 내용 */}
             <div className="flex justify-between items-center">
                 <h2 className="text-2xl font-bold w-full">📄 Transcript</h2>

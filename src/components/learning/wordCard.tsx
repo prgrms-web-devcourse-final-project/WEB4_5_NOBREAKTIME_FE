@@ -146,7 +146,7 @@ export default function WordCard({
             {filteredWords.map((word, idx) => (
                 <div
                     key={idx}
-                    className="flex flex-col justify-between p-4 w-[310px] h-[180px] bg-[var(--color-white)] rounded-lg border border-2 border-[var(--color-main)]"
+                    className="flex flex-col justify-between p-4 w-[32%] h-[180px] bg-[var(--color-white)] rounded-lg border border-2 border-[var(--color-main)]"
                 >
                     <div className="flex justify-between">
                         <div>

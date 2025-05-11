@@ -243,7 +243,7 @@ export default function WordQuiz() {
                     <h3 className="text-2xl font-bold text-[var(--color-black)]">Word Quiz</h3>
                 </div>
                 <div className="flex items-center justify-center h-full">
-                    <p className="text-2xl">로딩 중...</p>
+                    <Image src="/character/loading-2.gif" alt="loading" width={300} height={300} />
                 </div>
             </>
         )

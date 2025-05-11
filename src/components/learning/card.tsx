@@ -39,7 +39,7 @@ export default function Card({ wordbooks, isLoading = false }: Props) {
     }
 
     return (
-        <div className="flex-1 gap-4 flex flex-col">
+        <div className="flex-1 w-[50%] learning-box gap-4 flex flex-col">
             <div className="flex-1 grid grid-cols-2 gap-2">
                 {wordbooks.map((wordbook) => (
                     <div

@@ -235,7 +235,7 @@ export default function WordLearningPage() {
             </div>
 
             <div className="flex flex-col gap-6 bg-[var(--color-sub-2)] p-6 rounded-lg h-[calc(100vh-200px)]">
-                <div className="w-300 m-auto">
+                <div className="w-[80%] m-auto">
                     <Search onSearch={handleSearch} placeholder="단어 또는 뜻 검색..." />
                 </div>
                 <div className="flex-1">

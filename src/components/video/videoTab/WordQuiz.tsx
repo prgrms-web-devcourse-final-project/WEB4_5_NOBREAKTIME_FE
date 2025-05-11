@@ -3,6 +3,7 @@
 import React, { useState, useEffect } from 'react'
 import client from '@/lib/backend/client'
 import { WordQuizType, WordQuizProps, WordQuizResult } from '@/types/video'
+import Image from 'next/image'
 
 const WordQuiz: React.FC<WordQuizProps> = ({ fontSize, videoId, onQuizResult, wordQuizData = [] }) => {
     // 단어 퀴즈 상태 관리
@@ -188,7 +189,7 @@ const WordQuiz: React.FC<WordQuizProps> = ({ fontSize, videoId, onQuizResult, wo
     if (isLoading) {
         return (
             <div className="w-full h-full flex items-center justify-center">
-                <div className="animate-pulse">로딩 중...</div>
+                <Image src="/character/loading-1.gif" alt="loading" width={300} height={300} />
             </div>
         )
     }

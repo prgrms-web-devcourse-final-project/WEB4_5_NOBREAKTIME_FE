@@ -364,14 +364,14 @@ function VideoLearning({ video, analysisData: initialAnalysisData, onBack, isLoa
     }
 
     return (
-        <div className="flex flex-col gap-4 h-full">
+        <div className="flex flex-col gap-4 h-[calc(100vh-170px)]">
             <button onClick={onBack} className="text-[var(--color-main)] font-semibold w-full h-2 text-right">
                 &larr; 목록으로
             </button>
 
             <div className="flex flex-col gap-2 flex-1 overflow-hidden">
                 {/* 비디오 + 트랜스크립트 */}
-                <div className="flex flex-row gap-4 w-full h-[calc(100%-310px)]">
+                <div className="flex flex-row gap-4 w-full h-[calc(100%-240px)]">
                     <div className="w-full aspect-video bg-gray-300 rounded-sm overflow-hidden">
                         <iframe
                             ref={playerRef}

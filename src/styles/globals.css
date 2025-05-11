@@ -85,12 +85,11 @@
 html,
 body {
     height: 100%;
-    overflow: hidden;
     background: var(--background);
     color: var(--foreground);
     font-family: var(--font-sans);
-    min-width: 1700px;
-    overflow-x: auto;
+    /* min-width: 1700px;
+    overflow-x: auto; */
 }
 
 button {
@@ -209,5 +208,33 @@ button {
     }
     body {
         @apply bg-background text-foreground;
+    }
+}
+
+/* 반응형 텍스트 크기 */
+@media screen and (min-width: 1920px) {
+    .learning-title {
+        font-size: 3rem;
+    }
+    .learning-text {
+        font-size: 1.5rem;
+    }
+    .learning-strong {
+        font-size: 2rem;
+    }
+}
+
+@media screen and (max-width: 1450px) {
+    .learning-title {
+        font-size: 2rem;
+    }
+    .learning-text {
+        font-size: 1.25rem;
+    }
+    .learning-strong {
+        font-size: 1.5rem;
+    }
+    .learning-box {
+        width: 500px;
     }
 }
