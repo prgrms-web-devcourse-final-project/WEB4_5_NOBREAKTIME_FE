@@ -1,5 +1,6 @@
 'use client'
 
+import Loading from '@/components/common/loading'
 import client from '@/lib/backend/client'
 import { LoginMemberContext, useLoginMember } from '@/stores/auth/loginMember'
 import { ThemeProvider as NextThemesProvider } from 'next-themes'
@@ -44,11 +45,7 @@ export function ClientLayout({ children }: React.ComponentProps<typeof NextTheme
     }, [])
 
     if (isLoginMemberPending) {
-        return (
-            <div className="h-screen flex-1 flex justify-center items-center text-muted-foreground">
-                인증 정보 로딩중...
-            </div>
-        )
+        return <Loading />
     }
 
     // if (loginMember.language === 'NONE') {
