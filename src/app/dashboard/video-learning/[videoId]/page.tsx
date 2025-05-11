@@ -6,11 +6,11 @@ import client from '@/lib/backend/client'
 import { AnalysisData, VideoData } from '@/types/video'
 import { useRouter } from 'next/navigation'
 import { use, useEffect, useState } from 'react'
+import { mockAnalysisData } from './mockdata'
 
 function VideoLearningPage({ params }: { params: Promise<{ videoId: string }> }) {
     const router = useRouter()
     const { videoId } = use(params)
-    const url = process.env.NEXT_PUBLIC_API_URL
     const [videoData, setVideoData] = useState<VideoData | null>(null)
     const [analysisData, setAnalysisData] = useState<AnalysisData | null>(null)
     const [isLoading, setIsLoading] = useState(true)
@@ -34,6 +34,10 @@ function VideoLearningPage({ params }: { params: Promise<{ videoId: string }> })
                     thumbnailUrl: thumbnail || undefined,
                 })
 
+                // 목데이터 사용
+                setAnalysisData(mockAnalysisData)
+
+                /*
                 const { data, error } = await client.GET('/api/v1/videos/{youtubeVideoId}/analysis', {
                     params: {
                         path: {
@@ -52,6 +56,7 @@ function VideoLearningPage({ params }: { params: Promise<{ videoId: string }> })
                 if (data?.data) {
                     setAnalysisData(data.data)
                 }
+                */
             } catch (error) {
                 console.error('데이터 요청 실패:', error)
             } finally {
@@ -60,7 +65,7 @@ function VideoLearningPage({ params }: { params: Promise<{ videoId: string }> })
         }
 
         fetchData()
-    }, [videoId, url])
+    }, [videoId])
 
     const handleBack = () => {
         router.push('/video')

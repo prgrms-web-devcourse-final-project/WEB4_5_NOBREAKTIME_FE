@@ -5,6 +5,7 @@ import client from '@/lib/backend/client'
 import Image from 'next/image'
 import { useParams, useSearchParams } from 'next/navigation'
 import { useEffect, useState } from 'react'
+import { mockWordData } from './mockdata'
 
 interface Word {
     word: string
@@ -32,6 +33,11 @@ export default function WordLearning() {
     useEffect(() => {
         const fetchWords = async () => {
             try {
+                // 목데이터 사용
+                setWords(mockWordData.words)
+                setIsLoading(false)
+
+                /*
                 const { data } = await client.GET('/api/v1/wordbooks/{wordbookId}/words', {
                     params: {
                         path: {
@@ -56,7 +62,7 @@ export default function WordLearning() {
 
                     setWords(apiWords)
                 }
-                setIsLoading(false)
+                */
             } catch (error) {
                 console.error('단어 데이터를 가져오는데 실패했습니다:', error)
                 setIsLoading(false)

@@ -1436,7 +1436,7 @@ export interface components {
             id?: number
             name?: string
             /** @enum {string} */
-            language?: 'ENGLISH' | 'JAPANESE' | 'NONE'
+            language?: 'ENGLISH' | 'JAPANESE' | 'NONE' | 'ALL'
             /** Format: int64 */
             memberId?: number
         }
@@ -1538,7 +1538,7 @@ export interface components {
             id?: number
             name?: string
             /** @enum {string} */
-            language?: 'ENGLISH' | 'JAPANESE' | 'NONE'
+            language?: 'ENGLISH' | 'JAPANESE' | 'NONE' | 'ALL'
         }
         RsDataListWordResponse: {
             code: string
@@ -1580,6 +1580,8 @@ export interface components {
             subtitleResults?: components['schemas']['GptSubtitleResponse'][]
         }
         GptSubtitleResponse: {
+            /** Format: int64 */
+            subtitleId?: number
             startTime?: string
             endTime?: string
             speaker?: string
@@ -1652,7 +1654,7 @@ export interface components {
             title?: string
             thumbnailUrl?: string
             /** Format: date-time */
-            createdAt?: string
+            lastViewedAt?: string
         }
         /** @description 회원 전체 정보 조회 응답 DTO */
         UserProfileResponse: {
@@ -1675,13 +1677,13 @@ export interface components {
              * @description 구독 정보
              * @enum {string}
              */
-            subscription?: 'NONE' | 'BASIC' | 'STANDARD' | 'PREMIUM' | 'ADMIN'
+            subscriptionType?: 'NONE' | 'BASIC' | 'STANDARD' | 'PREMIUM' | 'ADMIN'
             /**
              * @description 언어 설정 정보
              * @example ENGLISH
              * @enum {string}
              */
-            language?: 'ENGLISH' | 'JAPANESE' | 'NONE'
+            language?: 'ENGLISH' | 'JAPANESE' | 'NONE' | 'ALL'
         }
         RsDataListExpressionBookResponse: {
             code: string
@@ -1786,8 +1788,8 @@ export interface components {
              */
             roleName?: string
             password?: string
-            authorities?: components['schemas']['GrantedAuthority'][]
             username?: string
+            authorities?: components['schemas']['GrantedAuthority'][]
             enabled?: boolean
             accountNonExpired?: boolean
             accountNonLocked?: boolean
@@ -1824,7 +1826,7 @@ export interface operations {
                     [name: string]: unknown
                 }
                 content: {
-                    'application/json;charset=UTF-8': components['schemas']['RsDataWordSearchResponse']
+                    'application/json': components['schemas']['RsDataWordSearchResponse']
                 }
             }
             /** @description Forbidden */
@@ -1833,7 +1835,7 @@ export interface operations {
                     [name: string]: unknown
                 }
                 content: {
-                    'application/json;charset=UTF-8': components['schemas']['ErrorResponse']
+                    'application/json': components['schemas']['ErrorResponse']
                 }
             }
             /** @description Internal Server Error */
@@ -1862,7 +1864,7 @@ export interface operations {
                     [name: string]: unknown
                 }
                 content: {
-                    'application/json;charset=UTF-8': components['schemas']['RsDataListWordbookResponse']
+                    'application/json': components['schemas']['RsDataListWordbookResponse']
                 }
             }
             /** @description Forbidden */
@@ -1871,7 +1873,7 @@ export interface operations {
                     [name: string]: unknown
                 }
                 content: {
-                    'application/json;charset=UTF-8': components['schemas']['ErrorResponse']
+                    'application/json': components['schemas']['ErrorResponse']
                 }
             }
             /** @description Not Found */
@@ -1889,7 +1891,7 @@ export interface operations {
                     [name: string]: unknown
                 }
                 content: {
-                    'application/json;charset=UTF-8': components['schemas']['ErrorResponse']
+                    'application/json': components['schemas']['ErrorResponse']
                 }
             }
         }
@@ -1913,7 +1915,7 @@ export interface operations {
                     [name: string]: unknown
                 }
                 content: {
-                    'application/json;charset=UTF-8': components['schemas']['RsDataLong']
+                    'application/json': components['schemas']['RsDataLong']
                 }
             }
             /** @description Bad Request */
@@ -1949,7 +1951,7 @@ export interface operations {
                     [name: string]: unknown
                 }
                 content: {
-                    'application/json;charset=UTF-8': components['schemas']['ErrorResponse']
+                    'application/json': components['schemas']['ErrorResponse']
                 }
             }
         }
@@ -1971,7 +1973,7 @@ export interface operations {
                     [name: string]: unknown
                 }
                 content: {
-                    'application/json;charset=UTF-8': components['schemas']['RsDataListWordResponse']
+                    'application/json': components['schemas']['RsDataListWordResponse']
                 }
             }
             /** @description Forbidden */
@@ -1989,7 +1991,7 @@ export interface operations {
                     [name: string]: unknown
                 }
                 content: {
-                    'application/json;charset=UTF-8': components['schemas']['ErrorResponse']
+                    'application/json': components['schemas']['ErrorResponse']
                 }
             }
         }
@@ -2015,7 +2017,7 @@ export interface operations {
                     [name: string]: unknown
                 }
                 content: {
-                    'application/json;charset=UTF-8': components['schemas']['RsDataVoid']
+                    'application/json': components['schemas']['RsDataVoid']
                 }
             }
             /** @description Forbidden */
@@ -2033,7 +2035,7 @@ export interface operations {
                     [name: string]: unknown
                 }
                 content: {
-                    'application/json;charset=UTF-8': components['schemas']['ErrorResponse']
+                    'application/json': components['schemas']['ErrorResponse']
                 }
             }
         }
@@ -2059,7 +2061,7 @@ export interface operations {
                     [name: string]: unknown
                 }
                 content: {
-                    'application/json;charset=UTF-8': components['schemas']['RsDataVoid']
+                    'application/json': components['schemas']['RsDataVoid']
                 }
             }
             /** @description Forbidden */
@@ -2077,7 +2079,7 @@ export interface operations {
                     [name: string]: unknown
                 }
                 content: {
-                    'application/json;charset=UTF-8': components['schemas']['ErrorResponse']
+                    'application/json': components['schemas']['ErrorResponse']
                 }
             }
         }
@@ -2101,7 +2103,7 @@ export interface operations {
                     [name: string]: unknown
                 }
                 content: {
-                    'application/json;charset=UTF-8': components['schemas']['RsDataVoid']
+                    'application/json': components['schemas']['RsDataVoid']
                 }
             }
             /** @description Forbidden */
@@ -2128,7 +2130,7 @@ export interface operations {
                     [name: string]: unknown
                 }
                 content: {
-                    'application/json;charset=UTF-8': components['schemas']['ErrorResponse']
+                    'application/json': components['schemas']['ErrorResponse']
                 }
             }
         }
@@ -2152,7 +2154,7 @@ export interface operations {
                     [name: string]: unknown
                 }
                 content: {
-                    'application/json;charset=UTF-8': components['schemas']['RsDataVoid']
+                    'application/json': components['schemas']['RsDataVoid']
                 }
             }
             /** @description Forbidden */
@@ -2161,7 +2163,7 @@ export interface operations {
                     [name: string]: unknown
                 }
                 content: {
-                    'application/json;charset=UTF-8': components['schemas']['ErrorResponse']
+                    'application/json': components['schemas']['ErrorResponse']
                 }
             }
             /** @description Not Found */
@@ -2179,7 +2181,7 @@ export interface operations {
                     [name: string]: unknown
                 }
                 content: {
-                    'application/json;charset=UTF-8': components['schemas']['ErrorResponse']
+                    'application/json': components['schemas']['ErrorResponse']
                 }
             }
         }
@@ -2203,7 +2205,7 @@ export interface operations {
                     [name: string]: unknown
                 }
                 content: {
-                    'application/json;charset=UTF-8': components['schemas']['RsDataVoid']
+                    'application/json': components['schemas']['RsDataVoid']
                 }
             }
             /** @description Forbidden */
@@ -2212,7 +2214,7 @@ export interface operations {
                     [name: string]: unknown
                 }
                 content: {
-                    'application/json;charset=UTF-8': components['schemas']['ErrorResponse']
+                    'application/json': components['schemas']['ErrorResponse']
                 }
             }
             /** @description Not Found */
@@ -2230,7 +2232,7 @@ export interface operations {
                     [name: string]: unknown
                 }
                 content: {
-                    'application/json;charset=UTF-8': components['schemas']['ErrorResponse']
+                    'application/json': components['schemas']['ErrorResponse']
                 }
             }
         }
@@ -2252,7 +2254,7 @@ export interface operations {
                     [name: string]: unknown
                 }
                 content: {
-                    'application/json;charset=UTF-8': components['schemas']['RsDataBoolean']
+                    'application/json': components['schemas']['RsDataBoolean']
                 }
             }
             /** @description 파라미터 검증 오류 메시지 */
@@ -2261,7 +2263,7 @@ export interface operations {
                     [name: string]: unknown
                 }
                 content: {
-                    'application/json;charset=UTF-8': components['schemas']['RsDataBoolean']
+                    'application/json': components['schemas']['RsDataBoolean']
                 }
             }
             /** @description Forbidden */
@@ -2270,7 +2272,7 @@ export interface operations {
                     [name: string]: unknown
                 }
                 content: {
-                    'application/json;charset=UTF-8': components['schemas']['ErrorResponse']
+                    'application/json': components['schemas']['ErrorResponse']
                 }
             }
             /** @description Internal Server Error */
@@ -2279,7 +2281,7 @@ export interface operations {
                     [name: string]: unknown
                 }
                 content: {
-                    'application/json;charset=UTF-8': components['schemas']['ErrorResponse']
+                    'application/json': components['schemas']['ErrorResponse']
                 }
             }
         }
@@ -2301,7 +2303,7 @@ export interface operations {
                     [name: string]: unknown
                 }
                 content: {
-                    'application/json;charset=UTF-8': components['schemas']['RsDataObject']
+                    'application/json': components['schemas']['RsDataObject']
                 }
             }
             /** @description 파라미터 검증 오류 메시지 */
@@ -2310,7 +2312,7 @@ export interface operations {
                     [name: string]: unknown
                 }
                 content: {
-                    'application/json;charset=UTF-8': components['schemas']['RsDataObject']
+                    'application/json': components['schemas']['RsDataObject']
                 }
             }
             /** @description Forbidden */
@@ -2319,7 +2321,7 @@ export interface operations {
                     [name: string]: unknown
                 }
                 content: {
-                    'application/json;charset=UTF-8': components['schemas']['ErrorResponse']
+                    'application/json': components['schemas']['ErrorResponse']
                 }
             }
             /** @description Not Found */
@@ -2346,7 +2348,7 @@ export interface operations {
                     [name: string]: unknown
                 }
                 content: {
-                    'application/json;charset=UTF-8': components['schemas']['ErrorResponse']
+                    'application/json': components['schemas']['ErrorResponse']
                 }
             }
         }
@@ -2366,7 +2368,7 @@ export interface operations {
                     [name: string]: unknown
                 }
                 content: {
-                    'application/json;charset=UTF-8': components['schemas']['RsDataListExpressionBookResponse']
+                    'application/json': components['schemas']['RsDataListExpressionBookResponse']
                 }
             }
             /** @description Forbidden */
@@ -2375,7 +2377,7 @@ export interface operations {
                     [name: string]: unknown
                 }
                 content: {
-                    'application/json;charset=UTF-8': components['schemas']['ErrorResponse']
+                    'application/json': components['schemas']['ErrorResponse']
                 }
             }
             /** @description Not Found */
@@ -2393,7 +2395,7 @@ export interface operations {
                     [name: string]: unknown
                 }
                 content: {
-                    'application/json;charset=UTF-8': components['schemas']['ErrorResponse']
+                    'application/json': components['schemas']['ErrorResponse']
                 }
             }
         }
@@ -2417,7 +2419,7 @@ export interface operations {
                     [name: string]: unknown
                 }
                 content: {
-                    'application/json;charset=UTF-8': components['schemas']['RsDataExpressionBookResponse']
+                    'application/json': components['schemas']['RsDataExpressionBookResponse']
                 }
             }
             /** @description Bad Request */
@@ -2453,7 +2455,7 @@ export interface operations {
                     [name: string]: unknown
                 }
                 content: {
-                    'application/json;charset=UTF-8': components['schemas']['ErrorResponse']
+                    'application/json': components['schemas']['ErrorResponse']
                 }
             }
         }
@@ -2479,7 +2481,7 @@ export interface operations {
                     [name: string]: unknown
                 }
                 content: {
-                    'application/json;charset=UTF-8': components['schemas']['RsDataObject']
+                    'application/json': components['schemas']['RsDataObject']
                 }
             }
             /** @description Forbidden */
@@ -2488,7 +2490,7 @@ export interface operations {
                     [name: string]: unknown
                 }
                 content: {
-                    'application/json;charset=UTF-8': components['schemas']['ErrorResponse']
+                    'application/json': components['schemas']['ErrorResponse']
                 }
             }
             /** @description Not Found */
@@ -2530,7 +2532,7 @@ export interface operations {
                     [name: string]: unknown
                 }
                 content: {
-                    'application/json;charset=UTF-8': components['schemas']['RsDataVoid']
+                    'application/json': components['schemas']['RsDataVoid']
                 }
             }
             /** @description Forbidden */
@@ -2539,7 +2541,7 @@ export interface operations {
                     [name: string]: unknown
                 }
                 content: {
-                    'application/json;charset=UTF-8': components['schemas']['ErrorResponse']
+                    'application/json': components['schemas']['ErrorResponse']
                 }
             }
             /** @description Not Found */
@@ -2557,7 +2559,7 @@ export interface operations {
                     [name: string]: unknown
                 }
                 content: {
-                    'application/json;charset=UTF-8': components['schemas']['ErrorResponse']
+                    'application/json': components['schemas']['ErrorResponse']
                 }
             }
         }
@@ -2581,7 +2583,7 @@ export interface operations {
                     [name: string]: unknown
                 }
                 content: {
-                    'application/json;charset=UTF-8': components['schemas']['RsDataVoid']
+                    'application/json': components['schemas']['RsDataVoid']
                 }
             }
             /** @description Forbidden */
@@ -2608,7 +2610,7 @@ export interface operations {
                     [name: string]: unknown
                 }
                 content: {
-                    'application/json;charset=UTF-8': components['schemas']['ErrorResponse']
+                    'application/json': components['schemas']['ErrorResponse']
                 }
             }
         }
@@ -2628,7 +2630,7 @@ export interface operations {
                     [name: string]: unknown
                 }
                 content: {
-                    'application/json;charset=UTF-8': components['schemas']['RsDataLevelCheckResponse']
+                    'application/json': components['schemas']['RsDataLevelCheckResponse']
                 }
             }
             /** @description Bad Request */
@@ -2646,7 +2648,7 @@ export interface operations {
                     [name: string]: unknown
                 }
                 content: {
-                    'application/json;charset=UTF-8': components['schemas']['ErrorResponse']
+                    'application/json': components['schemas']['ErrorResponse']
                 }
             }
             /** @description Not Found */
@@ -2686,7 +2688,7 @@ export interface operations {
                     [name: string]: unknown
                 }
                 content: {
-                    'application/json;charset=UTF-8': components['schemas']['RsDataVoid']
+                    'application/json': components['schemas']['RsDataVoid']
                 }
             }
             /** @description Forbidden */
@@ -2704,7 +2706,7 @@ export interface operations {
                     [name: string]: unknown
                 }
                 content: {
-                    'application/json;charset=UTF-8': components['schemas']['ErrorResponse']
+                    'application/json': components['schemas']['ErrorResponse']
                 }
             }
         }
@@ -2730,7 +2732,7 @@ export interface operations {
                     [name: string]: unknown
                 }
                 content: {
-                    'application/json;charset=UTF-8': components['schemas']['RsDataVoid']
+                    'application/json': components['schemas']['RsDataVoid']
                 }
             }
             /** @description Forbidden */
@@ -2748,7 +2750,7 @@ export interface operations {
                     [name: string]: unknown
                 }
                 content: {
-                    'application/json;charset=UTF-8': components['schemas']['ErrorResponse']
+                    'application/json': components['schemas']['ErrorResponse']
                 }
             }
         }
@@ -2772,7 +2774,7 @@ export interface operations {
                     [name: string]: unknown
                 }
                 content: {
-                    'application/json;charset=UTF-8': components['schemas']['RsDataVoid']
+                    'application/json': components['schemas']['RsDataVoid']
                 }
             }
             /** @description Forbidden */
@@ -2799,7 +2801,7 @@ export interface operations {
                     [name: string]: unknown
                 }
                 content: {
-                    'application/json;charset=UTF-8': components['schemas']['ErrorResponse']
+                    'application/json': components['schemas']['ErrorResponse']
                 }
             }
         }
@@ -2811,7 +2813,7 @@ export interface operations {
                  * @description 변경할 언어
                  * @example ENGLISH
                  */
-                language: 'ENGLISH' | 'JAPANESE' | 'NONE'
+                language: 'ENGLISH' | 'JAPANESE' | 'NONE' | 'ALL'
             }
             header?: never
             path?: never
@@ -2825,7 +2827,7 @@ export interface operations {
                     [name: string]: unknown
                 }
                 content: {
-                    'application/json;charset=UTF-8': components['schemas']['RsDataObject']
+                    'application/json': components['schemas']['RsDataObject']
                 }
             }
             /** @description Forbidden */
@@ -2834,7 +2836,7 @@ export interface operations {
                     [name: string]: unknown
                 }
                 content: {
-                    'application/json;charset=UTF-8': components['schemas']['ErrorResponse']
+                    'application/json': components['schemas']['ErrorResponse']
                 }
             }
             /** @description Not Found */
@@ -2861,7 +2863,7 @@ export interface operations {
                     [name: string]: unknown
                 }
                 content: {
-                    'application/json;charset=UTF-8': components['schemas']['ErrorResponse']
+                    'application/json': components['schemas']['ErrorResponse']
                 }
             }
         }
@@ -2881,7 +2883,7 @@ export interface operations {
                     [name: string]: unknown
                 }
                 content: {
-                    'application/json;charset=UTF-8': components['schemas']['UserProfileResponse']
+                    'application/json': components['schemas']['UserProfileResponse']
                 }
             }
             /** @description Forbidden */
@@ -2890,7 +2892,7 @@ export interface operations {
                     [name: string]: unknown
                 }
                 content: {
-                    'application/json;charset=UTF-8': components['schemas']['ErrorResponse']
+                    'application/json': components['schemas']['ErrorResponse']
                 }
             }
             /** @description Not Found */
@@ -2908,7 +2910,7 @@ export interface operations {
                     [name: string]: unknown
                 }
                 content: {
-                    'application/json;charset=UTF-8': components['schemas']['ErrorResponse']
+                    'application/json': components['schemas']['ErrorResponse']
                 }
             }
         }
@@ -2928,7 +2930,7 @@ export interface operations {
                     [name: string]: unknown
                 }
                 content: {
-                    'application/json;charset=UTF-8': components['schemas']['RsDataVoid']
+                    'application/json': components['schemas']['RsDataVoid']
                 }
             }
             /** @description Forbidden */
@@ -2937,7 +2939,7 @@ export interface operations {
                     [name: string]: unknown
                 }
                 content: {
-                    'application/json;charset=UTF-8': components['schemas']['ErrorResponse']
+                    'application/json': components['schemas']['ErrorResponse']
                 }
             }
             /** @description Not Found */
@@ -2964,7 +2966,7 @@ export interface operations {
                     [name: string]: unknown
                 }
                 content: {
-                    'application/json;charset=UTF-8': components['schemas']['ErrorResponse']
+                    'application/json': components['schemas']['ErrorResponse']
                 }
             }
         }
@@ -2995,7 +2997,7 @@ export interface operations {
                     [name: string]: unknown
                 }
                 content: {
-                    'application/json;charset=UTF-8': components['schemas']['ErrorResponse']
+                    'application/json': components['schemas']['ErrorResponse']
                 }
             }
             /** @description Not Found */
@@ -3022,7 +3024,7 @@ export interface operations {
                     [name: string]: unknown
                 }
                 content: {
-                    'application/json;charset=UTF-8': components['schemas']['ErrorResponse']
+                    'application/json': components['schemas']['ErrorResponse']
                 }
             }
         }
@@ -3049,7 +3051,7 @@ export interface operations {
                     [name: string]: unknown
                 }
                 content: {
-                    'application/json;charset=UTF-8': string
+                    'application/json': string
                 }
             }
             /** @description Bad Request */
@@ -3067,7 +3069,7 @@ export interface operations {
                     [name: string]: unknown
                 }
                 content: {
-                    'application/json;charset=UTF-8': components['schemas']['ErrorResponse']
+                    'application/json': components['schemas']['ErrorResponse']
                 }
             }
             /** @description Not Found */
@@ -3085,7 +3087,7 @@ export interface operations {
                     [name: string]: unknown
                 }
                 content: {
-                    'application/json;charset=UTF-8': components['schemas']['ErrorResponse']
+                    'application/json': components['schemas']['ErrorResponse']
                 }
             }
         }
@@ -3107,7 +3109,7 @@ export interface operations {
                     [name: string]: unknown
                 }
                 content: {
-                    'application/json;charset=UTF-8': components['schemas']['RsDataObject']
+                    'application/json': components['schemas']['RsDataObject']
                 }
             }
             /** @description Forbidden */
@@ -3134,7 +3136,7 @@ export interface operations {
                     [name: string]: unknown
                 }
                 content: {
-                    'application/json;charset=UTF-8': components['schemas']['ErrorResponse']
+                    'application/json': components['schemas']['ErrorResponse']
                 }
             }
         }
@@ -3160,7 +3162,7 @@ export interface operations {
                     [name: string]: unknown
                 }
                 content: {
-                    'application/json;charset=UTF-8': components['schemas']['RsDataObject']
+                    'application/json': components['schemas']['RsDataObject']
                 }
             }
             /** @description Forbidden */
@@ -3187,7 +3189,7 @@ export interface operations {
                     [name: string]: unknown
                 }
                 content: {
-                    'application/json;charset=UTF-8': components['schemas']['ErrorResponse']
+                    'application/json': components['schemas']['ErrorResponse']
                 }
             }
         }
@@ -3211,7 +3213,7 @@ export interface operations {
                     [name: string]: unknown
                 }
                 content: {
-                    'application/json;charset=UTF-8': components['schemas']['RsDataVoid']
+                    'application/json': components['schemas']['RsDataVoid']
                 }
             }
             /** @description Forbidden */
@@ -3238,7 +3240,7 @@ export interface operations {
                     [name: string]: unknown
                 }
                 content: {
-                    'application/json;charset=UTF-8': components['schemas']['ErrorResponse']
+                    'application/json': components['schemas']['ErrorResponse']
                 }
             }
         }
@@ -3262,7 +3264,7 @@ export interface operations {
                     [name: string]: unknown
                 }
                 content: {
-                    'application/json;charset=UTF-8': components['schemas']['RsDataVoid']
+                    'application/json': components['schemas']['RsDataVoid']
                 }
             }
             /** @description Forbidden */
@@ -3271,7 +3273,7 @@ export interface operations {
                     [name: string]: unknown
                 }
                 content: {
-                    'application/json;charset=UTF-8': components['schemas']['ErrorResponse']
+                    'application/json': components['schemas']['ErrorResponse']
                 }
             }
             /** @description Not Found */
@@ -3289,7 +3291,7 @@ export interface operations {
                     [name: string]: unknown
                 }
                 content: {
-                    'application/json;charset=UTF-8': components['schemas']['ErrorResponse']
+                    'application/json': components['schemas']['ErrorResponse']
                 }
             }
         }
@@ -3311,7 +3313,7 @@ export interface operations {
                     [name: string]: unknown
                 }
                 content: {
-                    'application/json;charset=UTF-8': components['schemas']['RsDataWordSearchResponse']
+                    'application/json': components['schemas']['RsDataWordSearchResponse']
                 }
             }
             /** @description Forbidden */
@@ -3320,7 +3322,7 @@ export interface operations {
                     [name: string]: unknown
                 }
                 content: {
-                    'application/json;charset=UTF-8': components['schemas']['ErrorResponse']
+                    'application/json': components['schemas']['ErrorResponse']
                 }
             }
             /** @description Not Found */
@@ -3338,7 +3340,7 @@ export interface operations {
                     [name: string]: unknown
                 }
                 content: {
-                    'application/json;charset=UTF-8': components['schemas']['ErrorResponse']
+                    'application/json': components['schemas']['ErrorResponse']
                 }
             }
         }
@@ -3360,7 +3362,7 @@ export interface operations {
                     [name: string]: unknown
                 }
                 content: {
-                    'application/json;charset=UTF-8': components['schemas']['RsDataWordQuizResponse']
+                    'application/json': components['schemas']['RsDataWordQuizResponse']
                 }
             }
             /** @description Bad Request */
@@ -3387,7 +3389,7 @@ export interface operations {
                     [name: string]: unknown
                 }
                 content: {
-                    'application/json;charset=UTF-8': components['schemas']['ErrorResponse']
+                    'application/json': components['schemas']['ErrorResponse']
                 }
             }
         }
@@ -3409,7 +3411,7 @@ export interface operations {
                     [name: string]: unknown
                 }
                 content: {
-                    'application/json;charset=UTF-8': components['schemas']['RsDataListWordResponse']
+                    'application/json': components['schemas']['RsDataListWordResponse']
                 }
             }
             /** @description Forbidden */
@@ -3436,7 +3438,7 @@ export interface operations {
                     [name: string]: unknown
                 }
                 content: {
-                    'application/json;charset=UTF-8': components['schemas']['ErrorResponse']
+                    'application/json': components['schemas']['ErrorResponse']
                 }
             }
         }
@@ -3458,7 +3460,7 @@ export interface operations {
                     [name: string]: unknown
                 }
                 content: {
-                    'application/json;charset=UTF-8': components['schemas']['RsDataListWordResponse']
+                    'application/json': components['schemas']['RsDataListWordResponse']
                 }
             }
             /** @description Forbidden */
@@ -3467,7 +3469,7 @@ export interface operations {
                     [name: string]: unknown
                 }
                 content: {
-                    'application/json;charset=UTF-8': components['schemas']['ErrorResponse']
+                    'application/json': components['schemas']['ErrorResponse']
                 }
             }
             /** @description Not Found */
@@ -3485,7 +3487,7 @@ export interface operations {
                     [name: string]: unknown
                 }
                 content: {
-                    'application/json;charset=UTF-8': components['schemas']['ErrorResponse']
+                    'application/json': components['schemas']['ErrorResponse']
                 }
             }
         }
@@ -3505,7 +3507,7 @@ export interface operations {
                     [name: string]: unknown
                 }
                 content: {
-                    'application/json;charset=UTF-8': components['schemas']['RsDataWordQuizResponse']
+                    'application/json': components['schemas']['RsDataWordQuizResponse']
                 }
             }
             /** @description Bad Request */
@@ -3523,7 +3525,7 @@ export interface operations {
                     [name: string]: unknown
                 }
                 content: {
-                    'application/json;charset=UTF-8': components['schemas']['ErrorResponse']
+                    'application/json': components['schemas']['ErrorResponse']
                 }
             }
             /** @description Internal Server Error */
@@ -3532,7 +3534,7 @@ export interface operations {
                     [name: string]: unknown
                 }
                 content: {
-                    'application/json;charset=UTF-8': components['schemas']['ErrorResponse']
+                    'application/json': components['schemas']['ErrorResponse']
                 }
             }
         }
@@ -3554,7 +3556,7 @@ export interface operations {
                     [name: string]: unknown
                 }
                 content: {
-                    'application/json;charset=UTF-8': components['schemas']['RsDataAnalyzeVideoResponse']
+                    'application/json': components['schemas']['RsDataAnalyzeVideoResponse']
                 }
             }
             /** @description Forbidden */
@@ -3563,7 +3565,7 @@ export interface operations {
                     [name: string]: unknown
                 }
                 content: {
-                    'application/json;charset=UTF-8': components['schemas']['ErrorResponse']
+                    'application/json': components['schemas']['ErrorResponse']
                 }
             }
             /** @description Internal Server Error */
@@ -3594,7 +3596,7 @@ export interface operations {
                     [name: string]: unknown
                 }
                 content: {
-                    'application/json;charset=UTF-8': components['schemas']['RsDataVideoLearningWordQuizListResponse']
+                    'application/json': components['schemas']['RsDataVideoLearningWordQuizListResponse']
                 }
             }
             /** @description Forbidden */
@@ -3603,7 +3605,7 @@ export interface operations {
                     [name: string]: unknown
                 }
                 content: {
-                    'application/json;charset=UTF-8': components['schemas']['ErrorResponse']
+                    'application/json': components['schemas']['ErrorResponse']
                 }
             }
             /** @description Not Found */
@@ -3621,7 +3623,7 @@ export interface operations {
                     [name: string]: unknown
                 }
                 content: {
-                    'application/json;charset=UTF-8': components['schemas']['ErrorResponse']
+                    'application/json': components['schemas']['ErrorResponse']
                 }
             }
         }
@@ -3643,7 +3645,7 @@ export interface operations {
                     [name: string]: unknown
                 }
                 content: {
-                    'application/json;charset=UTF-8': components['schemas']['RsDataVideoLearningExpressionQuizListResponse']
+                    'application/json': components['schemas']['RsDataVideoLearningExpressionQuizListResponse']
                 }
             }
             /** @description Forbidden */
@@ -3652,7 +3654,7 @@ export interface operations {
                     [name: string]: unknown
                 }
                 content: {
-                    'application/json;charset=UTF-8': components['schemas']['ErrorResponse']
+                    'application/json': components['schemas']['ErrorResponse']
                 }
             }
             /** @description Not Found */
@@ -3670,7 +3672,7 @@ export interface operations {
                     [name: string]: unknown
                 }
                 content: {
-                    'application/json;charset=UTF-8': components['schemas']['ErrorResponse']
+                    'application/json': components['schemas']['ErrorResponse']
                 }
             }
         }
@@ -3694,7 +3696,7 @@ export interface operations {
                     [name: string]: unknown
                 }
                 content: {
-                    'application/json;charset=UTF-8': components['schemas']['RsDataListVideoResponse']
+                    'application/json': components['schemas']['RsDataListVideoResponse']
                 }
             }
             /** @description Bad Request */
@@ -3712,7 +3714,7 @@ export interface operations {
                     [name: string]: unknown
                 }
                 content: {
-                    'application/json;charset=UTF-8': components['schemas']['ErrorResponse']
+                    'application/json': components['schemas']['ErrorResponse']
                 }
             }
             /** @description Not Found */
@@ -3750,7 +3752,7 @@ export interface operations {
                     [name: string]: unknown
                 }
                 content: {
-                    'application/json;charset=UTF-8': components['schemas']['RsDataListVideoHistoryResponse']
+                    'application/json': components['schemas']['RsDataListVideoHistoryResponse']
                 }
             }
             /** @description Forbidden */
@@ -3759,7 +3761,7 @@ export interface operations {
                     [name: string]: unknown
                 }
                 content: {
-                    'application/json;charset=UTF-8': components['schemas']['ErrorResponse']
+                    'application/json': components['schemas']['ErrorResponse']
                 }
             }
             /** @description Not Found */
@@ -3797,7 +3799,7 @@ export interface operations {
                     [name: string]: unknown
                 }
                 content: {
-                    'application/json;charset=UTF-8': components['schemas']['RsDataListVideoHistoryResponse']
+                    'application/json': components['schemas']['RsDataListVideoHistoryResponse']
                 }
             }
             /** @description Forbidden */
@@ -3806,7 +3808,7 @@ export interface operations {
                     [name: string]: unknown
                 }
                 content: {
-                    'application/json;charset=UTF-8': components['schemas']['ErrorResponse']
+                    'application/json': components['schemas']['ErrorResponse']
                 }
             }
             /** @description Not Found */
@@ -3844,7 +3846,7 @@ export interface operations {
                     [name: string]: unknown
                 }
                 content: {
-                    'application/json;charset=UTF-8': components['schemas']['RsDataObject']
+                    'application/json': components['schemas']['RsDataObject']
                 }
             }
             /** @description Unauthorized */
@@ -3862,7 +3864,7 @@ export interface operations {
                     [name: string]: unknown
                 }
                 content: {
-                    'application/json;charset=UTF-8': components['schemas']['ErrorResponse']
+                    'application/json': components['schemas']['ErrorResponse']
                 }
             }
             /** @description Internal Server Error */
@@ -3871,7 +3873,7 @@ export interface operations {
                     [name: string]: unknown
                 }
                 content: {
-                    'application/json;charset=UTF-8': components['schemas']['ErrorResponse']
+                    'application/json': components['schemas']['ErrorResponse']
                 }
             }
         }
@@ -3893,7 +3895,7 @@ export interface operations {
                     [name: string]: unknown
                 }
                 content: {
-                    'application/json;charset=UTF-8': components['schemas']['RsDataListExpressionResponse']
+                    'application/json': components['schemas']['RsDataListExpressionResponse']
                 }
             }
             /** @description Forbidden */
@@ -3920,7 +3922,7 @@ export interface operations {
                     [name: string]: unknown
                 }
                 content: {
-                    'application/json;charset=UTF-8': components['schemas']['ErrorResponse']
+                    'application/json': components['schemas']['ErrorResponse']
                 }
             }
         }
@@ -3942,7 +3944,7 @@ export interface operations {
                     [name: string]: unknown
                 }
                 content: {
-                    'application/json;charset=UTF-8': components['schemas']['RsDataExpressionQuizResponse']
+                    'application/json': components['schemas']['RsDataExpressionQuizResponse']
                 }
             }
             /** @description Bad Request */
@@ -3969,7 +3971,7 @@ export interface operations {
                     [name: string]: unknown
                 }
                 content: {
-                    'application/json;charset=UTF-8': components['schemas']['ErrorResponse']
+                    'application/json': components['schemas']['ErrorResponse']
                 }
             }
         }
@@ -3991,7 +3993,7 @@ export interface operations {
                     [name: string]: unknown
                 }
                 content: {
-                    'application/json;charset=UTF-8': components['schemas']['RsDataListExpressionResponse']
+                    'application/json': components['schemas']['RsDataListExpressionResponse']
                 }
             }
             /** @description Forbidden */
@@ -4000,7 +4002,7 @@ export interface operations {
                     [name: string]: unknown
                 }
                 content: {
-                    'application/json;charset=UTF-8': components['schemas']['ErrorResponse']
+                    'application/json': components['schemas']['ErrorResponse']
                 }
             }
             /** @description Internal Server Error */
@@ -4009,7 +4011,7 @@ export interface operations {
                     [name: string]: unknown
                 }
                 content: {
-                    'application/json;charset=UTF-8': components['schemas']['ErrorResponse']
+                    'application/json': components['schemas']['ErrorResponse']
                 }
             }
         }
@@ -4029,7 +4031,7 @@ export interface operations {
                     [name: string]: unknown
                 }
                 content: {
-                    'application/json;charset=UTF-8': components['schemas']['RsDataStatisticResponse']
+                    'application/json': components['schemas']['RsDataStatisticResponse']
                 }
             }
             /** @description Forbidden */
@@ -4038,7 +4040,7 @@ export interface operations {
                     [name: string]: unknown
                 }
                 content: {
-                    'application/json;charset=UTF-8': components['schemas']['ErrorResponse']
+                    'application/json': components['schemas']['ErrorResponse']
                 }
             }
             /** @description Not Found */
@@ -4056,7 +4058,7 @@ export interface operations {
                     [name: string]: unknown
                 }
                 content: {
-                    'application/json;charset=UTF-8': components['schemas']['ErrorResponse']
+                    'application/json': components['schemas']['ErrorResponse']
                 }
             }
         }
@@ -4076,7 +4078,7 @@ export interface operations {
                     [name: string]: unknown
                 }
                 content: {
-                    'application/json;charset=UTF-8': components['schemas']['RsDataLearningHistoryResponse']
+                    'application/json': components['schemas']['RsDataLearningHistoryResponse']
                 }
             }
             /** @description Forbidden */
@@ -4085,7 +4087,7 @@ export interface operations {
                     [name: string]: unknown
                 }
                 content: {
-                    'application/json;charset=UTF-8': components['schemas']['ErrorResponse']
+                    'application/json': components['schemas']['ErrorResponse']
                 }
             }
             /** @description Not Found */
@@ -4103,7 +4105,7 @@ export interface operations {
                     [name: string]: unknown
                 }
                 content: {
-                    'application/json;charset=UTF-8': components['schemas']['ErrorResponse']
+                    'application/json': components['schemas']['ErrorResponse']
                 }
             }
         }
@@ -4125,7 +4127,7 @@ export interface operations {
                     [name: string]: unknown
                 }
                 content: {
-                    'application/json;charset=UTF-8': string
+                    'application/json': string
                 }
             }
             /** @description Forbidden */
@@ -4134,7 +4136,7 @@ export interface operations {
                     [name: string]: unknown
                 }
                 content: {
-                    'application/json;charset=UTF-8': components['schemas']['ErrorResponse']
+                    'application/json': components['schemas']['ErrorResponse']
                 }
             }
             /** @description Internal Server Error */
@@ -4143,7 +4145,7 @@ export interface operations {
                     [name: string]: unknown
                 }
                 content: {
-                    'application/json;charset=UTF-8': components['schemas']['ErrorResponse']
+                    'application/json': components['schemas']['ErrorResponse']
                 }
             }
         }

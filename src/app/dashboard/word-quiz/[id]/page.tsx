@@ -5,6 +5,7 @@ import client from '@/lib/backend/client'
 import Image from 'next/image'
 import { useParams, useSearchParams } from 'next/navigation'
 import { useEffect, useRef, useState } from 'react'
+import { mockQuizData } from './mockdata'
 
 interface Word {
     word: string
@@ -170,6 +171,11 @@ export default function WordQuiz() {
         const fetchQuizWords = async () => {
             try {
                 setIsLoading(true)
+                // 목데이터 사용
+                setWords(mockQuizData.words)
+                setIsLoading(false)
+
+                /*
                 const { data } = await client.GET('/api/v1/wordbooks/{wordbookId}/words', {
                     params: {
                         path: {
@@ -191,7 +197,7 @@ export default function WordQuiz() {
 
                     setWords(apiWords)
                 }
-                setIsLoading(false)
+                */
             } catch (error) {
                 console.error('퀴즈 데이터를 가져오는데 실패했습니다:', error)
                 setIsLoading(false)

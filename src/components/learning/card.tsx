@@ -15,8 +15,8 @@ interface Props {
 export default function Card({ wordbooks, isLoading = false }: Props) {
     const router = useRouter()
     const pathname = usePathname()
-    const isGrammar = pathname.startsWith('/grammar')
-    const basePath = isGrammar ? 'grammar' : 'word'
+    const isGrammar = pathname.startsWith('/dashboard/grammar')
+    const basePath = isGrammar ? 'dashboard/grammar' : 'dashboard/word'
 
     if (isLoading) {
         return (
