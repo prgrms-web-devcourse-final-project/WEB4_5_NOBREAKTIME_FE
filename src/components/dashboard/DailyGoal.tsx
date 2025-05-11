@@ -34,12 +34,12 @@ export default function DailyGoal() {
     }
 
     return (
-        <div className="flex flex-col items-center w-full">
+        <div className="flex flex-col items-center w-full h-full relative">
             <div className="flex items-center gap-4 text-sm mb-6 w-full">
                 <GoalItem label="영상" options={[10, 20, 30]} value={videoGoal} onChange={handleVideoGoalChange} />
                 <GoalItem label="단어" options={[30, 50, 100]} value={wordGoal} onChange={handleWordGoalChange} />
             </div>
-            <div className="w-56 h-56 flex items-center justify-center relative">
+            <div className="flex-1 flex items-center justify-center absolute top-[-50px] bottom-0 left-0 right-0">
                 <ChartContainer config={{ goal: { color: '#3B82F6', label: '달성률' } }}>
                     <div className="w-56 h-56 relative">
                         <RePieChart width={224} height={224}>

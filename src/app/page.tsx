@@ -44,7 +44,7 @@ export default function Home() {
                 <section className="bg-main h-[800px] flex justify-center items-center px-10">
                     <Image src="/assets/img-item01.png" alt="item" width={700} height={500} />
                     <div className="flex flex-col gap-10">
-                        <div>
+                        <div className="flex flex-col gap-10">
                             <p className="text-[var(--color-white)] text-4xl font-bold">
                                 좋아하는 <strong className="text-[var(--color-point)]">영상</strong>으로 배우는 언어
                             </p>
@@ -56,7 +56,7 @@ export default function Home() {
                         <div className="flex gap-10 items-center">
                             <Image src="/assets/line-arrow.svg" alt="arrow" width={700} height={500} />
                             <button
-                                className="bg-[var(--color-point)] text-[var(--color-white)] text-4xl font-bold rounded-full px-10 py-5"
+                                className="bg-[var(--color-point)] text-[var(--color-white)] min-w-[300px] text-4xl font-bold rounded-full px-10 py-5"
                                 onClick={() => router.push('/login')}
                             >
                                 학습 바로가기
@@ -66,7 +66,7 @@ export default function Home() {
                 </section>
 
                 {/* 캐러셀 슬라이더 */}
-                <section className="flex flex-col gap-10 justify-center items-center text-center h-[800px] px-10">
+                <section className="flex flex-col gap-10 justify-center items-center text-center h-[600px] px-10">
                     <h3 className="text-[var(--color-black)] text-7xl font-bold leading-snug">
                         쉽게 배우는 영단어, 자연스러운 말하기!
                     </h3>
@@ -128,7 +128,7 @@ export default function Home() {
                 </section>
 
                 {/* 장점 섹션 */}
-                <section className="flex flex-row gap-40 justify-center items-center h-[800px] w-full px-20 bg-gradient-to-b from-[#F4F1FB] to-[#C8B8F1]">
+                <section className="flex flex-row gap-40 justify-center items-center h-[600px] w-full px-20 bg-gradient-to-b from-[#F4F1FB] to-[#C8B8F1]">
                     <div className="flex flex-col gap-10 max-w-[600px]">
                         <p className="text-2xl font-bold bg-[var(--color-main)] rounded-full text-white text-center py-3 px-6 w-fit">
                             실전 영어 학습

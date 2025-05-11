@@ -21,8 +21,8 @@ interface Props {
 
 export default function LearningCard({ title, descriptions, wordbooks, isLoading = false }: Props) {
     return (
-        <div className="flex gap-4 border border-[var(--color-main)] rounded-lg shadow-lg p-6">
-            <Image src="/character/character-word.png" alt="word" width={300} height={300} />
+        <div className="flex gap-4 border border-[var(--color-main)] rounded-lg shadow-lg p-4 h-[350px]">
+            <Image src="/character/character-word.png" alt="word" width={320} height={320} />
             <div className="flex-1 m-auto">
                 <h1 className="text-5xl font-bold mb-8">오늘 함께할 {title} 퀴즈는?</h1>
 

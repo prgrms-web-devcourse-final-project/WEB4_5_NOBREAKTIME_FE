@@ -32,14 +32,14 @@ export default function LearningHistory() {
 
     return (
         <div className="flex flex-col space-y-2 text-xs">
-            <h3 className="text-lg">Today</h3>
-            <div className="grid grid-cols-2 gap-4 w-full h-full flex-1">
+            <h3 className="text-md">Today</h3>
+            <div className="grid grid-cols-2 gap-2 flex-1">
                 {learningHistory.map((item) => (
                     <div
                         key={item.id}
-                        className="flex flex-col items-center gap-2 bg-[var(--color-sub-2)] p-5 rounded-lg p-2"
+                        className="flex flex-col h-[100px] items-center justify-center gap-2 bg-[var(--color-sub-2)] rounded-lg"
                     >
-                        <Image src={item.icon} alt={item.id} width={50} height={50} />
+                        <Image src={item.icon} alt={item.id} width={38} height={38} />
                         <span className="text-[var(--color-black)] text-lg font-bold">{item.time}</span>
                     </div>
                 ))}

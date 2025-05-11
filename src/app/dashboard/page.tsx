@@ -48,14 +48,14 @@ export default function DashboardPage() {
     }, [])
 
     return (
-        <>
-            <div className="flex items-center gap-2">
+        <div className="flex flex-col h-screen gap-2">
+            <div className="flex items-center gap-2 h-[40px]">
                 <h3 className="text-2xl font-bold text-[var(--color-black)]">Dashboard</h3>
             </div>
 
-            <div className="flex flex-1 gap-6 h-[calc(100vh-8rem)]">
+            <div className="flex min-h-0 h-[calc(100vh-150px)] p-2 overflow-y-auto">
                 {/* 본문 좌측: 인사말 + 목표 + 레벨 */}
-                <section className="flex-1 flex flex-col gap-6 border-r-2 border-[var(--color-sub-2)] pr-4 min-h-0 overflow-y-auto">
+                <section className="flex-1 h-full flex flex-col gap-6 border-r-2 border-[var(--color-sub-2)] pr-4">
                     {/* 인사말 + 오늘의 학습 */}
                     <div className="h-[320px] bg-white rounded-2xl flex justify-between items-center px-8 py-6 shadow-md border-2 border-[var(--color-sub-2)]">
                         <div>
@@ -88,19 +88,19 @@ export default function DashboardPage() {
                     </div>
 
                     {/* 목표 / 레벨 */}
-                    <div className="flex-1 grid grid-cols-2 gap-6 min-h-0">
+                    <div className="flex-1 grid grid-cols-2 gap-6">
                         {/* 하루 목표 */}
-                        <div className="flex flex-col bg-white p-6 rounded-2xl border-2 border-[var(--color-sub-2)] shadow-md h-[calc(100vh-28rem)]">
+                        <div className="flex flex-col bg-white p-6 rounded-2xl border-2 border-[var(--color-sub-2)] shadow-md">
                             <h3 className="text-3xl font-bold mb-4">👊 나의 하루 목표는?</h3>
-                            <div className="flex flex-col h-full ">
+                            <div className="flex flex-col h-full border">
                                 <DailyGoal />
                                 {/* TODO: 목표 달성 표시 그래프 영역 */}
-                                <div className="flex-1 rounded-lg"></div>
+                                {/* <div className="flex-1 rounded-lg border h-full"></div> */}
                             </div>
                         </div>
 
                         {/* 레벨 현황 */}
-                        <div className="flex flex-col bg-white p-6 rounded-2xl border-2 border-[var(--color-sub-2)] shadow-md h-[calc(100vh-28rem)]">
+                        <div className="flex flex-col bg-white p-6 rounded-2xl border-2 border-[var(--color-sub-2)] shadow-md">
                             <h3 className="text-3xl font-bold mb-4">🎓 나의 Level은?</h3>
                             <LevelBox
                                 statistics={userInfo}
@@ -124,14 +124,14 @@ export default function DashboardPage() {
                 </section>
 
                 {/* 우측 패널 */}
-                <section className="w-[400px] flex flex-col gap-6 pl-4 min-h-0 overflow-y-auto">
+                <section className="w-[400px] h-full flex flex-col gap-2 pl-4">
                     {/* 캘린더 */}
-                    <div className="flex-1 bg-[var(--color-white)] rounded-2xl p-6 shadow-md flex flex-col h-[calc(100vh-28rem)]">
+                    <div className="flex-1 bg-[var(--color-white)] rounded-2xl p-6 shadow-md flex flex-col">
                         <h3 className="text-lg font-bold mb-2">Calendar</h3>
                         <div className="flex-1">
                             <Calendar
                                 mode="single"
-                                className="h-full"
+                                className="w-full"
                                 classNames={{
                                     months: 'flex flex-col w-full',
                                     month: 'space-y-4 w-full',
@@ -161,12 +161,12 @@ export default function DashboardPage() {
                     </div>
 
                     {/* 학습 기록 */}
-                    <div className="flex-1 bg-white rounded-2xl p-6 shadow-md h-[calc(100vh-28rem)]">
+                    <div className="flex-1 bg-white rounded-2xl p-6 shadow-md">
                         <h3 className="text-lg font-bold mb-3">Learning History</h3>
                         <LearningHistory />
                     </div>
                 </section>
             </div>
-        </>
+        </div>
     )
 }

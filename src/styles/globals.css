@@ -89,6 +89,8 @@ body {
     background: var(--background);
     color: var(--foreground);
     font-family: var(--font-sans);
+    min-width: 1700px;
+    overflow-x: auto;
 }
 
 button {
@@ -98,6 +100,7 @@ button {
 /* 스크롤바 스타일링 */
 ::-webkit-scrollbar {
     width: 4px;
+    height: 4px;
 }
 
 ::-webkit-scrollbar-track {
@@ -119,6 +122,12 @@ button {
     background-image: url('/assets/Frame1.png');
     background-size: cover;
     background-position: top;
+    background-repeat: no-repeat;
+}
+.bg-image {
+    background-image: url('/assets/bg.jpg');
+    background-size: cover;
+    background-position: center;
     background-repeat: no-repeat;
 }
 

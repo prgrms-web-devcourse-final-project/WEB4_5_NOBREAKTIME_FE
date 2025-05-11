@@ -371,7 +371,7 @@ function VideoLearning({ video, analysisData: initialAnalysisData, onBack, isLoa
 
             <div className="flex flex-col gap-2 flex-1 overflow-hidden">
                 {/* 비디오 + 트랜스크립트 */}
-                <div className="flex flex-row gap-4 w-full h-[calc(100%-210px)]">
+                <div className="flex flex-row gap-4 w-full h-[calc(100%-310px)]">
                     <div className="w-full aspect-video bg-gray-300 rounded-sm overflow-hidden">
                         <iframe
                             ref={playerRef}
@@ -394,7 +394,7 @@ function VideoLearning({ video, analysisData: initialAnalysisData, onBack, isLoa
                 </div>
 
                 {/* 제목 + 부가기능 */}
-                <div className="flex justify-between items-center w-full h-20">
+                <div className="flex justify-between items-center w-full h-10">
                     <h3 className="flex-1">{video.title}</h3>
                     <div className="flex items-center gap-2">
                         <button onClick={() => setFontSize((prev) => Math.max(12, prev - 4))}>
