@@ -1,4 +1,4 @@
-export default function QuestionIcon({ className }: { className?: string }) {
+export default function ExpressionIcon({ className }: { className?: string }) {
     return (
         <svg
             width="42"

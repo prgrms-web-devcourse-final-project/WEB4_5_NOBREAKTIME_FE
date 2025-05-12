@@ -1,6 +1,6 @@
 import Image from 'next/image'
 
-export default function GrammarCard() {
+export default function ExpressionCard() {
     return (
         <div className="flex flex-wrap gap-4">
             {Array.from({ length: 20 }).map((_, idx) => (

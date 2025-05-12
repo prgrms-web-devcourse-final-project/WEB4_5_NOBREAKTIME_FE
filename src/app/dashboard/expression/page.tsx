@@ -2,11 +2,11 @@
 
 import DropdownCheckBox from '@/components/common/dropdownCheckBox'
 import Search from '@/components/common/search'
-import GrammarIcon from '@/components/icon/grammarIcon'
-import GrammarCard from '@/components/learning/grammarCard'
+import ExpressionIcon from '@/components/icon/expressionIcon'
+import ExpressionCard from '@/components/learning/expressionCard'
 import LearningCard from '@/components/learning/learningCard'
 
-export default function GrammarPage() {
+export default function ExpressionPage() {
     const wordbooks = [
         { id: 1, name: '기초 문법', language: 'ENGLISH' },
         { id: 2, name: '중급 문법', language: 'ENGLISH' },
@@ -17,14 +17,14 @@ export default function GrammarPage() {
         <>
             <div className="flex items-center gap-2">
                 <span className="text-[var(--color-main)]">
-                    <GrammarIcon />
+                    <ExpressionIcon />
                 </span>
-                <h3 className="text-2xl font-bold text-[var(--color-black)]">Grammar Learning</h3>
+                <h3 className="text-2xl font-bold text-[var(--color-black)]">Expression Learning</h3>
             </div>
 
             <div className="flex flex-col gap-6 bg-[var(--color-sub-2)] p-6 rounded-lg h-[calc(100vh-200px)]">
                 <div className="w-[80%] m-auto">
-                    <Search onSearch={() => {}} placeholder="grammar search..." />
+                    <Search onSearch={() => {}} placeholder="expression search..." />
                 </div>
 
                 <div className="flex-1">
@@ -47,7 +47,7 @@ export default function GrammarPage() {
 
                     {/* 카드 리스트 */}
                     <div className="flex-1 overflow-y-auto p-2">
-                        <GrammarCard />
+                        <ExpressionCard />
                     </div>
                 </div>
             </div>

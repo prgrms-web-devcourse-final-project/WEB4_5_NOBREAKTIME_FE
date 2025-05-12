@@ -1,11 +1,11 @@
 'use client'
 
-import GrammarIcon from '@/components/icon/grammarIcon'
+import ExpressionIcon from '@/components/icon/expressionIcon'
 import Image from 'next/image'
 import { useParams } from 'next/navigation'
 import { useEffect, useState } from 'react'
 
-const grammarQuizList = [
+const expressionQuizList = [
     { sentence: 'I abandoned my plan.', meaning: '나는 내 계획을 버렸다.', stars: 2 },
     { sentence: 'This policy benefits everyone.', meaning: '이 정책은 모두에게 이익이 된다.', stars: 3 },
     { sentence: 'Please focus on your work.', meaning: '일에 집중해 주세요.', stars: 1 },
@@ -13,20 +13,20 @@ const grammarQuizList = [
 
 type QuizMode = 'sentence' | 'meaning' | 'random'
 
-export default function GrammarQuiz() {
+export default function ExpressionQuiz() {
     const params = useParams()
     const selectedTitle = (params.title as string) || '제목 없음'
     const [index, setIndex] = useState(0)
     const [mode, setMode] = useState<QuizMode>('sentence')
     const [hiddenPart, setHiddenPart] = useState<'sentence' | 'meaning' | null>(null)
 
-    const [userInputs, setUserInputs] = useState<string[]>(Array(grammarQuizList.length).fill(''))
-    const [hintCounts, setHintCounts] = useState<number[]>(Array(grammarQuizList.length).fill(0))
-    const [correctStates, setCorrectStates] = useState<(boolean | null)[]>(Array(grammarQuizList.length).fill(null))
+    const [userInputs, setUserInputs] = useState<string[]>(Array(expressionQuizList.length).fill(''))
+    const [hintCounts, setHintCounts] = useState<number[]>(Array(expressionQuizList.length).fill(0))
+    const [correctStates, setCorrectStates] = useState<(boolean | null)[]>(Array(expressionQuizList.length).fill(null))
 
     const maxHint = 3
 
-    const current = grammarQuizList[index]
+    const current = expressionQuizList[index]
     const userInput = userInputs[index]
     const hintCount = hintCounts[index]
     const isCorrect = correctStates[index]
@@ -57,7 +57,7 @@ export default function GrammarQuiz() {
     }
 
     const handleNext = () => {
-        if (index < grammarQuizList.length - 1) setIndex(index + 1)
+        if (index < expressionQuizList.length - 1) setIndex(index + 1)
     }
 
     const handleHint = () => {
@@ -112,16 +112,16 @@ export default function GrammarQuiz() {
         <>
             <div className="flex items-center gap-2">
                 <span className="text-[var(--color-main)]">
-                    <GrammarIcon />
+                    <ExpressionIcon />
                 </span>
-                <h3 className="text-2xl font-bold text-[var(--color-black)]">Grammar Quiz</h3>
+                <h3 className="text-2xl font-bold text-[var(--color-black)]">Expression Quiz</h3>
             </div>
             <div className="bg-image p-20 flex flex-col gap-4 items-center">
                 <h1 className="text-5xl font-bold text-[var(--color-black)]">{selectedTitle} 문장 퀴즈</h1>
 
                 <div className="flex flex-row justify-between gap-4 w-180">
                     <div className="bg-[var(--color-main)] text-[var(--color-point)] px-4 py-2 rounded-sm">
-                        {index + 1} / {grammarQuizList.length}
+                        {index + 1} / {expressionQuizList.length}
                     </div>
 
                     <div className="flex gap-2">
@@ -214,7 +214,7 @@ export default function GrammarQuiz() {
                         <button
                             onClick={handleNext}
                             className="flex-1 flex items-center justify-center bg-[var(--color-sub-2)] border-[var(--color-main)] border-2 rounded-sm disabled:opacity-50"
-                            disabled={index === grammarQuizList.length - 1}
+                            disabled={index === expressionQuizList.length - 1}
                         >
                             <Image src="/assets/right.svg" alt="right" width={40} height={40} />
                         </button>

@@ -6,7 +6,7 @@ import { usePathname } from 'next/navigation'
 import React from 'react'
 import BookmarkIcon from '../icon/bookmarkIcon'
 import DashboardIcon from '../icon/dashboardIcon'
-import QuestionIcon from '../icon/grammarIcon'
+import ExpressionIcon from '../icon/expressionIcon'
 import VideoIcon from '../icon/videoIcon'
 import AbcIcon from '../icon/wordIcon'
 
@@ -41,10 +41,10 @@ function Nav() {
                 active={pathname === '/dashboard/word-learning'}
             />
             <NavItem
-                icon={<QuestionIcon />}
-                label="Grammar Learning"
-                href="/dashboard/grammar"
-                active={pathname === '/dashboard/grammar'}
+                icon={<ExpressionIcon />}
+                label="Expression Learning"
+                href="/dashboard/expression"
+                active={pathname === '/dashboard/expression'}
             />
         </nav>
     )

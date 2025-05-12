@@ -1,5 +1,5 @@
-import { useRouter, usePathname } from 'next/navigation'
 import Image from 'next/image'
+import { usePathname, useRouter } from 'next/navigation'
 interface Wordbook {
     id: number
     name: string
@@ -15,8 +15,8 @@ interface Props {
 export default function Card({ wordbooks, isLoading = false }: Props) {
     const router = useRouter()
     const pathname = usePathname()
-    const isGrammar = pathname.startsWith('/dashboard/grammar')
-    const basePath = isGrammar ? 'dashboard/grammar' : 'dashboard/word'
+    const isExpression = pathname.startsWith('/dashboard/expression')
+    const basePath = isExpression ? 'dashboard/expression' : 'dashboard/word'
 
     if (isLoading) {
         return (
@@ -56,7 +56,7 @@ export default function Card({ wordbooks, isLoading = false }: Props) {
 
                         {/* 버튼 영역 */}
                         <div className="flex justify-end gap-2">
-                            {!isGrammar && (
+                            {!isExpression && (
                                 <button
                                     className="bg-[var(--color-main)] text-white px-3 py-1 rounded text-sm"
                                     onClick={() =>
