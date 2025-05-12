@@ -1,12 +1,31 @@
 'use client'
 
+import { Button } from '@/components/ui/button'
+import { Dialog, DialogContent, DialogFooter, DialogHeader, DialogTitle } from '@/components/ui/dialog'
+import { Input } from '@/components/ui/input'
+import client from '@/lib/backend/client'
 import { useGlobalLoginMember } from '@/stores/auth/loginMember'
+import { Pencil } from 'lucide-react'
 import Image from 'next/image'
 import { useState } from 'react'
 
+type Language = 'ENGLISH' | 'JAPANESE' | 'NONE'
+
+const LANGUAGES = [
+    { code: 'ENGLISH' as Language, label: '영어', image: '/assets/america.svg' },
+    { code: 'JAPANESE' as Language, label: '일본어', image: '/assets/japan.svg' },
+    { code: 'NONE' as Language, label: '중국어', image: '/assets/china.svg' },
+]
+
 export default function MyPage() {
-    const { loginMember } = useGlobalLoginMember()
+    const { loginMember, setLoginMember } = useGlobalLoginMember()
     const [profileImage, setProfileImage] = useState(loginMember?.profileImage || '/assets/user.svg')
+    const [isModalOpen, setIsModalOpen] = useState(false)
+    const [isLanguageModalOpen, setIsLanguageModalOpen] = useState(false)
+    const [nickname, setNickname] = useState(loginMember?.nickname || '')
+    const [selectedLanguage, setSelectedLanguage] = useState<Language>(loginMember?.language || 'NONE')
+    const [isLoading, setIsLoading] = useState(false)
+    const [isLanguageLoading, setIsLanguageLoading] = useState(false)
 
     const getSocialIcon = (email: string) => {
         if (email.includes('@kakao.com')) return '/logo/kakao.png'
@@ -25,6 +44,75 @@ export default function MyPage() {
         if (file) {
             const imageUrl = URL.createObjectURL(file)
             setProfileImage(imageUrl)
+        }
+    }
+
+    const handleSubmit = async () => {
+        if (!nickname) return
+
+        setIsLoading(true)
+        try {
+            const { error } = await client.PATCH('/api/v1/members/me', {
+                params: {
+                    query: {
+                        request: {
+                            nickname,
+                            email: loginMember?.email,
+                        },
+                    },
+                },
+            })
+
+            if (error) {
+                const errorMessage =
+                    (error as { data?: { message?: string } })?.data?.message || '닉네임 수정에 실패했습니다'
+                alert(errorMessage)
+                return
+            }
+
+            setLoginMember({
+                ...loginMember,
+                nickname,
+            })
+            setIsModalOpen(false)
+        } catch (error) {
+            console.error('닉네임 수정 중 오류 발생:', error)
+            alert('닉네임 수정 중 오류가 발생했습니다.')
+        } finally {
+            setIsLoading(false)
+        }
+    }
+
+    const handleLanguageSubmit = async () => {
+        if (!selectedLanguage) return
+
+        setIsLanguageLoading(true)
+        try {
+            const { error } = await client.PATCH('/api/v1/members/update-language', {
+                params: {
+                    query: {
+                        language: selectedLanguage,
+                    },
+                },
+            })
+
+            if (error) {
+                const errorMessage =
+                    (error as { data?: { message?: string } })?.data?.message || '언어 설정 수정에 실패했습니다'
+                alert(errorMessage)
+                return
+            }
+
+            setLoginMember({
+                ...loginMember,
+                language: selectedLanguage,
+            })
+            setIsLanguageModalOpen(false)
+        } catch (error) {
+            console.error('언어 설정 수정 중 오류 발생:', error)
+            alert('언어 설정 수정 중 오류가 발생했습니다.')
+        } finally {
+            setIsLanguageLoading(false)
         }
     }
 
@@ -80,7 +168,16 @@ export default function MyPage() {
                             )}
                         </div>
                         <div className="flex flex-col gap-2">
-                            <h2 className="text-2xl font-bold text-gray-800">{loginMember.nickname}</h2>
+                            <div className="flex items-center gap-2">
+                                <h2 className="text-2xl font-bold text-gray-800">{loginMember.nickname}</h2>
+                                <button
+                                    onClick={() => setIsModalOpen(true)}
+                                    className="p-1 hover:bg-gray-100 rounded-full transition-colors"
+                                    title="닉네임 수정"
+                                >
+                                    <Pencil className="w-4 h-4 text-gray-500" />
+                                </button>
+                            </div>
                             <span className="text-sm text-gray-500">{loginMember.email}</span>
                             <span className="text-sm text-gray-500">구독: {loginMember.subscription}</span>
                         </div>
@@ -89,7 +186,16 @@ export default function MyPage() {
                     {/* 언어 정보 */}
                     <div className="flex items-center justify-between p-6 bg-white rounded-xl shadow-sm">
                         <div className="flex flex-col gap-1">
-                            <span className="text-sm text-[var(--color-black)] mb-4">선택한 언어</span>
+                            <div className="flex items-center gap-2 mb-4">
+                                <span className="text-sm text-[var(--color-black)]">선택한 언어</span>
+                                <button
+                                    onClick={() => setIsLanguageModalOpen(true)}
+                                    className="p-1 hover:bg-gray-100 rounded-full transition-colors"
+                                    title="언어 수정"
+                                >
+                                    <Pencil className="w-4 h-4 text-gray-500" />
+                                </button>
+                            </div>
                             <div className="flex items-center gap-3">
                                 <span className="text-lg font-semibold text-[var(--color-main)]">
                                     {language === 'ENGLISH'
@@ -119,6 +225,80 @@ export default function MyPage() {
                     </div>
                 </div>
             </div>
+
+            {/* 수정 모달 */}
+            <Dialog open={isModalOpen} onOpenChange={setIsModalOpen}>
+                <DialogContent className="sm:max-w-[425px]">
+                    <DialogHeader>
+                        <DialogTitle>닉네임 수정</DialogTitle>
+                    </DialogHeader>
+                    <div className="grid gap-4 py-4">
+                        <div className="grid gap-2">
+                            <label htmlFor="nickname" className="text-sm font-medium">
+                                닉네임
+                            </label>
+                            <Input
+                                id="nickname"
+                                value={nickname}
+                                onChange={(e) => setNickname(e.target.value)}
+                                placeholder="닉네임을 입력해주세요"
+                            />
+                        </div>
+                    </div>
+                    <DialogFooter>
+                        <Button variant="outline" onClick={() => setIsModalOpen(false)}>
+                            취소
+                        </Button>
+                        <Button onClick={handleSubmit} disabled={isLoading}>
+                            {isLoading ? '수정 중...' : '수정하기'}
+                        </Button>
+                    </DialogFooter>
+                </DialogContent>
+            </Dialog>
+
+            {/* 언어 수정 모달 */}
+            <Dialog open={isLanguageModalOpen} onOpenChange={setIsLanguageModalOpen}>
+                <DialogContent className="sm:max-w-[425px]">
+                    <DialogHeader>
+                        <DialogTitle>언어 수정</DialogTitle>
+                    </DialogHeader>
+                    <div className="grid gap-4 py-4">
+                        <div className="grid gap-2">
+                            <label className="text-sm font-medium text-center">학습 언어</label>
+                            <div className="flex justify-center gap-4">
+                                {LANGUAGES.map((lang) => (
+                                    <button
+                                        key={lang.code}
+                                        onClick={() => setSelectedLanguage(lang.code)}
+                                        className={`flex flex-col items-center gap-2 p-4 rounded-lg border-2 w-[100px] ${
+                                            selectedLanguage === lang.code
+                                                ? 'border-[var(--color-point)] bg-[var(--color-sub-2)]'
+                                                : 'border-gray-200'
+                                        }`}
+                                    >
+                                        <Image
+                                            src={lang.image}
+                                            alt={lang.label}
+                                            width={40}
+                                            height={40}
+                                            className="rounded-full"
+                                        />
+                                        <span className="text-sm">{lang.label}</span>
+                                    </button>
+                                ))}
+                            </div>
+                        </div>
+                    </div>
+                    <DialogFooter>
+                        <Button variant="outline" onClick={() => setIsLanguageModalOpen(false)}>
+                            취소
+                        </Button>
+                        <Button onClick={handleLanguageSubmit} disabled={isLanguageLoading}>
+                            {isLanguageLoading ? '수정 중...' : '수정하기'}
+                        </Button>
+                    </DialogFooter>
+                </DialogContent>
+            </Dialog>
         </>
     )
 }
