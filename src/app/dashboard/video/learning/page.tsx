@@ -1,6 +1,7 @@
 'use client'
 
 import Search from '@/components/common/search'
+import BookmarkIcon from '@/components/icon/bookmarkIcon'
 import VideoIcon from '@/components/icon/videoIcon'
 import client from '@/lib/backend/client'
 import { VideoData } from '@/types/video'
@@ -32,6 +33,7 @@ export default function VideoLearningPage() {
     const [videoList, setVideoList] = useState<VideoData[]>([])
     const [isLoading, setIsLoading] = useState(true)
     const [error, setError] = useState<string | null>(null)
+    const [bookmarkedVideos, setBookmarkedVideos] = useState<Set<string>>(new Set())
 
     // api/v1/video/list 호출
     useEffect(() => {
@@ -132,6 +134,35 @@ export default function VideoLearningPage() {
         setSelectedCategory(category)
     }
 
+    // 북마크 토글 핸들러
+    const handleBookmarkToggle = async (e: React.MouseEvent, videoId: string | undefined) => {
+        e.stopPropagation()
+
+        if (!videoId) return
+
+        try {
+            const isBookmarked = bookmarkedVideos.has(videoId)
+
+            if (isBookmarked) {
+                await client.DELETE(`/api/v1/bookmarks/${videoId}` as any, {})
+            } else {
+                await client.POST(`/api/v1/bookmarks/${videoId}` as any, {})
+            }
+
+            setBookmarkedVideos((prev) => {
+                const newSet = new Set(prev)
+                if (isBookmarked) {
+                    newSet.delete(videoId)
+                } else {
+                    newSet.add(videoId)
+                }
+                return newSet
+            })
+        } catch (err) {
+            console.error('북마크 토글 중 오류 발생:', err)
+        }
+    }
+
     return (
         <>
             <div className="flex items-center gap-2">
@@ -170,21 +201,46 @@ export default function VideoLearningPage() {
                         <div
                             key={video.videoId}
                             onClick={() => handleVideoClick(video)}
-                            className="flex gap-4 bg-[var(--color-white)] rounded-lg p-4 cursor-pointer"
+                            className="group flex gap-4 bg-[var(--color-white)] rounded-lg p-4 cursor-pointer hover:bg-gray-50 transition-colors"
                         >
-                            {video.thumbnailUrl && video.thumbnailUrl.trim() !== '' ? (
-                                <img
-                                    src={video.thumbnailUrl}
-                                    alt={video.title || ''}
-                                    className="w-120 h-80 object-cover rounded-md"
-                                />
-                            ) : (
-                                <div className="w-120 h-80 bg-gray-200 rounded-md flex items-center justify-center text-gray-400">
-                                    No Image
-                                </div>
-                            )}
-                            <div className="flex flex-col">
-                                <p className="text-lg font-bold">{video.title || 'Untitled'}</p>
+                            <div className="flex-shrink-0 w-120 h-80 relative">
+                                {video.thumbnailUrl && video.thumbnailUrl.trim() !== '' ? (
+                                    <>
+                                        <div className="absolute inset-0">
+                                            <img
+                                                src={video.thumbnailUrl}
+                                                alt={video.title || ''}
+                                                className="w-full h-full object-cover rounded-md"
+                                            />
+                                        </div>
+                                        {video.videoId && (
+                                            <button
+                                                onClick={(e) => handleBookmarkToggle(e, video.videoId)}
+                                                className="absolute top-2 left-2 p-1.5 bg-white/90 rounded-full 
+                                                         opacity-0 group-hover:opacity-100 transition-opacity
+                                                         hover:bg-white shadow-sm z-10"
+                                                title={
+                                                    bookmarkedVideos.has(video.videoId) ? '북마크 제거' : '북마크 추가'
+                                                }
+                                            >
+                                                <BookmarkIcon
+                                                    className={`w-5 h-5 transition-colors ${
+                                                        bookmarkedVideos.has(video.videoId)
+                                                            ? 'text-[var(--color-main)] fill-[var(--color-main)]'
+                                                            : 'text-gray-400 hover:text-gray-600'
+                                                    }`}
+                                                />
+                                            </button>
+                                        )}
+                                    </>
+                                ) : (
+                                    <div className="absolute inset-0 bg-gray-200 rounded-md flex items-center justify-center text-gray-400">
+                                        No Image
+                                    </div>
+                                )}
+                            </div>
+                            <div className="flex flex-col flex-1 min-w-0">
+                                <p className="text-lg font-bold truncate">{video.title || 'Untitled'}</p>
                                 <p className="text-lg text-gray-500">조회수 0회</p>
                                 <p className="text-sm text-gray-700 mt-2 line-clamp-12">
                                     {video.description || 'No description available'}
