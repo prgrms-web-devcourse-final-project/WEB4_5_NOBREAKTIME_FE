@@ -22,16 +22,6 @@ const CATEGORIES = {
     MOVIE: { id: 30, label: '영화' },
 } as const
 
-// 테스트용 목데이터
-const MOCK_VIDEO: VideoData & { bookmarked: boolean } = {
-    videoId: 'test_video_1',
-    title: '테스트 영상 - 영어 학습을 위한 TED Talk',
-    description:
-        '이 영상은 영어 학습을 위한 TED Talk입니다. 발음, 어휘, 문법 등 다양한 학습 포인트를 포함하고 있습니다. 특히 일상 대화에서 자주 사용되는 표현들을 배울 수 있습니다.',
-    thumbnailUrl: 'https://i.ytimg.com/vi/dQw4w9WgXcQ/maxresdefault.jpg',
-    bookmarked: true,
-}
-
 export default function VideoLearningPage() {
     const url = process.env.NEXT_PUBLIC_MOCK_URL
     const router = useRouter()
@@ -39,7 +29,7 @@ export default function VideoLearningPage() {
 
     const [selectedCategory, setSelectedCategory] = useState<Category>(CATEGORIES.ALL)
     const [searchKeyword, setSearchKeyword] = useState<string>('')
-    const [videoList, setVideoList] = useState<(VideoData & { bookmarked: boolean })[]>([MOCK_VIDEO])
+    const [videoList, setVideoList] = useState<(VideoData & { bookmarked: boolean })[]>([])
     const [isLoading, setIsLoading] = useState(true)
     const [error, setError] = useState<string | null>(null)
 
