@@ -18,7 +18,7 @@ const LANGUAGES = [
 ]
 
 export default function MyPage() {
-    const { loginMember, setLoginMember } = useGlobalLoginMember()
+    const { loginMember, setLoginMember, logoutAndHome } = useGlobalLoginMember()
     const [profileImage, setProfileImage] = useState<string | null>(loginMember?.profileImage || '/assets/user.svg')
     const [isModalOpen, setIsModalOpen] = useState(false)
     const [isLanguageModalOpen, setIsLanguageModalOpen] = useState(false)
@@ -169,6 +169,10 @@ export default function MyPage() {
         }
     }
 
+    const handleWithdrawClick = () => {
+        setIsWithdrawModalOpen(true)
+    }
+
     const handleWithdraw = async () => {
         if (withdrawEmail !== loginMember.email) {
             alert('이메일이 일치하지 않습니다.')
@@ -181,8 +185,9 @@ export default function MyPage() {
                 alert('회원 탈퇴에 실패했습니다.')
                 return
             }
-            // 로그아웃 처리 및 메인/로그인 페이지 이동
-            window.location.href = '/login'
+            alert('회원 탈퇴가 완료되었습니다.')
+            // 로그아웃 처리 및 메인 페이지 이동
+            logoutAndHome()
         } catch (e) {
             alert('회원 탈퇴 중 오류가 발생했습니다.')
         } finally {
@@ -311,7 +316,7 @@ export default function MyPage() {
                         <Button
                             variant="destructive"
                             className="bg-red-500 hover:bg-red-700"
-                            onClick={() => setIsWithdrawModalOpen(true)}
+                            onClick={handleWithdrawClick}
                         >
                             회원 탈퇴
                         </Button>
