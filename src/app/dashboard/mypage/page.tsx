@@ -279,11 +279,11 @@ export default function MyPage() {
                     </div>
 
                     {/* 수정 버튼 */}
-                    <div className="flex gap-3">
+                    {/* <div className="flex gap-3">
                         <button className="px-6 py-3 text-sm font-medium bg-[var(--color-main)] text-white rounded-lg shadow-sm hover:bg-opacity-90 transition-all duration-200">
                             프로필 수정
                         </button>
-                    </div>
+                    </div> */}
                 </div>
             </div>
 
