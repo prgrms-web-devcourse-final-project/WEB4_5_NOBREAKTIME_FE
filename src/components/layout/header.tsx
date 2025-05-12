@@ -25,7 +25,7 @@ export default function Header() {
 
     return (
         <header className="flex items-center justify-end h-16 px-6 relative">
-            <div className="flex items-center gap-4">
+            <div className="flex items-center gap-2">
                 {/* 프로필 아이콘 */}
                 <div className="w-6 h-6 rounded-full border-2 border-[var(--color-main)] flex items-center justify-center overflow-hidden">
                     <Image
