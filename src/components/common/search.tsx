@@ -11,9 +11,15 @@ interface SearchProps {
 export default function Search({ placeholder = 'search...', onSearch }: SearchProps) {
     const [keyword, setKeyword] = useState('')
 
-    const handleSearch = () => {
-        if (!keyword.trim()) return
-        onSearch(keyword.trim())
+    const handleInputChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+        const newKeyword = e.target.value
+        setKeyword(newKeyword)
+        onSearch(newKeyword.trim())
+    }
+
+    const clearSearch = () => {
+        setKeyword('')
+        onSearch('')
     }
 
     return (
@@ -22,13 +28,30 @@ export default function Search({ placeholder = 'search...', onSearch }: SearchPr
                 type="text"
                 placeholder={placeholder}
                 value={keyword}
-                onChange={(e) => setKeyword(e.target.value)}
-                onKeyDown={(e) => e.key === 'Enter' && handleSearch()}
+                onChange={handleInputChange}
                 className="w-full outline-none text-sm bg-transparent placeholder:text-gray-400"
             />
-            <button onClick={handleSearch} className="text-[var(--color-main)]">
-                <Image src="/assets/search.svg" alt="search" width={32} height={32} />
-            </button>
+            {keyword && (
+                <button onClick={clearSearch} className="text-gray-400 mr-2">
+                    <svg width="16" height="16" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+                        <path
+                            d="M18 6L6 18"
+                            stroke="currentColor"
+                            strokeWidth="2"
+                            strokeLinecap="round"
+                            strokeLinejoin="round"
+                        />
+                        <path
+                            d="M6 6L18 18"
+                            stroke="currentColor"
+                            strokeWidth="2"
+                            strokeLinecap="round"
+                            strokeLinejoin="round"
+                        />
+                    </svg>
+                </button>
+            )}
+            <Image src="/assets/search.svg" alt="search" width={32} height={32} className="text-[var(--color-main)]" />
         </div>
     )
 }

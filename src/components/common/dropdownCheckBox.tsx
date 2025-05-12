@@ -2,16 +2,37 @@
 
 import { useEffect, useRef, useState } from 'react'
 
-export default function DropdownCheckBox() {
+interface Wordbook {
+    id: number
+    name: string
+    language: string
+}
+
+interface Props {
+    wordbooks: Wordbook[]
+    onWordbookSelect?: (ids: number[]) => void
+}
+
+export default function DropdownCheckBox({ wordbooks, onWordbookSelect }: Props) {
     const [isOpen, setIsOpen] = useState(false)
-    const [checkedItems, setCheckedItems] = useState({
-        '새로운 단어장': false,
-        '영화 단어장': false,
-        '드라마 단어장': false,
-        '노래 단어장': false,
-    })
+    const [checkedItems, setCheckedItems] = useState<Record<number, boolean>>({})
 
     const dropdownRef = useRef<HTMLDivElement>(null)
+
+    useEffect(() => {
+        // 초기에 모든 워드북을 선택된 상태로 설정하되, 자동 선택 코드 제거
+        if (wordbooks.length > 0 && Object.keys(checkedItems).length === 0) {
+            const initialCheckedItems: Record<number, boolean> = {}
+            wordbooks.forEach((wordbook) => {
+                initialCheckedItems[wordbook.id] = true
+            })
+            setCheckedItems(initialCheckedItems)
+
+            // 선택된 모든 워드북 ID 전달
+            const allIds = wordbooks.map((book) => book.id)
+            onWordbookSelect?.(allIds)
+        }
+    }, [wordbooks, checkedItems, onWordbookSelect])
 
     useEffect(() => {
         const handleClickOut = (event: MouseEvent) => {
@@ -26,11 +47,23 @@ export default function DropdownCheckBox() {
         }
     }, [])
 
-    const handleCheckboxChange = (key: keyof typeof checkedItems) => {
-        setCheckedItems((prev) => ({
-            ...prev,
-            [key]: !prev[key],
-        }))
+    const handleCheckboxChange = (id: number) => {
+        const newCheckedItems = {
+            ...checkedItems,
+            [id]: !checkedItems[id],
+        }
+        setCheckedItems(newCheckedItems)
+
+        // 선택된 워드북 IDs 모아서 부모 컴포넌트에 전달
+        const selectedIds = Object.entries(newCheckedItems)
+            .filter(([_, isChecked]) => isChecked)
+            .map(([id]) => Number(id))
+
+        onWordbookSelect?.(selectedIds)
+    }
+
+    const getSelectedCount = () => {
+        return Object.values(checkedItems).filter(Boolean).length
     }
 
     return (
@@ -44,7 +77,7 @@ export default function DropdownCheckBox() {
                     aria-expanded={isOpen}
                     aria-haspopup="true"
                 >
-                    단어장 선택
+                    단어장 선택 ({getSelectedCount()})
                     <svg
                         className="-mr-1 size-5 text-gray-400"
                         viewBox="0 0 20 20"
@@ -69,27 +102,27 @@ export default function DropdownCheckBox() {
                     tabIndex={-1}
                 >
                     <div className="py-1" role="none">
-                        {Object.entries(checkedItems).map(([label, checked]) => (
+                        {wordbooks.map((wordbook) => (
                             <label
-                                key={label}
+                                key={wordbook.id}
                                 className="flex items-center justify-between px-4 py-2 text-sm text-gray-700 hover:bg-gray-100 cursor-pointer"
                                 role="menuitem"
                             >
-                                <span>{label}</span>
+                                <span>{wordbook.name}</span>
 
                                 <input
                                     type="checkbox"
-                                    checked={checked}
-                                    onChange={() => handleCheckboxChange(label as keyof typeof checkedItems)}
+                                    checked={checkedItems[wordbook.id] || false}
+                                    onChange={() => handleCheckboxChange(wordbook.id)}
                                     className="sr-only"
                                 />
 
                                 <span
                                     className={`w-5 h-5 flex items-center justify-center rounded border border-[var(--color-main)] ${
-                                        checked ? 'bg-[var(--color-main)] text-white' : 'bg-white'
+                                        checkedItems[wordbook.id] ? 'bg-[var(--color-main)] text-white' : 'bg-white'
                                     }`}
                                 >
-                                    {checked && (
+                                    {checkedItems[wordbook.id] && (
                                         <svg
                                             className="w-4 h-4"
                                             fill="none"

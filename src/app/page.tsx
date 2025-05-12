@@ -40,23 +40,33 @@ export default function Home() {
         <main className="bg-[var(--color-sub-2)] h-screen flex flex-col overflow-y-auto font-[Maplestory]">
             <MainHeader />
 
-            <div className="flex flex-col">
-                <section className="bg-main h-[800px] flex justify-center items-center px-10">
-                    <Image src="/assets/img-item01.png" alt="item" width={700} height={500} />
-                    <div className="flex flex-col gap-10">
-                        <div>
-                            <p className="text-[var(--color-white)] text-4xl font-bold">
-                                좋아하는 <strong className="text-[var(--color-point)]">영상</strong>으로 배우는 언어
-                            </p>
-                            <div className="text-8xl font-bold">
-                                <span className="text-[var(--color-point)]">말랑~</span>{' '}
-                                <span className="text-[var(--color-white)]">하게 쉽게!</span>
-                            </div>
-                        </div>
-                        <div className="flex gap-10 items-center">
-                            <Image src="/assets/line-arrow.svg" alt="arrow" width={700} height={500} />
+            <div className="flex flex-col w-full">
+                {/* Hero Section */}
+                <section className="bg-main min-h-[700px] flex flex-col md:flex-row justify-center items-center px-4 md:px-10 py-12 gap-10">
+                    <Image
+                        src="/assets/img-item01.png"
+                        alt="item"
+                        width={700}
+                        height={500}
+                        className="w-full max-w-[700px] h-auto"
+                    />
+                    <div className="flex flex-col gap-8 text-center md:text-left">
+                        <p className="text-white text-2xl md:text-4xl font-bold">
+                            좋아하는 <strong className="text-[var(--color-point)]">영상</strong>으로 배우는 언어
+                        </p>
+                        <h2 className="text-5xl md:text-7xl font-bold text-white">
+                            <span className="text-[var(--color-point)]">말랑~</span> 하게 쉽게!
+                        </h2>
+                        <div className="flex flex-col md:flex-row items-center gap-6">
+                            <Image
+                                src="/assets/line-arrow.svg"
+                                alt="arrow"
+                                width={300}
+                                height={200}
+                                className="hidden md:block"
+                            />
                             <button
-                                className="bg-[var(--color-point)] text-[var(--color-white)] text-4xl font-bold rounded-full px-10 py-5"
+                                className="bg-[var(--color-point)] text-[var(--color-white)] text-[clamp(1rem,2vw,2rem)] text-xl md:text-2xl px-6 py-3 rounded-full font-bold"
                                 onClick={() => router.push('/login')}
                             >
                                 학습 바로가기
@@ -65,16 +75,16 @@ export default function Home() {
                     </div>
                 </section>
 
-                {/* 캐러셀 슬라이더 */}
-                <section className="flex flex-col gap-10 justify-center items-center text-center h-[800px] px-10">
-                    <h3 className="text-[var(--color-black)] text-7xl font-bold leading-snug">
+                {/* Carousel Section */}
+                <section className="flex flex-col gap-6 items-center text-center px-4 md:px-10 py-16">
+                    <h3 className="text-[var(--color-black)] text-3xl md:text-5xl font-bold leading-snug">
                         쉽게 배우는 영단어, 자연스러운 말하기!
                     </h3>
-                    <p className="text-[var(--color-black)] text-2xl font-bold">
+                    <p className="text-[var(--color-black)] text-lg md:text-2xl font-medium">
                         그동안 어려웠던 언어의 재미! 말랑~ 하게 말하기도 단어도 한번에 잡자!
                     </p>
 
-                    <div className="relative w-[800px] h-[400px] overflow-hidden">
+                    <div className="relative w-full max-w-[800px] h-[250px] md:h-[400px] overflow-hidden mt-6">
                         <div className="relative w-full h-full flex justify-center items-center">
                             {images.map((src, idx) => {
                                 const offset = idx - currentIndex
@@ -105,14 +115,13 @@ export default function Home() {
                                             alt={`slide-${idx}`}
                                             width={550}
                                             height={350}
-                                            className="rounded-xl shadow-lg object-cover"
+                                            className="rounded-xl shadow-lg object-cover w-[300px] md:w-[550px] h-auto"
                                             priority={idx === currentIndex}
                                         />
                                     </div>
                                 )
                             })}
                         </div>
-
                         <div className="flex justify-center gap-2 mt-8">
                             {images.map((_, idx) => (
                                 <button
@@ -127,37 +136,36 @@ export default function Home() {
                     </div>
                 </section>
 
-                {/* 장점 섹션 */}
-                <section className="flex flex-row gap-40 justify-center items-center h-[800px] w-full px-20 bg-gradient-to-b from-[#F4F1FB] to-[#C8B8F1]">
-                    <div className="flex flex-col gap-10 max-w-[600px]">
-                        <p className="text-2xl font-bold bg-[var(--color-main)] rounded-full text-white text-center py-3 px-6 w-fit">
+                {/* Features Section */}
+                <section className="flex flex-col md:flex-row gap-10 justify-center items-center px-4 md:px-20 py-16 bg-gradient-to-b from-[#F4F1FB] to-[#C8B8F1]">
+                    <div className="flex flex-col gap-6 max-w-xl text-center md:text-left">
+                        <p className="text-lg md:text-xl font-bold bg-[var(--color-main)] text-white rounded-full px-4 py-2 w-fit mx-auto md:mx-0">
                             실전 영어 학습
                         </p>
-                        <p className="text-3xl font-bold">
-                            <strong className="text-[var(--color-point)]">유튜브</strong>에서 내가 좋아하는 영상으로
+                        <h4 className="text-2xl md:text-4xl font-bold">
+                            <span className="text-[var(--color-point)]">유튜브</span>에서 내가 좋아하는 영상으로
+                        </h4>
+                        <p className="text-2xl md:text-3xl font-bold">
+                            쉽고 재미있게 <span className="text-[var(--color-point)]">외국어</span>를 배워요!
                         </p>
-                        <p className="text-3xl font-bold">
-                            쉽고 재미있게 <strong className="text-[var(--color-point)]">외국어</strong>를 배워요!
-                        </p>
-
-                        <ul className="flex flex-col gap-5">
+                        <ul className="mt-4 flex flex-col gap-3">
                             {features.map((text, idx) => (
-                                <li key={idx} className="flex items-center gap-5">
-                                    <Image src="/assets/check-fill.svg" width={40} height={40} alt="check" />
-                                    <p className="text-2xl font-bold text-[var(--color-black)]">{text}</p>
+                                <li key={idx} className="flex items-start gap-3">
+                                    <Image src="/assets/check-fill.svg" width={30} height={30} alt="check" />
+                                    <span className="text-lg md:text-xl text-[var(--color-black)]">{text}</span>
                                 </li>
                             ))}
                         </ul>
                     </div>
 
-                    <div className="grid grid-cols-2 gap-10">
+                    <div className="grid grid-cols-2 gap-4">
                         {benefits.map((item, i) => (
                             <div
                                 key={i}
-                                className="flex flex-col gap-5 bg-[var(--color-white)] rounded-sm w-[200px] h-[200px] justify-center items-center shadow"
+                                className="bg-white rounded-md shadow p-4 flex flex-col items-center justify-center text-center w-[140px] md:w-[180px] h-[140px] md:h-[180px]"
                             >
-                                <Image src={item.icon} alt={`icon-${i}`} width={60} height={60} />
-                                <span className="text-center text-lg font-bold">{item.text}</span>
+                                <Image src={item.icon} alt={`icon-${i}`} width={40} height={40} />
+                                <span className="mt-2 text-sm md:text-base font-bold">{item.text}</span>
                             </div>
                         ))}
                     </div>
