@@ -34,12 +34,12 @@ export default function DailyGoal() {
     }
 
     return (
-        <div className="flex flex-col items-center w-full h-full relative">
-            <div className="flex items-center gap-4 text-sm mb-6 w-full">
+        <div className="flex flex-col items-center w-full h-full">
+            <div className="flex items-center gap-4 text-sm mb-2 w-full relative z-10">
                 <GoalItem label="영상" options={[10, 20, 30]} value={videoGoal} onChange={handleVideoGoalChange} />
                 <GoalItem label="단어" options={[30, 50, 100]} value={wordGoal} onChange={handleWordGoalChange} />
             </div>
-            <div className="flex-1 flex items-center justify-center absolute top-[-50px] bottom-0 left-0 right-0">
+            <div className="flex-1 flex items-start justify-center w-full">
                 <ChartContainer config={{ goal: { color: '#3B82F6', label: '달성률' } }}>
                     <div className="w-56 h-56 relative">
                         <RePieChart width={224} height={224}>
@@ -81,19 +81,36 @@ interface GoalItemProps {
 
 function GoalItem({ label, options, value, onChange }: GoalItemProps) {
     return (
-        <div className="flex flex-1 items-center gap-2">
-            <span className="text-lg">{label}</span>
-            <select
-                className="px-2 py-1 rounded border flex-1 border-[var(--color-main)]"
-                value={value}
-                onChange={onChange}
-            >
-                {options.map((opt) => (
-                    <option key={opt} value={opt}>
-                        {opt}개
-                    </option>
-                ))}
-            </select>
+        <div className="flex items-center gap-2 w-1/2">
+            <span className="text-lg whitespace-nowrap">{label}</span>
+            <div className="relative w-full">
+                <select
+                    className="w-full px-2 py-1 rounded border border-[var(--color-main)] bg-white appearance-none focus:outline-none focus:ring-0 focus:border-[var(--color-main)]"
+                    value={value}
+                    onChange={onChange}
+                >
+                    {options.map((opt) => (
+                        <option key={opt} value={opt} className="bg-white">
+                            {opt}개
+                        </option>
+                    ))}
+                </select>
+                <div className="absolute right-2 top-1/2 -translate-y-1/2 pointer-events-none">
+                    <svg
+                        xmlns="http://www.w3.org/2000/svg"
+                        width="12"
+                        height="12"
+                        viewBox="0 0 24 24"
+                        fill="none"
+                        stroke="currentColor"
+                        strokeWidth="2"
+                        strokeLinecap="round"
+                        strokeLinejoin="round"
+                    >
+                        <path d="m6 9 6 6 6-6" />
+                    </svg>
+                </div>
+            </div>
         </div>
     )
 }
