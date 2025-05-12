@@ -1095,13 +1095,13 @@ export interface components {
         /** @description 회원 정보 수정 요청 DTO */
         ChangeInfoRequest: {
             /**
-             * @description 회원 이메일
-             * @example user@example.com
+             * @description 회원 닉네임
+             * @example test_user
              */
             nickname?: string
             /**
-             * @description 회원 닉네임
-             * @example test_user
+             * @description 회원 이메일
+             * @example user@example.com
              */
             email?: string
         }
@@ -1398,9 +1398,9 @@ export interface components {
             username?: string
             authorities?: components['schemas']['GrantedAuthority'][]
             enabled?: boolean
+            credentialsNonExpired?: boolean
             accountNonExpired?: boolean
             accountNonLocked?: boolean
-            credentialsNonExpired?: boolean
         }
         GrantedAuthority: {
             authority?: string
@@ -2754,14 +2754,16 @@ export interface operations {
     }
     changeMemberInformation: {
         parameters: {
-            query: {
-                request: components['schemas']['ChangeInfoRequest']
-            }
+            query?: never
             header?: never
             path?: never
             cookie?: never
         }
-        requestBody?: never
+        requestBody: {
+            content: {
+                'application/json': components['schemas']['ChangeInfoRequest']
+            }
+        }
         responses: {
             /** @description 회원 정보가 성공적으로 수정되었습니다. */
             200: {

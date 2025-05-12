@@ -27,6 +27,9 @@ export default function MyPage() {
     const [isLoading, setIsLoading] = useState(false)
     const [isLanguageLoading, setIsLanguageLoading] = useState(false)
     const [isImageLoading, setIsImageLoading] = useState(false)
+    const [isWithdrawModalOpen, setIsWithdrawModalOpen] = useState(false)
+    const [withdrawEmail, setWithdrawEmail] = useState('')
+    const [isWithdrawLoading, setIsWithdrawLoading] = useState(false)
 
     const getSocialIcon = (email: string) => {
         if (email.includes('@kakao.com')) return '/logo/kakao.png'
@@ -107,10 +110,9 @@ export default function MyPage() {
         setIsLoading(true)
         try {
             const { error } = await client.PATCH('/api/v1/members/me', {
-                params: {
-                    query: {
-                        nickname,
-                    } as any,
+                body: {
+                    nickname,
+                    email: loginMember.email,
                 },
             })
 
@@ -164,6 +166,27 @@ export default function MyPage() {
             alert('언어 설정 수정 중 오류가 발생했습니다.')
         } finally {
             setIsLanguageLoading(false)
+        }
+    }
+
+    const handleWithdraw = async () => {
+        if (withdrawEmail !== loginMember.email) {
+            alert('이메일이 일치하지 않습니다.')
+            return
+        }
+        setIsWithdrawLoading(true)
+        try {
+            const { error } = await client.DELETE('/api/v1/members/me')
+            if (error) {
+                alert('회원 탈퇴에 실패했습니다.')
+                return
+            }
+            // 로그아웃 처리 및 메인/로그인 페이지 이동
+            window.location.href = '/login'
+        } catch (e) {
+            alert('회원 탈퇴 중 오류가 발생했습니다.')
+        } finally {
+            setIsWithdrawLoading(false)
         }
     }
 
@@ -284,6 +307,15 @@ export default function MyPage() {
                             프로필 수정
                         </button>
                     </div> */}
+                    <div className="flex justify-end mt-8">
+                        <Button
+                            variant="destructive"
+                            className="bg-red-500 hover:bg-red-700"
+                            onClick={() => setIsWithdrawModalOpen(true)}
+                        >
+                            회원 탈퇴
+                        </Button>
+                    </div>
                 </div>
             </div>
 
@@ -356,6 +388,40 @@ export default function MyPage() {
                         </Button>
                         <Button onClick={handleLanguageSubmit} disabled={isLanguageLoading}>
                             {isLanguageLoading ? '수정 중...' : '수정하기'}
+                        </Button>
+                    </DialogFooter>
+                </DialogContent>
+            </Dialog>
+
+            {/* 회원 탈퇴 모달 */}
+            <Dialog open={isWithdrawModalOpen} onOpenChange={setIsWithdrawModalOpen}>
+                <DialogContent className="sm:max-w-[425px]">
+                    <DialogHeader>
+                        <DialogTitle>회원 탈퇴</DialogTitle>
+                    </DialogHeader>
+                    <div className="grid gap-4 py-4">
+                        <div className="grid gap-2">
+                            <label htmlFor="withdraw-email" className="text-sm font-medium">
+                                이메일
+                            </label>
+                            <Input
+                                id="withdraw-email"
+                                value={withdrawEmail}
+                                onChange={(e) => setWithdrawEmail(e.target.value)}
+                                placeholder="이메일을 입력해주세요"
+                            />
+                        </div>
+                    </div>
+                    <DialogFooter>
+                        <Button variant="outline" onClick={() => setIsWithdrawModalOpen(false)}>
+                            취소
+                        </Button>
+                        <Button
+                            className="bg-red-500 hover:bg-red-700"
+                            onClick={handleWithdraw}
+                            disabled={isWithdrawLoading}
+                        >
+                            {isWithdrawLoading ? '탈퇴 중...' : '탈퇴하기'}
                         </Button>
                     </DialogFooter>
                 </DialogContent>
