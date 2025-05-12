@@ -313,7 +313,14 @@ export default function MyPage() {
                             프로필 수정
                         </button>
                     </div> */}
-                    <div className="flex justify-end mt-8">
+                    <div className="flex justify-between items-end gap-3 mt-8 w-full">
+                        <Button
+                            variant="default"
+                            className="bg-[var(--color-main)] hover:bg-[var(--color-main)]/90"
+                            onClick={() => {}}
+                        >
+                            구독 내역 확인
+                        </Button>
                         <Button
                             variant="destructive"
                             className="bg-red-500 hover:bg-red-700"
@@ -408,7 +415,7 @@ export default function MyPage() {
                     <div className="grid gap-4 py-4">
                         <div className="grid gap-2">
                             <label htmlFor="withdraw-email" className="text-sm font-medium">
-                                이메일
+                                탈퇴하시려면 본인의 이메일을 입력해 주세요.
                             </label>
                             <Input
                                 id="withdraw-email"
