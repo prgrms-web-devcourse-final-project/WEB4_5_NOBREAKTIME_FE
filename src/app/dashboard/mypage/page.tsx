@@ -9,7 +9,7 @@ import { Pencil } from 'lucide-react'
 import Image from 'next/image'
 import { useState } from 'react'
 
-type Language = 'ENGLISH' | 'JAPANESE' | 'NONE'
+type Language = 'ENGLISH' | 'JAPANESE' | 'NONE' | 'ALL'
 
 const LANGUAGES = [
     { code: 'ENGLISH' as Language, label: '영어', image: '/assets/america.svg' },
@@ -23,7 +23,7 @@ export default function MyPage() {
     const [isModalOpen, setIsModalOpen] = useState(false)
     const [isLanguageModalOpen, setIsLanguageModalOpen] = useState(false)
     const [nickname, setNickname] = useState(loginMember?.nickname || '')
-    const [selectedLanguage, setSelectedLanguage] = useState<Language>(loginMember?.language || 'NONE')
+    const [selectedLanguage, setSelectedLanguage] = useState<Language>((loginMember?.language as Language) || 'NONE')
     const [isLoading, setIsLoading] = useState(false)
     const [isLanguageLoading, setIsLanguageLoading] = useState(false)
     const [isImageLoading, setIsImageLoading] = useState(false)
