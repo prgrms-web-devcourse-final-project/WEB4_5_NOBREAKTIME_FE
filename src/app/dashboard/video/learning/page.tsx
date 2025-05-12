@@ -20,7 +20,6 @@ const CATEGORIES = {
     SONG: { id: 10, label: '노래' },
     DRAMA: { id: 36, label: '드라마' },
     MOVIE: { id: 30, label: '영화' },
-    NEW: { id: -1, label: '새로온 맞춤 동영상' },
 } as const
 
 export default function VideoLearningPage() {
