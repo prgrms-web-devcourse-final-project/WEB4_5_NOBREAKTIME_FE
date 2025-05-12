@@ -2,7 +2,6 @@
 
 import VideoIcon from '@/components/icon/videoIcon'
 import VideoLearning from '@/components/video/videoLearning'
-import client from '@/lib/backend/client'
 import { AnalysisData, VideoData } from '@/types/video'
 import { useRouter } from 'next/navigation'
 import { use, useEffect, useState } from 'react'
@@ -68,7 +67,7 @@ function VideoLearningPage({ params }: { params: Promise<{ videoId: string }> })
     }, [videoId])
 
     const handleBack = () => {
-        router.push('/video')
+        router.push('/dashboard/video/learning')
     }
 
     return (
