@@ -61,7 +61,7 @@ export default function Card({ wordbooks, isLoading = false }: Props) {
                                     className="bg-[var(--color-main)] text-white px-3 py-1 rounded text-sm"
                                     onClick={() =>
                                         router.push(
-                                            `/${basePath}-learning/${wordbook.id}?title=${encodeURIComponent(
+                                            `/${basePath}/learning/${wordbook.id}?title=${encodeURIComponent(
                                                 wordbook.name,
                                             )}`,
                                         )
@@ -75,7 +75,7 @@ export default function Card({ wordbooks, isLoading = false }: Props) {
                                 className="bg-[var(--color-point)] text-white px-3 py-1 rounded text-sm"
                                 onClick={() =>
                                     router.push(
-                                        `/${basePath}-quiz/${wordbook.id}?title=${encodeURIComponent(wordbook.name)}`,
+                                        `/${basePath}/quiz/${wordbook.id}?title=${encodeURIComponent(wordbook.name)}`,
                                     )
                                 }
                             >

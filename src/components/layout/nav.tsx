@@ -31,20 +31,20 @@ function Nav() {
             <NavItem
                 icon={<VideoIcon />}
                 label="Video Learning"
-                href="/dashboard/video-learning"
-                active={pathname === '/dashboard/video-learning'}
+                href="/dashboard/video/learning"
+                active={pathname === '/dashboard/video/learning'}
             />
             <NavItem
                 icon={<AbcIcon />}
                 label="Word Learning"
-                href="/dashboard/word-learning"
-                active={pathname === '/dashboard/word-learning'}
+                href="/dashboard/word/learning"
+                active={pathname === '/dashboard/word/learning'}
             />
             <NavItem
                 icon={<ExpressionIcon />}
                 label="Expression Learning"
-                href="/dashboard/expression"
-                active={pathname === '/dashboard/expression'}
+                href="/dashboard/expression/learning"
+                active={pathname === '/dashboard/expression/learning'}
             />
         </nav>
     )
