@@ -19,13 +19,7 @@ export default function BookmarkPage() {
 
     const fetchBookmarks = async () => {
         try {
-            const { data, error } = await client.GET('/api/v1/bookmarks', {
-                params: {
-                    query: {
-                        user: {}, // 실제로는 서버에서 처리됨
-                    },
-                },
-            })
+            const { data, error } = await client.GET('/api/v1/bookmarks')
             if (data && !error) {
                 const response = data as BookmarkResponse
                 setVideoList(response.data || [])
