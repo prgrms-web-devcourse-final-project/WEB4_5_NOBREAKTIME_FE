@@ -41,7 +41,7 @@ export default function Header() {
                 {/* 이름 + 레벨 + 드롭다운 */}
                 <div className="flex items-center gap-1 cursor-pointer" ref={dropdownRef}>
                     <span className="text-sm font-semibold text-gray-800">{loginMember.nickname}</span>
-                    <span className="text-sm text-gray-500">Lv. 0</span>
+                    <span className="text-sm text-gray-500">{loginMember.subscriptionType}</span>
                     <button onClick={() => setIsDropdownOpen(!isDropdownOpen)}>
                         <Image src="/assets/bottmBTN.svg" alt="dropdown" width={24} height={24} />
                     </button>
