@@ -55,11 +55,8 @@ export default function MyPage() {
             const { error } = await client.PATCH('/api/v1/members/me', {
                 params: {
                     query: {
-                        request: {
-                            nickname,
-                            email: loginMember?.email,
-                        },
-                    },
+                        nickname,
+                    } as any,
                 },
             })
 
