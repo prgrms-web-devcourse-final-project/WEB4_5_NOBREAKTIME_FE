@@ -5,7 +5,7 @@ type UserProfileResponse = {
     email?: string
     nickname?: string
     profileImage?: string
-    subscription?: 'NONE' | 'BASIC' | 'STANDARD' | 'PREMIUM' | 'ADMIN'
+    subscriptionType?: 'NONE' | 'BASIC' | 'STANDARD' | 'PREMIUM' | 'ADMIN'
     language?: 'ENGLISH' | 'JAPANESE' | 'NONE'
 }
 
@@ -21,7 +21,7 @@ export const LoginMemberContext = createContext<{
         email: '',
         nickname: '',
         profileImage: '',
-        subscription: 'NONE',
+        subscriptionType: 'NONE',
         language: 'NONE',
     },
     setLoginMember: () => {},
@@ -36,7 +36,7 @@ function createEmptyMember(): UserProfileResponse {
         email: '',
         nickname: '',
         profileImage: '',
-        subscription: 'NONE',
+        subscriptionType: 'NONE',
         language: 'NONE',
     }
 }
@@ -49,7 +49,7 @@ export function useLoginMember() {
         email: '',
         nickname: '',
         profileImage: '',
-        subscription: 'NONE',
+        subscriptionType: 'NONE',
         language: 'NONE',
     })
 
