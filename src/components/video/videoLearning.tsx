@@ -5,13 +5,14 @@ import VideoTab from './videoTab'
 import VideoScript from './videoScript'
 import WordModal from './wordModal'
 import Image from 'next/image'
-import { VideoData, AnalysisData, SubtitleResult, WordQuizResult, WordQuizType } from '@/types/video'
+import { VideoData, AnalysisData, SubtitleResult, WordQuizResult, WordQuizType, QuizData } from '@/types/video'
 import client from '@/lib/backend/client'
 import { Keyword } from './videoTab/KeywordCard'
 
 interface Props {
     video: VideoData
     analysisData: AnalysisData | null
+    quizData: QuizData | null
     onBack: () => void
     isLoading: boolean
 }
@@ -21,7 +22,13 @@ function parseTimeToSeconds(time: string) {
     return parseInt(h) * 3600 + parseInt(m) * 60 + parseFloat(s)
 }
 
-function VideoLearning({ video, analysisData: initialAnalysisData, onBack, isLoading: initialIsLoading }: Props) {
+function VideoLearning({
+    video,
+    analysisData: initialAnalysisData,
+    quizData,
+    onBack,
+    isLoading: initialIsLoading,
+}: Props) {
     const [fontSize, setFontSize] = useState(16)
     const [isModalOpen, setIsModalOpen] = useState(false)
     const [analysisData, setAnalysisData] = useState<AnalysisData | null>(initialAnalysisData)
@@ -350,6 +357,7 @@ function VideoLearning({ video, analysisData: initialAnalysisData, onBack, isLoa
             original: selectedSubtitle.original || '',
             transcript: selectedSubtitle.transcript || '',
             keywords: selectedSubtitle.keywords,
+            subtitleId: selectedSubtitle.subtitleId,
         },
         selectedTab,
         onTabChange: setSelectedTab,
@@ -422,10 +430,18 @@ function VideoLearning({ video, analysisData: initialAnalysisData, onBack, isLoa
                     onConfirm={async (selectedWords, selectedList) => {
                         try {
                             // 선택된 단어를 단어장에 추가
-                            const wordsToAdd = selectedWords.map((word) => ({
-                                word: word.word,
-                                videoId: video.videoId,
-                            }))
+                            const wordsToAdd = selectedWords.map((word) => {
+                                // 현재 선택된 자막의 subtitleId 찾기
+                                const currentSubtitle = analysisData?.subtitleResults.find(
+                                    (subtitle) => subtitle.original === selectedSubtitle?.original,
+                                )
+
+                                return {
+                                    word: word.word,
+                                    videoId: video.videoId,
+                                    subtitleId: currentSubtitle?.subtitleId,
+                                }
+                            })
 
                             // 선택된 단어장 정보 찾기
                             let selectedWordbookName = '단어장'

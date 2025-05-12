@@ -1079,9 +1079,9 @@ export interface components {
             authorities?: components['schemas']['GrantedAuthority'][]
             username?: string
             enabled?: boolean
-            credentialsNonExpired?: boolean
             accountNonExpired?: boolean
             accountNonLocked?: boolean
+            credentialsNonExpired?: boolean
         }
         GrantedAuthority: {
             authority?: string
