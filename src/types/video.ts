@@ -1,8 +1,8 @@
 export interface VideoData {
-    videoId?: string
-    title?: string
-    description?: string
-    thumbnailUrl?: string | null
+    videoId: string
+    title: string
+    description: string
+    thumbnailUrl?: string
 }
 
 export interface Keyword {
@@ -12,6 +12,7 @@ export interface Keyword {
 }
 
 export interface SubtitleResult {
+    subtitleId?: number
     startTime?: string
     endTime?: string
     speaker?: string
@@ -21,7 +22,19 @@ export interface SubtitleResult {
 }
 
 export interface AnalysisData {
-    subtitleResults?: SubtitleResult[]
+    subtitleResults: {
+        subtitleId?: number
+        startTime: string
+        endTime: string
+        speaker: string
+        original: string
+        transcript: string
+        keywords: {
+            word: string
+            meaning: string
+            difficulty: number
+        }[]
+    }[]
 }
 
 export interface WordQuizType {
@@ -60,4 +73,15 @@ export interface ExpressionQuizType {
 export interface ExpressionQuizProps {
     fontSize: number
     videoId: string
+}
+
+export interface QuizData {
+    words: {
+        word: string
+        pos: string
+        meaning: string
+        difficulty: string
+        exampleSentence: string
+        translatedSentence: string
+    }[]
 }

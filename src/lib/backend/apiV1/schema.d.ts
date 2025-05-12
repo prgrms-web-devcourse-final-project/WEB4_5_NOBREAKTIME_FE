@@ -321,7 +321,15 @@ export interface paths {
         }
         get?: never
         put?: never
+        /**
+         * 영상 북마크 추가
+         * @description 특정 영상을 북마크에 추가합니다.
+         */
         post: operations['add']
+        /**
+         * 영상 북마크 제거
+         * @description 특정 영상을 북마크에서 제거합니다.
+         */
         delete: operations['remove']
         options?: never
         head?: never
@@ -851,6 +859,10 @@ export interface paths {
             path?: never
             cookie?: never
         }
+        /**
+         * 북마크 영상 전체 조회
+         * @description 사용자가 북마크한 모든 영상을 조회합니다.
+         */
         get: operations['getAll']
         put?: never
         post?: never
@@ -1061,30 +1073,6 @@ export interface components {
             code: string
             msg: string
             data?: components['schemas']['LevelCheckResponse']
-        }
-        /** @description 인증된 회원의 상세 정보 */
-        CustomUserDetails: {
-            /**
-             * Format: int64
-             * @description 회원 고유 식별자
-             * @example 12345
-             */
-            memberId?: number
-            /**
-             * @description 회원 권한
-             * @example ROLE_STANDARD
-             */
-            roleName?: string
-            password?: string
-            authorities?: components['schemas']['GrantedAuthority'][]
-            username?: string
-            enabled?: boolean
-            credentialsNonExpired?: boolean
-            accountNonExpired?: boolean
-            accountNonLocked?: boolean
-        }
-        GrantedAuthority: {
-            authority?: string
         }
         RsDataString: {
             code: string
@@ -1392,6 +1380,30 @@ export interface components {
             code: string
             msg: string
             data?: components['schemas']['LearningHistoryResponse']
+        }
+        /** @description 인증된 회원의 상세 정보 */
+        CustomUserDetails: {
+            /**
+             * Format: int64
+             * @description 회원 고유 식별자
+             * @example 12345
+             */
+            memberId?: number
+            /**
+             * @description 회원 권한
+             * @example ROLE_STANDARD
+             */
+            roleName?: string
+            password?: string
+            username?: string
+            authorities?: components['schemas']['GrantedAuthority'][]
+            enabled?: boolean
+            accountNonExpired?: boolean
+            accountNonLocked?: boolean
+            credentialsNonExpired?: boolean
+        }
+        GrantedAuthority: {
+            authority?: string
         }
     }
     responses: never
@@ -2335,9 +2347,7 @@ export interface operations {
     }
     add: {
         parameters: {
-            query: {
-                user: components['schemas']['CustomUserDetails']
-            }
+            query?: never
             header?: never
             path: {
                 videoId: string
@@ -2346,8 +2356,8 @@ export interface operations {
         }
         requestBody?: never
         responses: {
-            /** @description OK */
-            200: {
+            /** @description 북마크 추가 완료 */
+            201: {
                 headers: {
                     [name: string]: unknown
                 }
@@ -2362,6 +2372,24 @@ export interface operations {
                 }
                 content: {
                     'application/json': components['schemas']['ErrorResponse']
+                }
+            }
+            /** @description Not Found */
+            404: {
+                headers: {
+                    [name: string]: unknown
+                }
+                content: {
+                    'application/json': unknown
+                }
+            }
+            /** @description Conflict */
+            409: {
+                headers: {
+                    [name: string]: unknown
+                }
+                content: {
+                    'application/json': unknown
                 }
             }
             /** @description Internal Server Error */
@@ -2377,9 +2405,7 @@ export interface operations {
     }
     remove: {
         parameters: {
-            query: {
-                user: components['schemas']['CustomUserDetails']
-            }
+            query?: never
             header?: never
             path: {
                 videoId: string
@@ -2388,7 +2414,7 @@ export interface operations {
         }
         requestBody?: never
         responses: {
-            /** @description OK */
+            /** @description 북마크 제거 완료 */
             200: {
                 headers: {
                     [name: string]: unknown
@@ -2404,6 +2430,15 @@ export interface operations {
                 }
                 content: {
                     'application/json': components['schemas']['ErrorResponse']
+                }
+            }
+            /** @description Not Found */
+            404: {
+                headers: {
+                    [name: string]: unknown
+                }
+                content: {
+                    'application/json': unknown
                 }
             }
             /** @description Internal Server Error */
@@ -3858,16 +3893,14 @@ export interface operations {
     }
     getAll: {
         parameters: {
-            query: {
-                user: components['schemas']['CustomUserDetails']
-            }
+            query?: never
             header?: never
             path?: never
             cookie?: never
         }
         requestBody?: never
         responses: {
-            /** @description OK */
+            /** @description 북마크 목록 조회 성공 */
             200: {
                 headers: {
                     [name: string]: unknown
@@ -3883,6 +3916,15 @@ export interface operations {
                 }
                 content: {
                     'application/json': components['schemas']['ErrorResponse']
+                }
+            }
+            /** @description Not Found */
+            404: {
+                headers: {
+                    [name: string]: unknown
+                }
+                content: {
+                    'application/json': unknown
                 }
             }
             /** @description Internal Server Error */

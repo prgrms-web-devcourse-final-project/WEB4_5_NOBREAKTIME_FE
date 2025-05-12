@@ -126,7 +126,7 @@ const Overview: React.FC<OverviewProps> = ({
                 },
                 body: {
                     videoId: videoId,
-                    subtitleId: selectedSubtitle.subtitleId || 0,
+                    subtitleId: selectedSubtitle.subtitleId,
                 },
             })
 
