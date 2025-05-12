@@ -1,7 +1,6 @@
 'use client'
 
 import WordIcon from '@/components/icon/wordIcon'
-import client from '@/lib/backend/client'
 import Image from 'next/image'
 import { useParams, useSearchParams } from 'next/navigation'
 import { useEffect, useState } from 'react'
