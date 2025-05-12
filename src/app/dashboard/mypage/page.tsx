@@ -233,7 +233,7 @@ export default function MyPage() {
                                 <h2 className="text-2xl font-bold text-gray-800">{loginMember.nickname}</h2>
                                 <button
                                     onClick={() => setIsModalOpen(true)}
-                                    className="p-1 hover:bg-gray-100 rounded-full transition-colors"
+                                    className="p-1 -ml-1 hover:bg-gray-100 rounded-full transition-colors"
                                     title="닉네임 수정"
                                 >
                                     <Pencil className="w-4 h-4 text-gray-500" />
@@ -249,13 +249,13 @@ export default function MyPage() {
                         <div className="flex flex-col gap-1">
                             <div className="flex items-center gap-2 mb-4">
                                 <span className="text-sm text-[var(--color-black)]">선택한 언어</span>
-                                <button
+                                {/* <button
                                     onClick={() => setIsLanguageModalOpen(true)}
-                                    className="p-1 hover:bg-gray-100 rounded-full transition-colors"
+                                    className="p-1 -ml-1 hover:bg-gray-100 rounded-full transition-colors"
                                     title="언어 수정"
                                 >
                                     <Pencil className="w-4 h-4 text-gray-500" />
-                                </button>
+                                </button> */}
                             </div>
                             <div className="flex items-center gap-3">
                                 <span className="text-lg font-semibold text-[var(--color-main)]">
