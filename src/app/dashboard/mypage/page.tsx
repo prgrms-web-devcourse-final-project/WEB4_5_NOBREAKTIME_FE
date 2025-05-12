@@ -19,13 +19,14 @@ const LANGUAGES = [
 
 export default function MyPage() {
     const { loginMember, setLoginMember } = useGlobalLoginMember()
-    const [profileImage, setProfileImage] = useState(loginMember?.profileImage || '/assets/user.svg')
+    const [profileImage, setProfileImage] = useState<string | null>(loginMember?.profileImage || '/assets/user.svg')
     const [isModalOpen, setIsModalOpen] = useState(false)
     const [isLanguageModalOpen, setIsLanguageModalOpen] = useState(false)
     const [nickname, setNickname] = useState(loginMember?.nickname || '')
     const [selectedLanguage, setSelectedLanguage] = useState<Language>(loginMember?.language || 'NONE')
     const [isLoading, setIsLoading] = useState(false)
     const [isLanguageLoading, setIsLanguageLoading] = useState(false)
+    const [isImageLoading, setIsImageLoading] = useState(false)
 
     const getSocialIcon = (email: string) => {
         if (email.includes('@kakao.com')) return '/logo/kakao.png'
@@ -39,11 +40,64 @@ export default function MyPage() {
         NONE: '/assets/china.svg',
     }
 
-    const handleImageChange = (e: React.ChangeEvent<HTMLInputElement>) => {
-        const file = e.target.files?.[0]
-        if (file) {
-            const imageUrl = URL.createObjectURL(file)
+    const handleImageChange = async (e: React.ChangeEvent<HTMLInputElement>) => {
+        const files = e.target.files
+        if (!files || files.length === 0) return
+
+        const file = files[0]
+        if (!(file instanceof File)) return
+
+        setIsImageLoading(true)
+        try {
+            const formData = new FormData()
+            formData.append('file', file)
+
+            const { data, error } = await client.PATCH('/api/v1/members/me/profile', {
+                body: formData as any,
+            })
+
+            if (error) {
+                throw new Error(
+                    (error as { data?: { message?: string } })?.data?.message || '프로필 이미지 변경에 실패했습니다',
+                )
+            }
+
+            let imageUrl: string | null = null
+
+            if (typeof data === 'string') {
+                try {
+                    const parsedData = JSON.parse(data)
+                    if (parsedData.code === '200' && parsedData.data) {
+                        imageUrl = parsedData.data
+                    }
+                } catch {
+                    if (data.startsWith('http')) {
+                        imageUrl = data
+                    }
+                }
+            } else if (data && typeof data === 'object' && data !== null) {
+                const responseData = data as { data?: string; url?: string }
+                imageUrl = responseData.data || responseData.url || null
+            }
+
+            if (!imageUrl) {
+                throw new Error('프로필 이미지 URL을 받지 못했습니다')
+            }
+
             setProfileImage(imageUrl)
+            setLoginMember({
+                ...loginMember,
+                profileImage: imageUrl,
+            })
+        } catch (error) {
+            alert(error instanceof Error ? error.message : '프로필 이미지 변경 중 오류가 발생했습니다')
+            setProfileImage('/assets/user.svg')
+            setLoginMember({
+                ...loginMember,
+                profileImage: '/assets/user.svg',
+            })
+        } finally {
+            setIsImageLoading(false)
         }
     }
 
@@ -132,16 +186,25 @@ export default function MyPage() {
                     <div className="flex items-center gap-6 p-6 bg-white rounded-xl shadow-sm">
                         <div className="relative group">
                             <div className="w-[140px] h-[140px] relative">
-                                <Image
-                                    src={profileImage}
-                                    alt="profile"
-                                    fill
-                                    className="rounded-full border-4 border-[var(--color-main)] shadow-md object-cover"
-                                />
+                                {profileImage && (
+                                    <Image
+                                        src={profileImage}
+                                        alt="profile"
+                                        fill
+                                        className="rounded-full border-4 border-[var(--color-main)] shadow-md object-cover"
+                                    />
+                                )}
+                                {isImageLoading && (
+                                    <div className="absolute inset-0 flex items-center justify-center bg-black bg-opacity-50 rounded-full">
+                                        <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-white"></div>
+                                    </div>
+                                )}
                             </div>
                             <label
                                 htmlFor="profile-image"
-                                className="absolute inset-0 flex items-center justify-center bg-black bg-opacity-50 rounded-full opacity-0 group-hover:opacity-100 transition-opacity cursor-pointer"
+                                className={`absolute inset-0 flex items-center justify-center bg-black bg-opacity-50 rounded-full opacity-0 group-hover:opacity-100 transition-opacity cursor-pointer ${
+                                    isImageLoading ? 'hidden' : ''
+                                }`}
                             >
                                 <span className="text-white text-sm font-medium">프로필 변경</span>
                             </label>
@@ -151,6 +214,7 @@ export default function MyPage() {
                                 accept="image/*"
                                 className="hidden"
                                 onChange={handleImageChange}
+                                disabled={isImageLoading}
                             />
                             {socialIcon && (
                                 <div className="absolute -top-2 -right-2 bg-white rounded-full p-1 shadow-md">
