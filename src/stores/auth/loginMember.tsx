@@ -18,7 +18,7 @@ export const LoginMemberContext = createContext<{
     logoutAndHome: () => void
 }>({
     loginMember: {
-        email: '',
+        email: undefined,
         nickname: '',
         profileImage: '',
         subscriptionType: 'NONE',
@@ -33,7 +33,7 @@ export const LoginMemberContext = createContext<{
 
 function createEmptyMember(): UserProfileResponse {
     return {
-        email: '',
+        email: undefined,
         nickname: '',
         profileImage: '',
         subscriptionType: 'NONE',
@@ -46,7 +46,7 @@ export function useLoginMember() {
 
     const [isLoginMemberPending, setLoginMemberPending] = useState(true)
     const [loginMember, _setLoginMember] = useState<UserProfileResponse>({
-        email: '',
+        email: undefined,
         nickname: '',
         profileImage: '',
         subscriptionType: 'NONE',
