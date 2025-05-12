@@ -9,7 +9,6 @@ export default function DailyGoal() {
     const [videoGoal, setVideoGoal] = useState(10)
     const [wordGoal, setWordGoal] = useState(30)
     const [goalRate, setGoalRate] = useState(0)
-    const [loading, setLoading] = useState(false)
 
     async function handleVideoGoalChange(e: React.ChangeEvent<HTMLSelectElement>) {
         const newVideoGoal = Number(e.target.value)
@@ -22,14 +21,11 @@ export default function DailyGoal() {
         fetchGoalRate(videoGoal, newWordGoal)
     }
     async function fetchGoalRate(videoGoal: number, wordGoal: number) {
-        setLoading(true)
         try {
             const response = await client.PATCH('/api/v1/dashboard/goal', { body: { videoGoal, wordGoal } })
             setGoalRate(response.data?.data?.achievementRate ?? 0)
         } catch {
             setGoalRate(0)
-        } finally {
-            setLoading(false)
         }
     }
 
