@@ -22,6 +22,16 @@ const CATEGORIES = {
     MOVIE: { id: 30, label: '영화' },
 } as const
 
+// 테스트용 목데이터
+const MOCK_VIDEO: VideoData & { bookmarked: boolean } = {
+    videoId: 'test_video_1',
+    title: '테스트 영상 - 영어 학습을 위한 TED Talk',
+    description:
+        '이 영상은 영어 학습을 위한 TED Talk입니다. 발음, 어휘, 문법 등 다양한 학습 포인트를 포함하고 있습니다. 특히 일상 대화에서 자주 사용되는 표현들을 배울 수 있습니다.',
+    thumbnailUrl: 'https://i.ytimg.com/vi/dQw4w9WgXcQ/maxresdefault.jpg',
+    bookmarked: true,
+}
+
 export default function VideoLearningPage() {
     const url = process.env.NEXT_PUBLIC_MOCK_URL
     const router = useRouter()
@@ -29,10 +39,9 @@ export default function VideoLearningPage() {
 
     const [selectedCategory, setSelectedCategory] = useState<Category>(CATEGORIES.ALL)
     const [searchKeyword, setSearchKeyword] = useState<string>('')
-    const [videoList, setVideoList] = useState<VideoData[]>([])
+    const [videoList, setVideoList] = useState<(VideoData & { bookmarked: boolean })[]>([MOCK_VIDEO])
     const [isLoading, setIsLoading] = useState(true)
     const [error, setError] = useState<string | null>(null)
-    const [bookmarkedVideos, setBookmarkedVideos] = useState<Set<string>>(new Set())
 
     // api/v1/video/list 호출
     useEffect(() => {
@@ -140,23 +149,21 @@ export default function VideoLearningPage() {
         if (!videoId) return
 
         try {
-            const isBookmarked = bookmarkedVideos.has(videoId)
+            const video = videoList.find((v) => v.videoId === videoId)
+            const isBookmarked = video?.bookmarked
 
             if (isBookmarked) {
-                await client.DELETE(`/api/v1/bookmarks/${videoId}` as any, {})
+                await client.DELETE('/api/v1/bookmarks/{videoId}', {
+                    params: { path: { videoId } },
+                })
             } else {
-                await client.POST(`/api/v1/bookmarks/${videoId}` as any, {})
+                await client.POST('/api/v1/bookmarks/{videoId}', {
+                    params: { path: { videoId } },
+                })
             }
 
-            setBookmarkedVideos((prev) => {
-                const newSet = new Set(prev)
-                if (isBookmarked) {
-                    newSet.delete(videoId)
-                } else {
-                    newSet.add(videoId)
-                }
-                return newSet
-            })
+            // 비디오 목록 업데이트
+            setVideoList((prev) => prev.map((v) => (v.videoId === videoId ? { ...v, bookmarked: !isBookmarked } : v)))
         } catch (err) {
             console.error('북마크 토글 중 오류 발생:', err)
         }
@@ -218,13 +225,11 @@ export default function VideoLearningPage() {
                                                 className="absolute top-2 left-2 p-1.5 bg-white/90 rounded-full 
                                                          opacity-0 group-hover:opacity-100 transition-opacity
                                                          hover:bg-white shadow-sm z-10"
-                                                title={
-                                                    bookmarkedVideos.has(video.videoId) ? '북마크 제거' : '북마크 추가'
-                                                }
+                                                title={video.bookmarked ? '북마크 제거' : '북마크 추가'}
                                             >
                                                 <BookmarkIcon
                                                     className={`w-5 h-5 transition-colors ${
-                                                        bookmarkedVideos.has(video.videoId)
+                                                        video.bookmarked
                                                             ? 'text-[var(--color-main)] fill-[var(--color-main)]'
                                                             : 'text-gray-400 hover:text-gray-600'
                                                     }`}
