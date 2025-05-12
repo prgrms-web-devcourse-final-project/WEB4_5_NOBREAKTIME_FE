@@ -6,7 +6,7 @@ type UserProfileResponse = {
     nickname?: string
     profileImage?: string
     subscriptionType?: 'NONE' | 'BASIC' | 'STANDARD' | 'PREMIUM' | 'ADMIN'
-    language?: 'ENGLISH' | 'JAPANESE' | 'NONE'
+    language?: 'ENGLISH' | 'JAPANESE' | 'NONE' | 'ALL'
 }
 
 export const LoginMemberContext = createContext<{

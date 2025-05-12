@@ -199,6 +199,7 @@ export default function MyPage() {
         return null
     }
 
+    console.log(loginMember)
     const language = loginMember.language || 'NONE'
     const socialIcon = getSocialIcon(loginMember.email || '')
 

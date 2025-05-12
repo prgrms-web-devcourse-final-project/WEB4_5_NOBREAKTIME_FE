@@ -2,6 +2,7 @@
 
 import Footer from '@/components/layout/footer'
 import client from '@/lib/backend/client'
+import { useGlobalLoginMember } from '@/stores/auth/loginMember'
 import Image from 'next/image'
 import Link from 'next/link'
 import { useRouter } from 'next/navigation'
@@ -17,6 +18,7 @@ const LANGUAGES = [
 
 export default function LanguagePage() {
     const router = useRouter()
+    const { loginMember, setLoginMember } = useGlobalLoginMember()
     const [selectedLang, setSelectedLang] = useState<Language | null>(null)
 
     const handleStart = async () => {
@@ -35,7 +37,10 @@ export default function LanguagePage() {
                 throw new Error('언어 업데이트에 실패했습니다')
             }
 
-            localStorage.setItem('lang', selectedLang)
+            setLoginMember({
+                ...loginMember,
+                language: selectedLang,
+            })
             router.push('/dashboard')
         } catch (error) {
             console.error('언어 업데이트 중 오류 발생:', error)
