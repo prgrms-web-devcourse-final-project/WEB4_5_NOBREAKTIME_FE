@@ -240,7 +240,7 @@ export default function MyPage() {
                                 </button>
                             </div>
                             <span className="text-sm text-gray-500">{loginMember.email}</span>
-                            <span className="text-sm text-gray-500">구독: {loginMember.subscription}</span>
+                            <span className="text-sm text-gray-500">구독: {loginMember.subscriptionType}</span>
                         </div>
                     </div>
 
