@@ -2,16 +2,19 @@
 
 import React, { useState, useEffect } from 'react'
 import Image from 'next/image'
-import { AnalysisData, SubtitleResult } from '@/types/video'
+import { components } from '@/lib/backend/apiV1/schema'
+
+type GptSubtitleResponse = components['schemas']['GptSubtitleResponse']
+type AnalyzeVideoResponse = components['schemas']['AnalyzeVideoResponse']
 
 interface Props {
-    analysisData: AnalysisData | null
-    onSubtitleClick?: (startTime: string, subtitle: SubtitleResult) => void
+    analysisData: AnalyzeVideoResponse | null
+    onSubtitleClick?: (startTime: string, subtitle: GptSubtitleResponse) => void
     showTranscript: boolean
     setShowTranscript: (show: boolean) => void
     isLoading: boolean
     currentTime?: number
-    selectedSubtitle?: SubtitleResult | null
+    selectedSubtitle?: GptSubtitleResponse | null
 }
 
 function VideoScript({

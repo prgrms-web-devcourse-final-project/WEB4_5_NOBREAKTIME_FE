@@ -1,15 +1,23 @@
 import Image from 'next/image'
 import { usePathname, useRouter } from 'next/navigation'
+
 interface Wordbook {
     id: number
     name: string
     language: string
-    wordCount?: number
+    wordCount: number
 }
 
 interface Props {
-    wordbooks: Wordbook[]
-    isLoading?: boolean
+    title: string
+    descriptions: { text: string; strong: string[] }[]
+    wordbooks: {
+        id: number
+        name: string
+        language: string
+        wordCount: number
+    }[]
+    isLoading: boolean
 }
 
 export default function Card({ wordbooks, isLoading = false }: Props) {
@@ -50,9 +58,7 @@ export default function Card({ wordbooks, isLoading = false }: Props) {
                         <p className="font-semibold text-[var(--color-main)] mb-1">{wordbook.name}</p>
 
                         {/* 단어 수 */}
-                        <strong className="text-[var(--color-point)] text-xl mb-2">
-                            {wordbook.wordCount || 0}개 단어
-                        </strong>
+                        <strong className="text-[var(--color-point)] text-xl mb-2">{wordbook.wordCount}개 단어</strong>
 
                         {/* 버튼 영역 */}
                         <div className="flex justify-end gap-2">
@@ -88,13 +94,16 @@ export default function Card({ wordbooks, isLoading = false }: Props) {
 
             <div className="flex justify-between gap-2 rounded-lg">
                 <div className="flex gap-2">
+                    {/*
                     <button className="bg-[var(--color-main)] text-sm text-[var(--color-white)] p-2 rounded-lg hover:opacity-90 transition-opacity">
                         추가
                     </button>
                     <button className="bg-[var(--color-warning)] text-sm text-[var(--color-white)] p-2 rounded-lg hover:opacity-90 transition-opacity">
                         삭제
                     </button>
+                    */}
                 </div>
+
                 <div className="flex gap-2">
                     <button className="p-2 rounded-lg hover:bg-gray-100 transition-colors">
                         <Image src="/assets/left.svg" alt="arrow-left" width={24} height={24} />

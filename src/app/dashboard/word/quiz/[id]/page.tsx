@@ -4,17 +4,20 @@ import WordIcon from '@/components/icon/wordIcon'
 import Image from 'next/image'
 import { useParams, useSearchParams } from 'next/navigation'
 import { useEffect, useRef, useState } from 'react'
-import { mockQuizData } from './mockdata'
-interface Word {
-    word: string
-    pos: string
-    meaning: string
-    difficulty: string
-    exampleSentence: string
-    translatedSentence: string
-}
+import client from '@/lib/backend/client'
+import QuizComplete from '@/components/learning/Quiz/QuizComplete'
+import { components } from '@/lib/backend/apiV1/schema'
 
-type QuizMode = 'word' | 'meaning' | 'random'
+type WordQuizItem = components['schemas']['WordQuizItem']
+
+interface WordQuizItemWithIds extends WordQuizItem {
+    quizId: number
+    wordQuizItemId: number
+    word: string
+    question: string
+    original: string
+    meaning: string
+}
 
 export default function WordQuiz() {
     const params = useParams()
@@ -22,159 +25,22 @@ export default function WordQuiz() {
     const selectedId = params.id as string
     const selectedTitle = searchParams.get('title') || '제목 없음'
 
-    // 모든 상태 관련 훅을 맨 위에 배치
-    const [words, setWords] = useState<Word[]>([])
+    const [originalWords, setOriginalWords] = useState<WordQuizItemWithIds[]>([])
+    const [words, setWords] = useState<WordQuizItemWithIds[]>([])
     const [isLoading, setIsLoading] = useState(true)
     const [index, setIndex] = useState(0)
-    const [mode, setMode] = useState<QuizMode>('word')
-    const [hiddenPart, setHiddenPart] = useState<'word' | 'meaning' | null>(null)
-    const [userInput, setUserInput] = useState<string[] | string>([])
-    const [hintCount, setHintCount] = useState(0)
-    const [isCorrect, setIsCorrect] = useState<null | boolean>(null)
-    const [hintIndices, setHintIndices] = useState<number[]>([])
-    const [initialHintIndex, setInitialHintIndex] = useState<number | null>(null)
-    const maxHint = 2
-    const inputRefs = useRef<(HTMLInputElement | null)[]>([])
+    const [userInputs, setUserInputs] = useState<string[]>([])
+    const [hintCounts, setHintCounts] = useState<number[]>([])
+    const [quizResults, setQuizResults] = useState<(boolean | null)[]>([])
+    const maxHint = 3
 
-    // 함수들도 상태 훅 다음에 정의
-    const getAnswer = () => {
-        // 단어가 없을 때 빈 문자열 반환
-        if (!words.length || index >= words.length) return ''
-
-        const current = words[index]
-        return mode === 'word' || (mode === 'random' && hiddenPart === 'word') ? current.word : current.meaning
-    }
-
-    const resetState = (newIndex: number, resetMode = false) => {
-        setIndex(newIndex)
-        setUserInput(mode === 'meaning' || (mode === 'random' && hiddenPart === 'meaning') ? '' : [])
-        setHintCount(0)
-        setIsCorrect(null)
-        setHintIndices([])
-        setInitialHintIndex(null)
-        if (mode === 'random' || resetMode) {
-            setHiddenPart(Math.random() > 0.5 ? 'word' : 'meaning')
-        } else {
-            setHiddenPart(null)
-        }
-    }
-
-    const handlePrev = () => {
-        if (index > 0) resetState(index - 1)
-    }
-
-    const handleNext = () => {
-        if (index < words.length - 1) resetState(index + 1)
-    }
-
-    const handleHint = () => {
-        if (isMeaningMode) return
-
-        const answer = getAnswer()
-        if (hintCount >= maxHint || (userInput as string[]).join('').length >= answer.length || isCorrect) return
-
-        const newInput = [...(userInput as string[])]
-        for (let i = 0; i < answer.length; i++) {
-            if (newInput[i] !== answer[i]) {
-                newInput[i] = answer[i]
-                setUserInput(newInput)
-                setHintCount((prev) => prev + 1)
-                setHintIndices((prev) => [...prev, i])
-
-                // 힌트를 2회 이상 사용하면 틀린 것으로 처리하고 모든 글자를 빨간색으로 표시
-                if (hintCount + 1 >= maxHint) {
-                    setIsCorrect(false)
-                    // 나머지 글자들도 모두 보여줌
-                    for (let j = i + 1; j < answer.length; j++) {
-                        newInput[j] = answer[j]
-                        setHintIndices((prev) => [...prev, j])
-                    }
-                    setUserInput(newInput)
-                } else if (newInput.join('') === answer) {
-                    setIsCorrect(true)
-                }
-                return
-            }
-        }
-    }
-
-    const handleInputChange = (e: React.ChangeEvent<HTMLInputElement>, index?: number) => {
-        if (!words.length) return
-
-        if (isMeaningMode) {
-            setUserInput(e.target.value)
-            // 자동 채점
-            if (e.target.value === current.meaning) {
-                setIsCorrect(true)
-            } else {
-                setIsCorrect(null)
-            }
-        } else {
-            // 힌트로 보여준 글자는 변경할 수 없음
-            if (hintIndices.includes(index!)) return
-
-            const value = e.target.value.slice(-1).toLowerCase()
-            const newInput = [...(userInput as string[])]
-            newInput[index!] = value
-            setUserInput(newInput)
-
-            // 자동으로 다음 입력칸으로 이동
-            if (value) {
-                // 다음 입력 가능한 칸 찾기
-                let nextIndex = index! + 1
-                while (nextIndex < getAnswer().length && hintIndices.includes(nextIndex)) {
-                    nextIndex++
-                }
-                if (nextIndex < getAnswer().length) {
-                    inputRefs.current[nextIndex]?.focus()
-                }
-            }
-
-            // 자동 채점
-            const currentAnswer = newInput.join('')
-            if (currentAnswer.length === getAnswer().length) {
-                const isAnswerCorrect = currentAnswer === getAnswer()
-                setIsCorrect(isAnswerCorrect)
-                if (!isAnswerCorrect) {
-                    // 오답일 경우 정답으로 채우기
-                    setUserInput(getAnswer().split(''))
-                }
-            } else {
-                setIsCorrect(null)
-            }
-        }
-    }
-
-    const handleKeyDown = (e: React.KeyboardEvent<HTMLInputElement>, index: number) => {
-        if (e.key === 'Backspace' && !userInput[index] && index > 0) {
-            // 이전 입력 가능한 칸 찾기
-            let prevIndex = index - 1
-            while (prevIndex >= 0 && hintIndices.includes(prevIndex)) {
-                prevIndex--
-            }
-            if (prevIndex >= 0) {
-                inputRefs.current[prevIndex]?.focus()
-            }
-        }
-    }
-
-    const getResultIcon = () => {
-        if (isCorrect === true) return '/assets/ok.svg'
-        if (isCorrect === false) return '/assets/fail.svg'
-        return '/assets/hint.svg'
-    }
-
-    // 서버에서 단어 데이터 가져오기
+    // 퀴즈 데이터 불러오기
     useEffect(() => {
         const fetchQuizWords = async () => {
             try {
                 setIsLoading(true)
-                // 목데이터 사용
-                setWords(mockQuizData.words)
-                setIsLoading(false)
 
-                /*
-                const { data } = await client.GET('/api/v1/wordbooks/{wordbookId}/words', {
+                const response = await client.GET('/api/v1/wordbooks/{wordbookId}/quiz', {
                     params: {
                         path: {
                             wordbookId: Number(selectedId),
@@ -182,20 +48,30 @@ export default function WordQuiz() {
                     },
                 })
 
-                if (data?.data) {
-                    // 타입 안전하게 처리
-                    const apiWords = data.data.map((item: any) => ({
-                        word: item.word || '',
-                        pos: item.pos || '',
-                        meaning: item.meaning || '',
-                        difficulty: item.difficulty || 'EASY',
-                        exampleSentence: item.exampleSentence || '',
-                        translatedSentence: item.translatedSentence || '',
-                    }))
+                if (response.data?.code === '200' && response.data?.data) {
+                    const quizData = response.data.data
+                    console.log('퀴즈 데이터:', {
+                        quizId: quizData.quizId,
+                        quizItems: quizData.quizItems,
+                    })
 
-                    setWords(apiWords)
+                    const wordsWithIds = (quizData.quizItems || []).map((item) => ({
+                        word: item.word || '',
+                        meaning: item.meaning || '',
+                        question: item.question || '',
+                        original: item.original || '',
+                        quizId: quizData.quizId,
+                        wordQuizItemId: item.wordQuizItemId || 0,
+                    })) as WordQuizItemWithIds[]
+
+                    setOriginalWords(wordsWithIds)
+                    setWords(wordsWithIds)
+                    setUserInputs(new Array(wordsWithIds.length).fill(''))
+                    setHintCounts(new Array(wordsWithIds.length).fill(0))
+                    setQuizResults(new Array(wordsWithIds.length).fill(null))
                 }
-                */
+
+                setIsLoading(false)
             } catch (error) {
                 console.error('퀴즈 데이터를 가져오는데 실패했습니다:', error)
                 setIsLoading(false)
@@ -207,30 +83,147 @@ export default function WordQuiz() {
         }
     }, [selectedId])
 
-    useEffect(() => {
-        resetState(index, true)
-        // eslint-disable-next-line react-hooks/exhaustive-deps
-    }, [mode])
+    // 최종 결과 저장 함수
+    const saveAllResults = async () => {
+        try {
+            const savePromises = words
+                .map((word, idx) => {
+                    // null이 아닌 모든 결과(정답/오답) 저장
+                    if (quizResults[idx] !== null) {
+                        const params = {
+                            quizId: word.quizId,
+                            wordbookItemId: word.wordQuizItemId,
+                            isCorrect: quizResults[idx],
+                        }
+                        console.log('퀴즈 결과 저장 파라미터:', params)
+                        return client.POST('/api/v1/wordbooks/quiz/result', {
+                            body: params,
+                        })
+                    }
+                    return null
+                })
+                .filter(Boolean)
 
-    useEffect(() => {
-        if (!words.length) return
-
-        const answer = getAnswer()
-        if (isMeaningMode) {
-            setUserInput('')
-        } else {
-            const newInput = Array(answer.length).fill('')
-            // 랜덤으로 한 글자 선택
-            const randomIndex = Math.floor(Math.random() * answer.length)
-            newInput[randomIndex] = answer[randomIndex]
-            setUserInput(newInput)
-            setHintIndices([randomIndex])
-            setInitialHintIndex(randomIndex)
+            await Promise.all(savePromises)
+            console.log('모든 결과 저장 완료')
+        } catch (error) {
+            console.error('결과 저장 실패:', error)
         }
-        inputRefs.current = inputRefs.current.slice(0, answer.length)
-    }, [index, mode, hiddenPart, words.length])
+    }
 
-    // 로딩 중이거나 데이터가 없을 때 처리
+    const handleHint = async () => {
+        if (hintCounts[index] >= maxHint || quizResults[index] !== null) return
+
+        // 마지막 힌트(정답 보기)를 사용하는 경우
+        if (hintCounts[index] === maxHint - 1) {
+            const newUserInputs = [...userInputs]
+            newUserInputs[index] = words[index].word
+            setUserInputs(newUserInputs)
+
+            const newHintCounts = [...hintCounts]
+            newHintCounts[index] = hintCounts[index] + 1
+            setHintCounts(newHintCounts)
+
+            saveQuizResult(index, false)
+            return
+        }
+
+        // 힌트 사용 시 다음 글자 하나 보여주기
+        const answer = words[index].word
+        const currentInput = userInputs[index]
+        let matchLength = 0
+        for (let i = 0; i < currentInput.length && i < answer.length; i++) {
+            if (currentInput[i] === answer[i]) {
+                matchLength++
+            } else {
+                break
+            }
+        }
+
+        if (matchLength < answer.length) {
+            const newInput = answer.slice(0, matchLength + 1)
+            const newUserInputs = [...userInputs]
+            newUserInputs[index] = newInput
+            setUserInputs(newUserInputs)
+
+            const newHintCounts = [...hintCounts]
+            newHintCounts[index] = hintCounts[index] + 1
+            setHintCounts(newHintCounts)
+        }
+    }
+
+    const handleInputChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+        if (quizResults[index] !== null || hintCounts[index] >= maxHint) return
+        const newUserInputs = [...userInputs]
+        newUserInputs[index] = e.target.value
+        setUserInputs(newUserInputs)
+    }
+
+    const handleKeyDown = async (e: React.KeyboardEvent<HTMLInputElement>) => {
+        if (e.key === 'Enter' && quizResults[index] === null && hintCounts[index] < maxHint) {
+            const isAnswerCorrect = userInputs[index].toLowerCase() === (words[index].word || '').toLowerCase()
+
+            // 오답인 경우 정답 표시
+            if (!isAnswerCorrect) {
+                const newUserInputs = [...userInputs]
+                newUserInputs[index] = words[index].word
+                setUserInputs(newUserInputs)
+            }
+
+            saveQuizResult(index, isAnswerCorrect)
+        }
+    }
+
+    const handlePrev = () => {
+        if (index > 0) {
+            setIndex(index - 1)
+        }
+    }
+
+    const handleNext = () => {
+        if (index < words.length - 1) {
+            setIndex(index + 1)
+        }
+    }
+
+    const saveQuizResult = (index: number, result: boolean) => {
+        setQuizResults((prev) => {
+            const newResults = [...prev]
+            newResults[index] = result
+            return newResults
+        })
+    }
+
+    const calculateScore = () => {
+        return quizResults.filter((result) => result === true).length
+    }
+
+    const isQuizCompleted = () => {
+        return quizResults.every((result) => result !== null)
+    }
+
+    const filterIncorrectWords = () => {
+        return originalWords.filter((_, index) => quizResults[index] === false)
+    }
+
+    const resetQuiz = () => {
+        const incorrectWords = filterIncorrectWords()
+        setWords(incorrectWords.length > 0 ? incorrectWords : originalWords)
+        setIndex(0)
+        const newLength = incorrectWords.length || originalWords.length
+        setQuizResults(new Array(newLength).fill(null))
+        setUserInputs(new Array(newLength).fill(''))
+        setHintCounts(new Array(newLength).fill(0))
+    }
+
+    const restartQuiz = () => {
+        setWords(originalWords)
+        setIndex(0)
+        setQuizResults(new Array(originalWords.length).fill(null))
+        setUserInputs(new Array(originalWords.length).fill(''))
+        setHintCounts(new Array(originalWords.length).fill(0))
+    }
+
     if (isLoading) {
         return (
             <>
@@ -263,13 +256,77 @@ export default function WordQuiz() {
         )
     }
 
-    // 컴포넌트 렌더링 부분 전에 필요한 계산 수행
-    const current = words[index]
-    const wordDifficulty = current.difficulty === 'EASY' ? 1 : current.difficulty === 'MEDIUM' ? 2 : 3
+    if (isQuizCompleted()) {
+        const score = calculateScore()
+        const incorrectCount = filterIncorrectWords().length
 
-    const isHidden = mode !== 'random' ? true : !!hiddenPart
-    const isWordMode = mode === 'word' || (mode === 'random' && hiddenPart === 'word')
-    const isMeaningMode = mode === 'meaning' || (mode === 'random' && hiddenPart === 'meaning')
+        // 결과 저장 후 완료 화면 표시
+        saveAllResults()
+
+        return (
+            <QuizComplete
+                score={score}
+                totalCount={words.length}
+                incorrectCount={incorrectCount}
+                onResetQuiz={resetQuiz}
+                onRestartQuiz={restartQuiz}
+            />
+        )
+    }
+
+    const current = words[index]
+    const getResultIcon = () => {
+        if (quizResults[index] === true) return '/assets/ok.svg'
+        if (quizResults[index] === false) return '/assets/fail.svg'
+        if (hintCounts[index] >= maxHint - 1) return '/assets/answer.svg'
+        return '/assets/hint.svg'
+    }
+
+    const renderQuestion = () => {
+        if (!current) return null
+
+        // question이 비어있거나 {}가 없는 경우 전체 문장을 표시
+        if (!current.question || !current.question.includes('{}')) {
+            return (
+                <div className="flex flex-col items-center w-full">
+                    <div className="bg-gray-50 w-full py-6 rounded-lg mb-8">
+                        <p className="text-xl text-gray-600 text-center px-4">{current.meaning}</p>
+                    </div>
+                    <div className="flex flex-wrap items-center justify-center gap-3 text-3xl font-bold text-center bg-white py-8 px-4 rounded-lg w-full">
+                        <p>{current.question || current.original || '문제 데이터가 없습니다.'}</p>
+                    </div>
+                </div>
+            )
+        }
+
+        const parts = current.question.split('{}')
+
+        return (
+            <div className="flex flex-col items-center w-full">
+                <div className="bg-gray-50 w-full py-6 rounded-lg mb-8">
+                    <p className="text-xl text-gray-600 text-center px-4">{current.meaning}</p>
+                </div>
+                <div className="flex flex-wrap items-center justify-center gap-3 text-3xl font-bold text-center bg-white py-8 px-4 rounded-lg w-full">
+                    <span className="break-keep">{parts[0]}</span>
+                    <input
+                        type="text"
+                        value={userInputs[index]}
+                        onChange={handleInputChange}
+                        onKeyDown={handleKeyDown}
+                        className={`w-44 min-w-[140px] h-[50px] text-2xl text-center rounded-md bg-[#ECEAFC] border-2 border-[#D1CFFA] focus:outline-none focus:border-[var(--color-main)] ${
+                            quizResults[index] === true
+                                ? 'text-green-500 border-green-500 bg-green-100'
+                                : quizResults[index] === false || hintCounts[index] >= maxHint
+                                ? 'text-red-500 border-red-500 bg-red-100'
+                                : ''
+                        }`}
+                        readOnly={quizResults[index] !== null || hintCounts[index] >= maxHint}
+                    />
+                    <span className="break-keep">{parts[1]}</span>
+                </div>
+            </div>
+        )
+    }
 
     return (
         <>
@@ -279,107 +336,32 @@ export default function WordQuiz() {
                 </span>
                 <h3 className="text-2xl font-bold text-[var(--color-black)]">Word Quiz</h3>
             </div>
-            <div className="bg-image p-20 flex flex-col gap-4 items-center">
-                <h1 className="text-5xl font-bold text-[var(--color-black)]">{selectedTitle} 단어장 퀴즈</h1>
+            <div className="bg-image p-30 flex flex-col gap-4 items-center">
+                <h1 className="text-5xl font-bold text-[var(--color-black)]">{selectedTitle} 퀴즈</h1>
 
-                <div className="flex flex-row justify-between gap-4 w-180">
+                <div className="flex flex-row justify-between gap-4 w-250">
                     <div className="bg-[var(--color-main)] text-[var(--color-point)] px-4 py-2 rounded-sm">
                         {index + 1} / {words.length}
                     </div>
-
-                    <div className="flex gap-2">
-                        {(['word', 'meaning', 'random'] as QuizMode[]).map((m) => {
-                            const isActive = mode === m
-                            return (
-                                <label
-                                    key={m}
-                                    className={`
-          cursor-pointer px-4 py-2 rounded-md border text-sm
-          ${
-              isActive
-                  ? 'bg-[var(--color-main)] text-[var(--color-point)] border-[var(--color-main)]'
-                  : 'bg-[var(--color-sub-2)] text-[var(--color-main)] border-[var(--color-main)] border-2 hover:bg-[var(--color-sub-1)]'
-          }
-        `}
-                                >
-                                    <input
-                                        type="radio"
-                                        className="hidden"
-                                        checked={mode === m}
-                                        onChange={() => setMode(m)}
-                                    />
-                                    <span>{m === 'word' ? '영단어' : m === 'meaning' ? '뜻' : '랜덤'}</span>
-                                </label>
-                            )
-                        })}
-                    </div>
                 </div>
 
-                <div className="flex flex-col items-center justify-center bg-[var(--color-white)] w-180 h-full gap-8 p-12">
-                    <div className="text-yellow-400 text-xl">
-                        {Array.from({ length: wordDifficulty }).map((_, i) => (
-                            <span key={i}>⭐</span>
-                        ))}
+                <div className="flex flex-col items-center justify-center bg-[var(--color-white)] w-250 h-full gap-8 p-12">
+                    {renderQuestion()}
+
+                    <div className="flex flex-col items-center gap-2">
+                        <button
+                            className="w-18 h-18 disabled:opacity-50"
+                            onClick={handleHint}
+                            disabled={hintCounts[index] >= maxHint || quizResults[index] !== null}
+                        >
+                            <Image src={getResultIcon()} alt="result" width={80} height={80} />
+                        </button>
+                        <p className="text-sm text-gray-500">
+                            {hintCounts[index] >= maxHint - 1
+                                ? '정답 보기'
+                                : `힌트 사용: ${hintCounts[index]} / ${maxHint}`}
+                        </p>
                     </div>
-
-                    {isWordMode ? (
-                        <div className="flex gap-2">
-                            {Array.from({ length: getAnswer().length }).map((_, i) => (
-                                <input
-                                    key={i}
-                                    ref={(el) => {
-                                        inputRefs.current[i] = el
-                                    }}
-                                    type="text"
-                                    maxLength={1}
-                                    value={userInput[i] || ''}
-                                    onChange={(e) => handleInputChange(e, i)}
-                                    onKeyDown={(e) => handleKeyDown(e, i)}
-                                    className={`w-12 h-12 text-2xl text-center border-b-2 border-gray-300 focus:outline-none focus:border-[var(--color-main)] ${
-                                        isCorrect === true
-                                            ? 'text-green-500'
-                                            : hintCount >= maxHint || isCorrect === false
-                                            ? 'text-red-500'
-                                            : hintIndices.includes(i) && i !== initialHintIndex && hintCount < maxHint
-                                            ? 'text-yellow-500'
-                                            : ''
-                                    }`}
-                                    readOnly={hintIndices.includes(i) || isCorrect !== null}
-                                />
-                            ))}
-                        </div>
-                    ) : (
-                        <p className="text-4xl font-bold text-center">{current.word}</p>
-                    )}
-
-                    {isMeaningMode ? (
-                        <input
-                            type="text"
-                            value={userInput as string}
-                            onChange={handleInputChange}
-                            placeholder="뜻을 입력하세요"
-                            className={`w-96 text-2xl text-center border-b-2 border-gray-300 focus:outline-none focus:border-[var(--color-main)] ${
-                                isCorrect === true ? 'text-green-500' : isCorrect === false ? 'text-red-500' : ''
-                            }`}
-                        />
-                    ) : (
-                        <span className="text-2xl">{current.meaning}</span>
-                    )}
-
-                    {isHidden && (
-                        <div className="flex flex-col items-center gap-2">
-                            <button
-                                className="w-18 h-18 disabled:opacity-50"
-                                onClick={handleHint}
-                                disabled={hintCount >= maxHint || isCorrect === true}
-                            >
-                                <Image src={getResultIcon()} alt="result" width={80} height={80} />
-                            </button>
-                            <p className="text-sm text-gray-500">
-                                힌트 사용: {hintCount} / {maxHint}
-                            </p>
-                        </div>
-                    )}
 
                     <div className="flex gap-2 w-full">
                         <button
@@ -389,13 +371,32 @@ export default function WordQuiz() {
                         >
                             <Image src="/assets/left.svg" alt="left" width={40} height={40} />
                         </button>
-                        <button
-                            onClick={handleNext}
-                            className="flex-1 flex items-center justify-center bg-[var(--color-sub-2)] border-[var(--color-main)] border-2 rounded-sm disabled:opacity-50"
-                            disabled={index === words.length - 1}
-                        >
-                            <Image src="/assets/right.svg" alt="right" width={40} height={40} />
-                        </button>
+                        {index === words.length - 1 ? (
+                            <button
+                                onClick={() => {
+                                    // 풀지 않은 문제들을 오답으로 처리
+                                    const newQuizResults = [...quizResults]
+                                    for (let i = 0; i < newQuizResults.length; i++) {
+                                        if (newQuizResults[i] === null) {
+                                            newQuizResults[i] = false
+                                        }
+                                    }
+                                    console.log('퀴즈 최종 결과:', newQuizResults)
+                                    setQuizResults(newQuizResults)
+                                }}
+                                className="flex-1 flex items-center justify-center bg-[var(--color-main)] text-white font-bold py-2 rounded-sm"
+                            >
+                                결과 제출
+                            </button>
+                        ) : (
+                            <button
+                                onClick={handleNext}
+                                className="flex-1 flex items-center justify-center bg-[var(--color-sub-2)] border-[var(--color-main)] border-2 rounded-sm disabled:opacity-50"
+                                disabled={index === words.length - 1}
+                            >
+                                <Image src="/assets/right.svg" alt="right" width={40} height={40} />
+                            </button>
+                        )}
                     </div>
                 </div>
             </div>

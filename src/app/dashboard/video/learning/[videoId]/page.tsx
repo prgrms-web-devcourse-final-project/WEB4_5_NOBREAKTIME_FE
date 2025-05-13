@@ -1,18 +1,22 @@
 'use client'
 
+import { components } from '@/lib/backend/apiV1/schema'
 import VideoIcon from '@/components/icon/videoIcon'
 import VideoLearning from '@/components/video/videoLearning'
-import { AnalysisData, QuizData, VideoData } from '@/types/video'
 import { useRouter } from 'next/navigation'
 import { use, useEffect, useState } from 'react'
 import client from '@/lib/backend/client'
+import { mockAnalysisData, mockQuizData } from './mockdata'
+
+type VideoResponse = components['schemas']['VideoResponse']
+type AnalyzeVideoResponse = components['schemas']['AnalyzeVideoResponse']
+type VideoLearningWordQuizListResponse = components['schemas']['VideoLearningWordQuizListResponse']
 
 function VideoLearningPage({ params }: { params: Promise<{ videoId: string }> }) {
     const router = useRouter()
     const { videoId } = use(params)
-    const [videoData, setVideoData] = useState<VideoData | null>(null)
-    const [analysisData, setAnalysisData] = useState<AnalysisData | null>(null)
-    const [quizData, setQuizData] = useState<QuizData | null>(null)
+    const [videoData, setVideoData] = useState<VideoResponse | null>(null)
+    const [analysisData, setAnalysisData] = useState<AnalyzeVideoResponse | null>(null)
     const [isLoading, setIsLoading] = useState(true)
 
     // 비디오 상세 정보 요청 및 분석 데이터 요청
@@ -32,8 +36,10 @@ function VideoLearningPage({ params }: { params: Promise<{ videoId: string }> })
                     title: title || '비디오 제목',
                     description: description || '비디오 설명',
                     thumbnailUrl: thumbnail || undefined,
+                    bookmarked: false,
                 })
 
+                // /*
                 const { data, error } = await client.GET('/api/v1/videos/{youtubeVideoId}/analysis', {
                     params: {
                         path: {
@@ -50,49 +56,12 @@ function VideoLearningPage({ params }: { params: Promise<{ videoId: string }> })
                 console.log('비디오 분석 데이터:', data)
 
                 if (data?.data?.subtitleResults) {
-                    setAnalysisData({
-                        subtitleResults: data.data.subtitleResults.map((result: any) => ({
-                            subtitleId: result.subtitleId || 0,
-                            startTime: result.startTime || '',
-                            endTime: result.endTime || '',
-                            speaker: result.speaker || '',
-                            original: result.original || '',
-                            transcript: result.transcript || '',
-                            keywords: (result.keywords || []).map((keyword: any) => ({
-                                word: keyword.word || '',
-                                meaning: keyword.meaning || '',
-                                difficulty: keyword.difficulty || 1,
-                            })),
-                        })),
-                    })
-
-                    // 영상 분석이 성공적으로 완료되면 단어 퀴즈 조회
-                    try {
-                        const { data: quizResponse } = await client.GET('/api/v1/videos/{videoId}/quiz/words', {
-                            params: {
-                                path: {
-                                    videoId: videoId,
-                                },
-                            },
-                        })
-
-                        if (quizResponse?.data?.quiz) {
-                            setQuizData({
-                                words: quizResponse.data.quiz.map((word: any) => ({
-                                    word: word.word || '',
-                                    pos: word.pos || '',
-                                    meaning: word.meaning || '',
-                                    difficulty: word.difficulty || 'EASY',
-                                    exampleSentence: word.sentence || '',
-                                    translatedSentence: word.sentenceMeaning || '',
-                                })),
-                            })
-                            console.log('단어 퀴즈 데이터:', quizResponse.data)
-                        }
-                    } catch (quizError) {
-                        console.error('단어 퀴즈 데이터를 가져오는데 실패했습니다:', quizError)
-                    }
+                    setAnalysisData(data.data)
                 }
+                // */
+
+                // 목데이터 사용
+                // setAnalysisData(mockAnalysisData)
             } catch (error) {
                 console.error('데이터 요청 실패:', error)
             } finally {
@@ -116,9 +85,8 @@ function VideoLearningPage({ params }: { params: Promise<{ videoId: string }> })
                 <h3 className="text-2xl font-bold text-[var(--color-black)]">Video Learning</h3>
             </div>
             <VideoLearning
-                video={videoData || { videoId, title: '', description: '', thumbnailUrl: undefined }}
+                video={videoData || { videoId, title: '', description: '', thumbnailUrl: undefined, bookmarked: false }}
                 analysisData={analysisData}
-                quizData={quizData}
                 onBack={handleBack}
                 isLoading={isLoading}
             />

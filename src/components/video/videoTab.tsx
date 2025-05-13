@@ -1,12 +1,16 @@
 'use client'
 
-import React, { useState } from 'react'
+import React, { useState, useEffect } from 'react'
 import { Keyword } from './videoTab/KeywordCard'
 import WordQuiz from './videoTab/WordQuiz'
 import ExpressionQuiz from './videoTab/ExpressionQuiz'
 import Overview from './videoTab/Overview'
 import Image from 'next/image'
-import { WordQuizResult, WordQuizType } from '@/types/video'
+import { components } from '@/lib/backend/apiV1/schema'
+import client from '@/lib/backend/client'
+
+type VideoLearningWordQuizItem = components['schemas']['VideoLearningWordQuizItem']
+type VideoLearningWordQuizListResponse = components['schemas']['VideoLearningWordQuizListResponse']
 
 interface Props {
     fontSize: number // 폰트 크기
@@ -14,17 +18,19 @@ interface Props {
         original: string
         transcript: string
         keywords?: Keyword[]
+        subtitleId?: number
     } | null
     selectedTab: string
     onTabChange: (tab: string) => void
     isLoading: boolean
     videoId: string
-    onQuizResults?: (results: WordQuizResult[]) => void
-    wordQuizData?: WordQuizType[]
     onAddKeyword?: (keyword: Keyword) => void
     onRemoveKeyword?: (keyword: Keyword) => void
     isKeywordAdded?: (keyword: Keyword) => boolean
     currentTime?: number
+    subtitleIndex?: number
+    onPrevSubtitle?: () => void
+    onNextSubtitle?: () => void
 }
 
 function VideoTab({
@@ -32,24 +38,54 @@ function VideoTab({
     selectedSubtitle,
     selectedTab,
     onTabChange,
-    isLoading,
+    isLoading: parentIsLoading,
     videoId,
-    onQuizResults,
-    wordQuizData = [],
     onAddKeyword,
     onRemoveKeyword,
     isKeywordAdded,
     currentTime = 0,
+    subtitleIndex = 0,
+    onPrevSubtitle,
+    onNextSubtitle,
 }: Props) {
-    const [wordQuizResults, setWordQuizResults] = useState<WordQuizResult[]>([])
+    const [quizData, setQuizData] = useState<VideoLearningWordQuizItem[]>([])
+    const [isQuizLoading, setIsQuizLoading] = useState(false)
 
-    // 단어 퀴즈 결과 처리
-    const handleWordQuizResults = (results: WordQuizResult[]) => {
-        setWordQuizResults(results)
-        if (onQuizResults) {
-            onQuizResults(results)
+    // 단어 퀴즈 데이터 로드 - 컴포넌트 마운트 시 한 번만 실행
+    useEffect(() => {
+        const fetchWordQuiz = async () => {
+            // 이미 데이터가 있으면 API 호출하지 않음
+            if (quizData.length > 0) return
+
+            try {
+                setIsQuizLoading(true)
+                const { data, error } = await client.GET('/api/v1/videos/{videoId}/quiz/words', {
+                    params: {
+                        path: {
+                            videoId: videoId,
+                        },
+                    },
+                })
+
+                if (error) {
+                    console.error('단어 퀴즈 데이터 요청 실패:', error)
+                    return
+                }
+
+                if (data?.data?.quiz) {
+                    setQuizData(data.data.quiz)
+                }
+            } catch (error) {
+                console.error('단어 퀴즈 데이터 요청 실패:', error)
+            } finally {
+                setIsQuizLoading(false)
+            }
         }
-    }
+
+        fetchWordQuiz()
+    }, [videoId]) // videoId가 변경될 때만 실행
+
+    const isLoading = parentIsLoading || isQuizLoading
 
     return (
         <div className="flex flex-row w-full justify-center items-center h-[180px] bg-[var(--color-white)] rounded-lg border-2 border-[var(--color-sub-1)]">
@@ -91,15 +127,13 @@ function VideoTab({
                                 isKeywordAdded={isKeywordAdded}
                                 videoId={videoId}
                                 currentTime={currentTime}
+                                subtitleIndex={subtitleIndex}
+                                onPrevSubtitle={onPrevSubtitle}
+                                onNextSubtitle={onNextSubtitle}
                             />
                         )}
                         {selectedTab === '단어' && (
-                            <WordQuiz
-                                fontSize={fontSize}
-                                videoId={videoId}
-                                onQuizResult={handleWordQuizResults}
-                                wordQuizData={wordQuizData}
-                            />
+                            <WordQuiz fontSize={fontSize} videoId={videoId} quizData={quizData} />
                         )}
                         {selectedTab === '표현' && <ExpressionQuiz fontSize={fontSize} videoId={videoId} />}
                     </>

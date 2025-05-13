@@ -1,111 +1,57 @@
 import Image from 'next/image'
-import { useState, useEffect } from 'react'
-import client from '@/lib/backend/client'
+import { useState } from 'react'
+import type { components } from '@/lib/backend/apiV1/schema'
 
-interface Word {
-    id?: number
-    word: string
-    pos: string
-    meaning: string
-    difficulty: string
-}
+type WordResponse = components['schemas']['WordResponse']
 
 interface Props {
     selectedWordbookIds?: number[]
     searchKeyword?: string
     isEditMode?: boolean
-    onDeleteWord?: (word: Word) => Promise<void>
+    onSelectWords?: (words: WordResponse[]) => void
+    words: WordResponse[]
+    isLoading?: boolean
+    selectedWords?: WordResponse[]
 }
 
 export default function WordCard({
     selectedWordbookIds = [],
     searchKeyword = '',
     isEditMode = false,
-    onDeleteWord,
+    onSelectWords,
+    words,
+    isLoading,
+    selectedWords = [],
 }: Props) {
-    const [words, setWords] = useState<Word[]>([])
-    const [isLoading, setIsLoading] = useState(false)
-
-    useEffect(() => {
-        const fetchAllWords = async () => {
-            if (selectedWordbookIds.length === 0) {
-                setWords([])
-                setIsLoading(false)
-                return
-            }
-
-            try {
-                setIsLoading(true)
-                const promises = selectedWordbookIds.map((id) =>
-                    client.GET('/api/v1/wordbooks/{wordbookId}/words', {
-                        params: {
-                            path: {
-                                wordbookId: id,
-                            },
-                        },
-                    }),
-                )
-
-                const results = await Promise.all(promises)
-
-                let allWords: Word[] = []
-                results.forEach((result) => {
-                    if (result.data?.data) {
-                        const apiWords = result.data.data.map((item: any) => ({
-                            id: item.id || undefined,
-                            word: item.word || '',
-                            pos: item.pos || '',
-                            meaning: item.meaning || '',
-                            difficulty: item.difficulty || 'EASY',
-                        }))
-                        allWords = [...allWords, ...apiWords]
-                    }
-                })
-
-                setWords(allWords)
-                setIsLoading(false)
-            } catch (error) {
-                console.error('단어 데이터를 가져오는데 실패했습니다:', error)
-                setIsLoading(false)
-                setWords([])
-            }
-        }
-
-        fetchAllWords()
-    }, [selectedWordbookIds])
-
     // 검색 키워드에 따라 단어 필터링
     const filteredWords = searchKeyword.trim()
         ? words.filter(
               (word) =>
-                  word.word.toLowerCase().includes(searchKeyword.toLowerCase()) ||
-                  word.meaning.toLowerCase().includes(searchKeyword.toLowerCase()),
+                  (word.word || '').toLowerCase().includes(searchKeyword.toLowerCase()) ||
+                  (word.meaning || '').toLowerCase().includes(searchKeyword.toLowerCase()),
           )
         : words
 
     const getDifficultyStars = (difficulty: string) => {
-        return difficulty === 'EASY' ? 1 : difficulty === 'MEDIUM' ? 2 : 3
+        return difficulty === 'EASY' ? 1 : difficulty === 'NORMAL' ? 2 : 3
     }
 
-    const speak = (text: string) => {
+    const speak = (text: string | undefined) => {
+        if (!text) return
         const utterance = new SpeechSynthesisUtterance(text)
         utterance.lang = 'en-US' // 영어 발음
         speechSynthesis.speak(utterance)
     }
 
-    const handleDeleteWord = async (word: Word, e: React.MouseEvent) => {
-        e.stopPropagation() // 이벤트 전파 방지
-        if (onDeleteWord) {
-            await onDeleteWord(word)
+    const handleWordSelect = (word: WordResponse, e?: React.ChangeEvent<HTMLInputElement>) => {
+        if (e) {
+            e.stopPropagation()
         }
-    }
-
-    if (selectedWordbookIds.length === 0) {
-        return (
-            <div className="flex justify-center items-center h-40">
-                <p className="text-xl text-gray-500">단어장을 선택해주세요.</p>
-            </div>
-        )
+        const isSelected = selectedWords.some((w) => w.word === word.word)
+        const newSelectedWords = isSelected
+            ? selectedWords.filter((w) => w.word !== word.word)
+            : [...selectedWords, word]
+        onSelectWords?.(newSelectedWords)
     }
 
     if (isLoading) {
@@ -141,36 +87,85 @@ export default function WordCard({
         )
     }
 
+    const formatDate = (dateString: string | undefined) => {
+        if (!dateString) return ''
+        const date = new Date(dateString)
+        return new Intl.DateTimeFormat('ko-KR', {
+            year: 'numeric',
+            month: '2-digit',
+            day: '2-digit',
+        }).format(date)
+    }
+
     return (
         <div className="flex flex-wrap gap-4">
             {filteredWords.map((word, idx) => (
                 <div
                     key={idx}
-                    className="flex flex-col justify-between p-4 w-[32%] h-[180px] bg-[var(--color-white)] rounded-lg border border-2 border-[var(--color-main)]"
+                    onClick={() => {
+                        if (isEditMode) {
+                            const isSelected = selectedWords.some((w) => w.word === word.word)
+                            const newSelectedWords = isSelected
+                                ? selectedWords.filter((w) => w.word !== word.word)
+                                : [...selectedWords, word]
+                            onSelectWords?.(newSelectedWords)
+                        }
+                    }}
+                    className={`flex flex-col justify-between p-4 w-[32%] h-[180px] bg-[var(--color-white)] rounded-lg border border-2 ${
+                        selectedWords.some((w) => w.word === word.word)
+                            ? 'border-[var(--color-point)]'
+                            : 'border-[var(--color-main)]'
+                    } ${isEditMode ? 'cursor-pointer hover:bg-gray-50' : ''}`}
                 >
                     <div className="flex justify-between">
                         <div>
-                            {Array.from({ length: getDifficultyStars(word.difficulty) }).map((_, i) => (
+                            {Array.from({ length: getDifficultyStars(word.difficulty || 'EASY') }).map((_, i) => (
                                 <span key={i} className="text-yellow-400">
                                     ⭐
                                 </span>
                             ))}
                         </div>
-                        {isEditMode && (
-                            <button
-                                onClick={(e) => handleDeleteWord(word, e)}
-                                className="text-red-500 hover:text-red-700 transition-colors"
-                            >
-                                <Image src="/assets/close.svg" alt="card delete" width={24} height={24} />
-                            </button>
-                        )}
+                        <div className="flex items-center gap-2">
+                            {isEditMode && (
+                                <input
+                                    type="checkbox"
+                                    checked={selectedWords.some((w) => w.word === word.word)}
+                                    onChange={(e) => {
+                                        e.stopPropagation()
+                                        const isSelected = selectedWords.some((w) => w.word === word.word)
+                                        const newSelectedWords = isSelected
+                                            ? selectedWords.filter((w) => w.word !== word.word)
+                                            : [...selectedWords, word]
+                                        onSelectWords?.(newSelectedWords)
+                                    }}
+                                    onClick={(e) => e.stopPropagation()}
+                                    className="w-5 h-5 text-[var(--color-main)] border-gray-300 rounded focus:ring-[var(--color-main)]"
+                                />
+                            )}
+                        </div>
                     </div>
                     <p className="text-2xl font-bold text-center">{word.word}</p>
-                    <button className="flex items-center gap-2 justify-center" onClick={() => speak(word.word)}>
-                        <Image src="/assets/volume.svg" alt="volume" width={24} height={24} />
-                        <span>{word.meaning}</span>
-                    </button>
-                    <p className="text-sm text-center">{word.pos}</p>
+                    {!isEditMode ? (
+                        <button
+                            className="flex items-center gap-2 justify-center"
+                            onClick={(e) => {
+                                e.stopPropagation()
+                                speak(word.word)
+                            }}
+                        >
+                            <Image src="/assets/volume.svg" alt="volume" width={24} height={24} />
+                            <span>
+                                [{word.pos}] {word.meaning}
+                            </span>
+                        </button>
+                    ) : (
+                        <div className="flex items-center gap-2 justify-center">
+                            <span>
+                                [{word.pos}] {word.meaning}
+                            </span>
+                        </div>
+                    )}
+                    <p className="text-sm text-center text-gray-500">{formatDate(word.createdAt)}</p>
                 </div>
             ))}
         </div>

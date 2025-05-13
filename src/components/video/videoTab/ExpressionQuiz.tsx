@@ -2,13 +2,20 @@
 
 import React, { useState, useEffect } from 'react'
 import client from '@/lib/backend/client'
-import { ExpressionQuizType, ExpressionQuizProps } from '@/types/video'
 import Image from 'next/image'
+import { components } from '@/lib/backend/apiV1/schema'
+
+type ExpressionQuizItem = components['schemas']['ExpressionQuizItem']
+
+interface ExpressionQuizProps {
+    fontSize: number
+    videoId: string
+}
 
 const ExpressionQuiz: React.FC<ExpressionQuizProps> = ({ fontSize, videoId }) => {
     // 표현 퀴즈 상태 관리
     const [currentExpressionQuizIndex, setCurrentExpressionQuizIndex] = useState(0)
-    const [expressionQuizzes, setExpressionQuizzes] = useState<ExpressionQuizType[]>([])
+    const [expressionQuizzes, setExpressionQuizzes] = useState<ExpressionQuizItem[]>([])
     const [isLoading, setIsLoading] = useState(true)
 
     // API 호출
@@ -30,7 +37,7 @@ const ExpressionQuiz: React.FC<ExpressionQuizProps> = ({ fontSize, videoId }) =>
 
                 console.log('표현 퀴즈 데이터:', data)
                 if (data?.data?.quiz) {
-                    setExpressionQuizzes(data.data.quiz as ExpressionQuizType[])
+                    setExpressionQuizzes(data.data.quiz as ExpressionQuizItem[])
                 }
             } catch (error) {
                 console.error('표현 퀴즈 데이터 요청 실패:', error)

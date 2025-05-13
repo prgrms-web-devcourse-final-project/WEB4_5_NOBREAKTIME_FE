@@ -1,18 +1,20 @@
 'use client'
 
-import { useState, useEffect, useRef, useCallback } from 'react'
+import { useState, useEffect, useRef } from 'react'
 import VideoTab from './videoTab'
 import VideoScript from './videoScript'
-import WordModal from './wordModal'
 import Image from 'next/image'
-import { VideoData, AnalysisData, SubtitleResult, WordQuizResult, WordQuizType, QuizData } from '@/types/video'
+import { components } from '@/lib/backend/apiV1/schema'
 import client from '@/lib/backend/client'
 import { Keyword } from './videoTab/KeywordCard'
 
+type VideoResponse = components['schemas']['VideoResponse']
+type GptSubtitleResponse = components['schemas']['GptSubtitleResponse']
+type AnalyzeVideoResponse = components['schemas']['AnalyzeVideoResponse']
+
 interface Props {
-    video: VideoData
-    analysisData: AnalysisData | null
-    quizData: QuizData | null
+    video: VideoResponse
+    analysisData: AnalyzeVideoResponse | null
     onBack: () => void
     isLoading: boolean
 }
@@ -22,31 +24,18 @@ function parseTimeToSeconds(time: string) {
     return parseInt(h) * 3600 + parseInt(m) * 60 + parseFloat(s)
 }
 
-function VideoLearning({
-    video,
-    analysisData: initialAnalysisData,
-    quizData,
-    onBack,
-    isLoading: initialIsLoading,
-}: Props) {
+function VideoLearning({ video, analysisData: initialAnalysisData, onBack, isLoading: initialIsLoading }: Props) {
     const [fontSize, setFontSize] = useState(16)
-    const [isModalOpen, setIsModalOpen] = useState(false)
-    const [analysisData, setAnalysisData] = useState<AnalysisData | null>(initialAnalysisData)
-    const [selectedSubtitle, setSelectedSubtitle] = useState<SubtitleResult | null>(null)
+    const [analysisData, setAnalysisData] = useState<AnalyzeVideoResponse | null>(initialAnalysisData)
+    const [selectedSubtitle, setSelectedSubtitle] = useState<GptSubtitleResponse | null>(null)
     const [selectedTab, setSelectedTab] = useState<string>('overview')
     const [showTranscript, setShowTranscript] = useState(true)
     const [isLoading, setIsLoading] = useState(initialIsLoading)
     const [currentTime, setCurrentTime] = useState(0)
-    const [quizResults, setQuizResults] = useState<WordQuizResult[]>([])
-    const [wordQuizData, setWordQuizData] = useState<WordQuizType[]>([])
-    const [wordQuizLoading, setWordQuizLoading] = useState(false)
-    // 커스텀 단어 목록
-    const [customWords, setCustomWords] = useState<{ word: string; description?: string; checked: boolean }[]>([])
-    const url = process.env.NEXT_PUBLIC_API_URL
     const playerRef = useRef<HTMLIFrameElement | null>(null)
     const playerStateRef = useRef<any>(null)
 
-    // 비디오 데이터 및 단어 퀴즈 데이터 로드
+    // 비디오 데이터 로드
     useEffect(() => {
         setAnalysisData(initialAnalysisData)
         setIsLoading(initialIsLoading)
@@ -55,48 +44,7 @@ function VideoLearning({
         if (initialAnalysisData?.subtitleResults && initialAnalysisData.subtitleResults.length > 0) {
             setSelectedSubtitle(initialAnalysisData.subtitleResults[0])
         }
-
-        // 단어 퀴즈 데이터 로드
-        const fetchWordQuiz = async () => {
-            if (!video.videoId) return
-
-            try {
-                setWordQuizLoading(true)
-                const { data, error } = await client.GET('/api/v1/videos/{videoId}/quiz/words', {
-                    params: {
-                        path: {
-                            videoId: video.videoId,
-                        },
-                    },
-                })
-
-                if (error) {
-                    console.error('단어 퀴즈 데이터 요청 실패:', error)
-                    return
-                }
-
-                console.log('단어 퀴즈 데이터:', data)
-                if (data?.data?.quiz) {
-                    const quizData = data.data.quiz as WordQuizType[]
-                    setWordQuizData(quizData)
-
-                    // 결과 배열 초기화
-                    const initialResults = quizData.map((quiz) => ({
-                        word: quiz.word || '',
-                        meaning: quiz.meaning,
-                        isCorrect: false,
-                    }))
-                    setQuizResults(initialResults)
-                }
-            } catch (error) {
-                console.error('단어 퀴즈 데이터 요청 실패:', error)
-            } finally {
-                setWordQuizLoading(false)
-            }
-        }
-
-        fetchWordQuiz()
-    }, [initialAnalysisData, initialIsLoading, video.videoId])
+    }, [initialAnalysisData, initialIsLoading])
 
     // 현재 시간에 따라 자막 자동 선택
     useEffect(() => {
@@ -199,9 +147,6 @@ function VideoLearning({
 
             // 영상이 끝났을 때 메시지 표시
             alert('영상 시청이 완료되었습니다. 단어 탭에서 학습한 내용을 테스트해보세요!')
-
-            // 영상이 끝나도 모달을 바로 열지 않음
-            // setIsModalOpen(true)
         } else {
             // 일시정지, 정지 등의 상태일 때 타이머 정리
             clearInterval(playerStateRef.current.timeUpdateInterval)
@@ -219,7 +164,7 @@ function VideoLearning({
     }, [selectedTab])
 
     // 스크립트 클릭 시 유튜브 플레이어 시간 이동
-    const handleSubtitleClick = (time: string, subtitle: SubtitleResult) => {
+    const handleSubtitleClick = (time: string, subtitle: GptSubtitleResponse) => {
         // 선택된 자막 설정
         setSelectedSubtitle(subtitle)
 
@@ -235,118 +180,35 @@ function VideoLearning({
         }
     }
 
-    // 단어 퀴즈 결과 처리
-    const handleQuizResults = (results: WordQuizResult[]) => {
-        setQuizResults(results)
+    // 현재 선택된 자막의 인덱스 계산
+    const currentSubtitleIndex =
+        analysisData?.subtitleResults?.findIndex((subtitle) => subtitle.original === selectedSubtitle?.original) ?? 0
 
-        // 모든 문제를 풀었는지 확인
-        const allAnswered = results.every((result) => result.isCorrect !== undefined)
-
-        // 최종 결과 확인 버튼을 클릭한 경우에만 모달 표시
-        // 모든 문제가 풀렸고, 오답이 있는 경우에만 모달 표시
-        if (allAnswered) {
-            const hasIncorrect = results.some((result) => result.isCorrect === false)
-            if (hasIncorrect) {
-                setIsModalOpen(true)
-            } else {
-                // 모두 정답인 경우 축하 메시지
-                alert('축하합니다! 모든 문제를 맞추셨습니다.')
+    // 이전 자막으로 이동
+    const handlePrevSubtitle = () => {
+        if (!analysisData?.subtitleResults || currentSubtitleIndex <= 0) return
+        const prevSubtitle = analysisData.subtitleResults[currentSubtitleIndex - 1]
+        setSelectedSubtitle(prevSubtitle)
+        if (prevSubtitle.startTime) {
+            const seconds = parseTimeToSeconds(prevSubtitle.startTime)
+            if (playerRef.current && playerStateRef.current) {
+                playerStateRef.current.seekTo(seconds, true)
+                setCurrentTime(seconds)
             }
         }
     }
 
-    // 키워드가 이미 추가되었는지 확인
-    const isKeywordAdded = (keyword: Keyword) => {
-        if (!keyword.word) return false
-
-        // 커스텀 단어장에 추가된 단어인지 확인
-        const isInCustomWords = customWords.some((w) => w.word.toLowerCase() === keyword.word?.toLowerCase())
-
-        // 퀴즈 오답에 있는 단어인지 확인
-        const isInQuizResults = quizResults.some(
-            (result) => result.word.toLowerCase() === keyword.word?.toLowerCase() && result.isCorrect === false,
-        )
-
-        return isInCustomWords || isInQuizResults
-    }
-
-    // 키워드 추가 처리
-    const handleAddKeyword = (keyword: Keyword) => {
-        // 이미 추가된 단어인지 확인
-        const exists = customWords.some((w) => w.word.toLowerCase() === keyword.word?.toLowerCase())
-
-        if (!exists && keyword.word) {
-            setCustomWords([
-                ...customWords,
-                {
-                    word: keyword.word,
-                    description: keyword.meaning || '', // undefined일 경우 빈 문자열로 처리
-                    checked: true,
-                },
-            ])
-        }
-    }
-
-    // 키워드 제거 처리
-    const handleRemoveKeyword = (keyword: Keyword) => {
-        if (!keyword.word) return
-
-        // 커스텀 단어에서 제거
-        setCustomWords(customWords.filter((w) => w.word.toLowerCase() !== keyword.word?.toLowerCase()))
-
-        // 퀴즈 결과 단어라면 isCorrect를 true로 변경 (체크 해제)
-        const updatedQuizResults = quizResults.map((result) => {
-            if (result.word.toLowerCase() === keyword.word?.toLowerCase()) {
-                return { ...result, isCorrect: true }
+    // 다음 자막으로 이동
+    const handleNextSubtitle = () => {
+        if (!analysisData?.subtitleResults || currentSubtitleIndex >= analysisData.subtitleResults.length - 1) return
+        const nextSubtitle = analysisData.subtitleResults[currentSubtitleIndex + 1]
+        setSelectedSubtitle(nextSubtitle)
+        if (nextSubtitle.startTime) {
+            const seconds = parseTimeToSeconds(nextSubtitle.startTime)
+            if (playerRef.current && playerStateRef.current) {
+                playerStateRef.current.seekTo(seconds, true)
+                setCurrentTime(seconds)
             }
-            return result
-        })
-
-        if (JSON.stringify(updatedQuizResults) !== JSON.stringify(quizResults)) {
-            setQuizResults(updatedQuizResults)
-        }
-    }
-
-    // 모달에 전달할 단어 목록 (모든 단어 포함, 오답만 체크)
-    const getWordsForModal = () => {
-        // 퀴즈 결과에서 단어 목록 가져오기
-        const quizWords = quizResults.map((result) => ({
-            word: result.word,
-            description: result.meaning || '', // undefined일 경우 빈 문자열로 처리
-            // 오답인 경우만 체크하고, 정답이거나 아직 풀지 않은 문제는 체크 해제
-            checked: result.isCorrect === false,
-            isCorrect: result.isCorrect,
-        }))
-
-        // 커스텀 단어 목록과 합치기 (중복 제거)
-        const allWords = [...quizWords]
-
-        customWords.forEach((customWord) => {
-            // 퀴즈에 이미 있는 단어가 아닌 경우만 추가
-            if (!allWords.some((w) => w.word.toLowerCase() === customWord.word.toLowerCase())) {
-                // 항상 description이 문자열인 새 객체를 만들어 추가
-                allWords.push({
-                    word: customWord.word,
-                    description: customWord.description || '', // undefined인 경우 빈 문자열 사용
-                    checked: customWord.checked,
-                    isCorrect: false, // 커스텀 단어는 정답이 아님
-                })
-            }
-        })
-
-        console.log('모달에 전달할 단어 목록:', allWords)
-        return allWords
-    }
-
-    // 단어 추가 버튼 클릭 시 처리
-    const handleAddWordsClick = () => {
-        const words = getWordsForModal()
-        const checkedWords = words.filter((word) => word.checked)
-
-        if (checkedWords.length > 0) {
-            setIsModalOpen(true)
-        } else {
-            alert('추가할 단어가 없습니다. 단어 퀴즈에서 오답을 내거나 Overview에서 단어를 추가해주세요!')
         }
     }
 
@@ -356,19 +218,17 @@ function VideoLearning({
         selectedSubtitle: selectedSubtitle && {
             original: selectedSubtitle.original || '',
             transcript: selectedSubtitle.transcript || '',
-            keywords: selectedSubtitle.keywords,
+            keywords: selectedSubtitle.keywords || [],
             subtitleId: selectedSubtitle.subtitleId,
         },
         selectedTab,
         onTabChange: setSelectedTab,
-        isLoading: isLoading || wordQuizLoading,
+        isLoading,
         videoId: video.videoId || '',
-        onQuizResults: handleQuizResults,
-        wordQuizData,
-        onAddKeyword: handleAddKeyword,
-        onRemoveKeyword: handleRemoveKeyword,
-        isKeywordAdded,
         currentTime,
+        subtitleIndex: currentSubtitleIndex,
+        onPrevSubtitle: handlePrevSubtitle,
+        onNextSubtitle: handleNextSubtitle,
     }
 
     return (
@@ -420,73 +280,6 @@ function VideoLearning({
                 {/* 하단 탭 메뉴 */}
                 <VideoTab {...videoTabProps} />
             </div>
-
-            {/* 모달 */}
-            {isModalOpen && (
-                <WordModal
-                    title="단어를 단어장에 추가할까요?"
-                    description={`"${video.title}"`}
-                    onCancel={() => setIsModalOpen(false)}
-                    onConfirm={async (selectedWords, selectedList) => {
-                        try {
-                            // 선택된 단어를 단어장에 추가
-                            const wordsToAdd = selectedWords.map((word) => {
-                                // 현재 선택된 자막의 subtitleId 찾기
-                                const currentSubtitle = analysisData?.subtitleResults.find(
-                                    (subtitle) => subtitle.original === selectedSubtitle?.original,
-                                )
-
-                                return {
-                                    word: word.word,
-                                    videoId: video.videoId,
-                                    subtitleId: currentSubtitle?.subtitleId,
-                                }
-                            })
-
-                            // 선택된 단어장 정보 찾기
-                            let selectedWordbookName = '단어장'
-                            const { data: wordbooksData } = await client.GET('/api/v1/wordbooks', {})
-
-                            if (wordbooksData?.data) {
-                                const wordbook = wordbooksData.data.find(
-                                    (book: any) => book.id.toString() === selectedList,
-                                )
-                                if (wordbook && wordbook.name) {
-                                    selectedWordbookName = wordbook.name
-                                }
-                            }
-
-                            const { error } = await client.POST(`/api/v1/wordbooks/{wordbookId}/words`, {
-                                params: {
-                                    path: {
-                                        wordbookId: parseInt(selectedList),
-                                    },
-                                },
-                                body: {
-                                    words: wordsToAdd,
-                                },
-                            })
-
-                            if (error) {
-                                console.error('단어 추가 실패:', error)
-                                alert('단어 추가에 실패했습니다.')
-                            } else {
-                                alert(`${selectedWordbookName}에 ${selectedWords.length}개 단어가 추가되었습니다.`)
-                            }
-                        } catch (error) {
-                            console.error('단어 추가 오류:', error)
-                            alert('단어 추가에 실패했습니다.')
-                        } finally {
-                            setIsModalOpen(false)
-                            // 모달을 닫은 후 커스텀 단어 초기화
-                            setCustomWords([])
-                        }
-                    }}
-                    confirmText="추가하기"
-                    cancelText="닫기"
-                    initialWords={getWordsForModal()}
-                />
-            )}
         </div>
     )
 }

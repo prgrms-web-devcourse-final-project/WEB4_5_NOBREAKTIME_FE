@@ -1395,12 +1395,12 @@ export interface components {
              */
             roleName?: string
             password?: string
-            username?: string
             authorities?: components['schemas']['GrantedAuthority'][]
+            username?: string
             enabled?: boolean
-            credentialsNonExpired?: boolean
             accountNonExpired?: boolean
             accountNonLocked?: boolean
+            credentialsNonExpired?: boolean
         }
         GrantedAuthority: {
             authority?: string

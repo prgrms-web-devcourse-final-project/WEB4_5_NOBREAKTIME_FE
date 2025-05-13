@@ -1,0 +1,61 @@
+import { components } from '@/lib/backend/apiV1/schema'
+
+type WordResponse = components['schemas']['WordResponse']
+
+export const mockWords: WordResponse[] = [
+    {
+        word: 'apple',
+        pos: 'noun',
+        meaning: '사과',
+        difficulty: 'EASY',
+        exampleSentence: 'I eat an apple every day.',
+        translatedSentence: '나는 매일 사과를 먹습니다.',
+        videoId: 'video1',
+        subtitleId: 1,
+        createdAt: '2024-03-20T12:00:00Z',
+    },
+    {
+        word: 'beautiful',
+        pos: 'adjective',
+        meaning: '아름다운',
+        difficulty: 'EASY',
+        exampleSentence: 'She has a beautiful smile.',
+        translatedSentence: '그녀는 아름다운 미소를 가지고 있습니다.',
+        videoId: 'video2',
+        subtitleId: 2,
+        createdAt: '2024-03-20T12:01:00Z',
+    },
+    {
+        word: 'communicate',
+        pos: 'verb',
+        meaning: '의사소통하다',
+        difficulty: 'MEDIUM',
+        exampleSentence: 'It is important to communicate clearly.',
+        translatedSentence: '명확하게 의사소통하는 것이 중요합니다.',
+        videoId: 'video3',
+        subtitleId: 3,
+        createdAt: '2024-03-20T12:02:00Z',
+    },
+    {
+        word: 'determination',
+        pos: 'noun',
+        meaning: '결심, 의지',
+        difficulty: 'HARD',
+        exampleSentence: 'His determination to succeed was impressive.',
+        translatedSentence: '성공하고자 하는 그의 의지가 인상적이었습니다.',
+        videoId: 'video4',
+        subtitleId: 4,
+        createdAt: '2024-03-20T12:03:00Z',
+    },
+    {
+        word: 'efficient',
+        pos: 'adjective',
+        meaning: '효율적인',
+        difficulty: 'MEDIUM',
+        exampleSentence: 'This is a very efficient way to work.',
+        translatedSentence: '이것은 매우 효율적인 작업 방식입니다.',
+        videoId: 'video5',
+        subtitleId: 5,
+        createdAt: '2024-03-20T12:04:00Z',
+    },
+]

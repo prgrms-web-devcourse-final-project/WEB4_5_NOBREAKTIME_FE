@@ -4,9 +4,12 @@ import Search from '@/components/common/search'
 import BookmarkIcon from '@/components/icon/bookmarkIcon'
 import VideoIcon from '@/components/icon/videoIcon'
 import client from '@/lib/backend/client'
-import { VideoData } from '@/types/video'
+import { components } from '@/lib/backend/apiV1/schema'
 import { useRouter } from 'next/navigation'
 import { useEffect, useRef, useState } from 'react'
+import { mockVideoList } from './mockdata'
+
+type VideoResponse = components['schemas']['VideoResponse']
 
 // 카테고리 타입 정의
 type Category = {
@@ -29,7 +32,7 @@ export default function VideoLearningPage() {
 
     const [selectedCategory, setSelectedCategory] = useState<Category>(CATEGORIES.ALL)
     const [searchKeyword, setSearchKeyword] = useState<string>('')
-    const [videoList, setVideoList] = useState<(VideoData & { bookmarked: boolean })[]>([])
+    const [videoList, setVideoList] = useState<VideoResponse[]>([])
     const [isLoading, setIsLoading] = useState(true)
     const [error, setError] = useState<string | null>(null)
 
@@ -38,6 +41,20 @@ export default function VideoLearningPage() {
         const loadVideos = async () => {
             try {
                 setIsLoading(true)
+                // API 호출 대신 목데이터 필터링
+                const filteredVideos = mockVideoList.filter((video) => {
+                    const matchesCategory =
+                        selectedCategory.id === 0 ||
+                        (video.videoId && video.videoId.includes(String(selectedCategory.id)))
+                    const matchesSearch =
+                        !searchKeyword ||
+                        video.title?.toLowerCase().includes(searchKeyword.toLowerCase()) ||
+                        video.description?.toLowerCase().includes(searchKeyword.toLowerCase())
+                    return matchesCategory && matchesSearch
+                })
+                setVideoList(filteredVideos)
+
+                /* API 호출 주석 처리
                 const { data, error } = await client.GET('/api/v1/videos/list', {
                     params: {
                         query: {
@@ -58,6 +75,7 @@ export default function VideoLearningPage() {
                     // @ts-ignore - 타입 에러 무시
                     setVideoList(data.data)
                 }
+                */
             } catch (err) {
                 setError('비디오 리스트를 불러오는데 실패했습니다.')
                 console.error(err)
@@ -80,6 +98,10 @@ export default function VideoLearningPage() {
         const loadInitialVideos = async () => {
             try {
                 setIsLoading(true)
+                // 초기 데이터로 목데이터 사용
+                setVideoList(mockVideoList)
+
+                /* API 호출 주석 처리
                 const { data, error } = await client.GET('/api/v1/videos/list', {
                     params: {
                         query: {
@@ -97,6 +119,7 @@ export default function VideoLearningPage() {
                     // @ts-ignore - 타입 에러 무시
                     setVideoList(data.data)
                 }
+                */
             } catch (err) {
                 setError('비디오 리스트를 불러오는데 실패했습니다.')
                 console.error(err)
@@ -113,7 +136,7 @@ export default function VideoLearningPage() {
     }
 
     // 비디오 클릭 핸들러
-    const handleVideoClick = (video: VideoData) => {
+    const handleVideoClick = (video: VideoResponse) => {
         // URL 쿼리 파라미터로 비디오 정보 전달
         const queryParams = new URLSearchParams({
             title: video.title || '',
@@ -139,6 +162,14 @@ export default function VideoLearningPage() {
         if (!videoId) return
 
         try {
+            // 목데이터에서 북마크 상태 토글
+            setVideoList((prevList) =>
+                prevList.map((video) =>
+                    video.videoId === videoId ? { ...video, bookmarked: !video.bookmarked } : video,
+                ),
+            )
+
+            /* API 호출 주석 처리
             const video = videoList.find((v) => v.videoId === videoId)
             const isBookmarked = video?.bookmarked
 
@@ -154,6 +185,7 @@ export default function VideoLearningPage() {
 
             // 비디오 목록 업데이트
             setVideoList((prev) => prev.map((v) => (v.videoId === videoId ? { ...v, bookmarked: !isBookmarked } : v)))
+            */
         } catch (err) {
             console.error('북마크 토글 중 오류 발생:', err)
         }
@@ -235,7 +267,6 @@ export default function VideoLearningPage() {
                             </div>
                             <div className="flex flex-col flex-1 min-w-0">
                                 <p className="text-lg font-bold truncate">{video.title || 'Untitled'}</p>
-                                <p className="text-lg text-gray-500">조회수 0회</p>
                                 <p className="text-sm text-gray-700 mt-2 line-clamp-12">
                                     {video.description || 'No description available'}
                                 </p>

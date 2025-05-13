@@ -4,18 +4,20 @@ import WordIcon from '@/components/icon/wordIcon'
 import Image from 'next/image'
 import { useParams, useSearchParams } from 'next/navigation'
 import { useEffect, useState } from 'react'
-import { mockWordData } from './mockdata'
+import client from '@/lib/backend/client'
+import { components } from '@/lib/backend/apiV1/schema'
 
-interface Word {
-    word: string
-    pos: string
-    meaning: string
-    difficulty: string
-    exampleSentence: string
-    translatedSentence: string
-    videoId: string
-    subtitleId: number
-    createdAt: string
+type WordResponse = components['schemas']['WordResponse']
+
+// 날짜 포맷팅 함수
+const formatDate = (dateString: string | undefined) => {
+    if (!dateString) return ''
+    const date = new Date(dateString)
+    return new Intl.DateTimeFormat('ko-KR', {
+        year: 'numeric',
+        month: '2-digit',
+        day: '2-digit',
+    }).format(date)
 }
 
 export default function WordLearning() {
@@ -24,7 +26,7 @@ export default function WordLearning() {
     const selectedId = params.id as string
     const selectedTitle = searchParams.get('title') || '제목 없음'
 
-    const [words, setWords] = useState<Word[]>([])
+    const [words, setWords] = useState<WordResponse[]>([])
     const [index, setIndex] = useState(0)
     const wordItem = words.length
     const [isLoading, setIsLoading] = useState(true)
@@ -32,11 +34,6 @@ export default function WordLearning() {
     useEffect(() => {
         const fetchWords = async () => {
             try {
-                // 목데이터 사용
-                setWords(mockWordData.words)
-                setIsLoading(false)
-
-                /*
                 const { data } = await client.GET('/api/v1/wordbooks/{wordbookId}/words', {
                     params: {
                         path: {
@@ -45,9 +42,10 @@ export default function WordLearning() {
                     },
                 })
 
+                console.log('API 응답 데이터:', data)
+
                 if (data?.data) {
-                    // 타입 안전하게 처리
-                    const apiWords = data.data.map((item: any) => ({
+                    const apiWords = data.data.map((item: components['schemas']['WordResponse']) => ({
                         word: item.word || '',
                         pos: item.pos || '',
                         meaning: item.meaning || '',
@@ -58,10 +56,15 @@ export default function WordLearning() {
                         subtitleId: item.subtitleId || 0,
                         createdAt: item.createdAt || '',
                     }))
-
+                    console.log(
+                        '예문 리스트:',
+                        apiWords.map((w) => w.exampleSentence),
+                    )
                     setWords(apiWords)
+                } else {
+                    setWords([])
                 }
-                */
+                setIsLoading(false)
             } catch (error) {
                 console.error('단어 데이터를 가져오는데 실패했습니다:', error)
                 setIsLoading(false)
@@ -85,7 +88,8 @@ export default function WordLearning() {
         setIndex(0)
     }
 
-    function highlightWord(sentence: string, word: string) {
+    function highlightWord(sentence: string | undefined, word: string | undefined) {
+        if (!sentence || !word) return sentence || ''
         const regex = new RegExp(`(${word})`, 'gi') // 대소문자 구분 없이
         const parts = sentence.split(regex)
 
@@ -100,7 +104,8 @@ export default function WordLearning() {
         )
     }
 
-    const speak = (text: string) => {
+    const speak = (text: string | undefined) => {
+        if (!text) return
         const utterance = new SpeechSynthesisUtterance(text)
         utterance.lang = 'en-US' // 영어 발음
         speechSynthesis.speak(utterance)
@@ -168,16 +173,18 @@ export default function WordLearning() {
 
                     <button className="flex items-center gap-2 justify-center" onClick={() => speak(current.word)}>
                         <Image src="/assets/volume.svg" alt="volume" width={24} height={24} />
-                        <span className="text-lg">{current.meaning}</span>
+                        <span className="text-lg">
+                            [{current.pos}] {current.meaning}
+                        </span>
                     </button>
-
-                    <p className="text-lg text-center">
-                        [{current.pos}] {current.meaning}
-                    </p>
 
                     <div>
                         <p className="text-md text-center">{highlightWord(current.exampleSentence, current.word)}</p>
                         <p className="text-md text-center">{current.translatedSentence}</p>
+                    </div>
+
+                    <div className="w-full flex justify-end">
+                        <p className="text-sm text-gray-400">{formatDate(current.createdAt)}</p>
                     </div>
 
                     <div className="flex gap-2 w-full">
