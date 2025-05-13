@@ -1,13 +1,12 @@
 'use client'
 
 import BookmarkIcon from '@/components/icon/bookmarkIcon'
-import type { components, paths } from '@/lib/backend/apiV1/schema'
+import type { components } from '@/lib/backend/apiV1/schema'
 import client from '@/lib/backend/client'
 import { useRouter } from 'next/navigation'
 import { useEffect, useState } from 'react'
 
 type VideoResponse = components['schemas']['VideoResponse']
-type BookmarkResponse = paths['/api/v1/bookmarks']['get']['responses']['200']['content']['application/json']
 
 export default function BookmarkPage() {
     const [videoList, setVideoList] = useState<VideoResponse[]>([])
@@ -21,8 +20,7 @@ export default function BookmarkPage() {
         try {
             const { data, error } = await client.GET('/api/v1/bookmarks')
             if (data && !error) {
-                const response = data as BookmarkResponse
-                setVideoList(response.data || [])
+                setVideoList(data.data || [])
             }
         } catch (error) {
             console.error('북마크 목록을 가져오는데 실패했습니다:', error)
@@ -61,7 +59,6 @@ export default function BookmarkPage() {
                             </div>
                             <div className="flex flex-col">
                                 <p className="text-lg font-bold">{video.title}</p>
-                                <p className="text-lg text-gray-500">조회수 0회</p>
                                 <p className="text-sm text-gray-700 mt-2">{video.description}</p>
                             </div>
                         </div>
