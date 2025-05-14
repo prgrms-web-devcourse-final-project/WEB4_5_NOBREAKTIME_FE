@@ -78,20 +78,20 @@ const KeywordCard: React.FC<KeywordCardProps> = ({
             }
 
             // 성공 시 상태 업데이트 및 콜백 호출
+            setIsLoading(false) // 로딩 상태 먼저 해제
             setIsAdded(true)
             setShowSuccess(true)
             if (onAddWord) {
                 onAddWord(keyword)
             }
 
-            // 1초 후 카드 닫기
+            // 충분한 시간 동안 성공 표시를 보여준 후 카드 닫기
             setTimeout(() => {
                 onClose()
-            }, 1000)
+            }, 2000)
         } catch (error) {
             console.error('단어 추가 중 오류 발생:', error)
             alert('단어 추가에 실패했습니다.')
-        } finally {
             setIsLoading(false)
         }
     }

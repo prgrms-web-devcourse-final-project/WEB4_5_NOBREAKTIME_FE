@@ -265,6 +265,7 @@ export default function WordQuiz() {
 
         return (
             <QuizComplete
+                quizType="word"
                 score={score}
                 totalCount={words.length}
                 incorrectCount={incorrectCount}

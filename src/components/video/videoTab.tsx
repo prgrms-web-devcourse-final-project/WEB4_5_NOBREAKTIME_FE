@@ -51,9 +51,12 @@ function VideoTab({
     const [quizData, setQuizData] = useState<VideoLearningWordQuizItem[]>([])
     const [isQuizLoading, setIsQuizLoading] = useState(false)
 
-    // 단어 퀴즈 데이터 로드 - 컴포넌트 마운트 시 한 번만 실행
+    // 단어 퀴즈 데이터 로드 - 분석이 완료되고 selectedSubtitle이 있을 때 실행
     useEffect(() => {
         const fetchWordQuiz = async () => {
+            // 선택된 자막이 없거나 분석이 완료되지 않은 경우 리턴
+            if (!selectedSubtitle) return
+
             // 이미 데이터가 있으면 API 호출하지 않음
             if (quizData.length > 0) return
 
@@ -83,7 +86,7 @@ function VideoTab({
         }
 
         fetchWordQuiz()
-    }, [videoId]) // videoId가 변경될 때만 실행
+    }, [videoId, selectedSubtitle]) // videoId와 selectedSubtitle이 변경될 때 실행
 
     const isLoading = parentIsLoading || isQuizLoading
 

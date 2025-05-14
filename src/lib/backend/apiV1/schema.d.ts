@@ -560,8 +560,8 @@ export interface paths {
             cookie?: never
         }
         /**
-         * 단어 목록 조회
-         * @description 특정 단어장의 단어 목록을 조회합니다.
+         * 전체 단어 목록 조회
+         * @description 로그인한 사용자의 모든 단어장에 있는 단어들을 조회합니다.
          */
         get: operations['getWordbookItems']
         put?: never
@@ -752,26 +752,6 @@ export interface paths {
         patch?: never
         trace?: never
     }
-    '/api/v1/expressionbooks/{expressionBookId}/words': {
-        parameters: {
-            query?: never
-            header?: never
-            path?: never
-            cookie?: never
-        }
-        /**
-         * 표현 목록 조회
-         * @description 특정 표현함의 표현 목록을 조회합니다.
-         */
-        get: operations['getExpressionsByBook']
-        put?: never
-        post?: never
-        delete?: never
-        options?: never
-        head?: never
-        patch?: never
-        trace?: never
-    }
     '/api/v1/expressionbooks/{expressionBookId}/quiz': {
         parameters: {
             query?: never
@@ -784,6 +764,26 @@ export interface paths {
          * @description 표현함에 대한 퀴즈를 요청합니다.
          */
         get: operations['getExpressionBookQuiz']
+        put?: never
+        post?: never
+        delete?: never
+        options?: never
+        head?: never
+        patch?: never
+        trace?: never
+    }
+    '/api/v1/expressionbooks/view': {
+        parameters: {
+            query?: never
+            header?: never
+            path?: never
+            cookie?: never
+        }
+        /**
+         * 전체 표현 목록 조회
+         * @description 모든 표현함의 표현들을 등록 날짜 기준으로 정렬하여 조회합니다.
+         */
+        get: operations['getExpressionsByBook']
         put?: never
         post?: never
         delete?: never
@@ -1159,10 +1159,14 @@ export interface components {
             exampleSentence?: string
             translatedSentence?: string
             videoId?: string
+            videoTitle?: string
+            imageUrl?: string
             /** Format: int64 */
             subtitleId?: number
             /** Format: date-time */
             createdAt?: string
+            /** Format: int64 */
+            wordBookId?: number
         }
         RsDataWordQuizResponse: {
             code: string
@@ -1182,29 +1186,9 @@ export interface components {
             quizId?: number
             quizItems?: components['schemas']['WordQuizItem'][]
         }
-        AnalyzeVideoResponse: {
-            subtitleResults?: components['schemas']['GptSubtitleResponse'][]
-        }
-        GptSubtitleResponse: {
+        SseEmitter: {
             /** Format: int64 */
-            subtitleId?: number
-            startTime?: string
-            endTime?: string
-            speaker?: string
-            original?: string
-            transcript?: string
-            keywords?: components['schemas']['KeywordInfo'][]
-        }
-        KeywordInfo: {
-            word?: string
-            meaning?: string
-            /** Format: int32 */
-            difficulty?: number
-        }
-        RsDataAnalyzeVideoResponse: {
-            code: string
-            msg: string
-            data?: components['schemas']['AnalyzeVideoResponse']
+            timeout?: number
         }
         RsDataVideoLearningWordQuizListResponse: {
             code: string
@@ -1297,19 +1281,6 @@ export interface components {
             msg: string
             data?: components['schemas']['ExpressionBookResponse'][]
         }
-        ExpressionResponse: {
-            /** Format: int64 */
-            expressionId?: number
-            sentence?: string
-            description?: string
-            sentenceAnalysis?: string
-            subtitleAt?: string
-        }
-        RsDataListExpressionResponse: {
-            code: string
-            msg: string
-            data?: components['schemas']['ExpressionResponse'][]
-        }
         ExpressionQuizItem: {
             /** Format: int64 */
             expressionQuizItemId?: number
@@ -1327,6 +1298,27 @@ export interface components {
             code: string
             msg: string
             data?: components['schemas']['ExpressionQuizResponse']
+        }
+        ExpressionResponse: {
+            /** Format: int64 */
+            expressionId?: number
+            sentence?: string
+            description?: string
+            sentenceAnalysis?: string
+            thumbnailImageUrl?: string
+            videoId?: string
+            videoTitle?: string
+            /** @example 14:30:00 */
+            subtitleAt?: string
+            /** Format: date-time */
+            createdAt?: string
+            /** Format: int64 */
+            expressionBookId?: number
+        }
+        RsDataListExpressionResponse: {
+            code: string
+            msg: string
+            data?: components['schemas']['ExpressionResponse'][]
         }
         AchievementDetail: {
             /** Format: int32 */
@@ -1398,9 +1390,9 @@ export interface components {
             authorities?: components['schemas']['GrantedAuthority'][]
             username?: string
             enabled?: boolean
+            credentialsNonExpired?: boolean
             accountNonExpired?: boolean
             accountNonLocked?: boolean
-            credentialsNonExpired?: boolean
         }
         GrantedAuthority: {
             authority?: string
@@ -3179,9 +3171,7 @@ export interface operations {
     }
     getWordbookItems: {
         parameters: {
-            query?: {
-                wordbookId?: number
-            }
+            query?: never
             header?: never
             path?: never
             cookie?: never
@@ -3203,7 +3193,7 @@ export interface operations {
                     [name: string]: unknown
                 }
                 content: {
-                    'application/json': unknown
+                    'application/json': components['schemas']['ErrorResponse']
                 }
             }
             /** @description Not Found */
@@ -3339,7 +3329,7 @@ export interface operations {
                     [name: string]: unknown
                 }
                 content: {
-                    'application/json': components['schemas']['RsDataAnalyzeVideoResponse']
+                    'text/event-stream': components['schemas']['SseEmitter']
                 }
             }
             /** @description Forbidden */
@@ -3661,55 +3651,6 @@ export interface operations {
             }
         }
     }
-    getExpressionsByBook: {
-        parameters: {
-            query?: never
-            header?: never
-            path: {
-                expressionBookId: number
-            }
-            cookie?: never
-        }
-        requestBody?: never
-        responses: {
-            /** @description 표현함의 표현 목록 조회에 성공했습니다. */
-            200: {
-                headers: {
-                    [name: string]: unknown
-                }
-                content: {
-                    'application/json': components['schemas']['RsDataListExpressionResponse']
-                }
-            }
-            /** @description Forbidden */
-            403: {
-                headers: {
-                    [name: string]: unknown
-                }
-                content: {
-                    'application/json': unknown
-                }
-            }
-            /** @description Not Found */
-            404: {
-                headers: {
-                    [name: string]: unknown
-                }
-                content: {
-                    'application/json': unknown
-                }
-            }
-            /** @description Internal Server Error */
-            500: {
-                headers: {
-                    [name: string]: unknown
-                }
-                content: {
-                    'application/json': components['schemas']['ErrorResponse']
-                }
-            }
-        }
-    }
     getExpressionBookQuiz: {
         parameters: {
             query?: never
@@ -3741,6 +3682,53 @@ export interface operations {
             }
             /** @description Forbidden */
             403: {
+                headers: {
+                    [name: string]: unknown
+                }
+                content: {
+                    'application/json': unknown
+                }
+            }
+            /** @description Internal Server Error */
+            500: {
+                headers: {
+                    [name: string]: unknown
+                }
+                content: {
+                    'application/json': components['schemas']['ErrorResponse']
+                }
+            }
+        }
+    }
+    getExpressionsByBook: {
+        parameters: {
+            query?: never
+            header?: never
+            path?: never
+            cookie?: never
+        }
+        requestBody?: never
+        responses: {
+            /** @description 표현함의 표현 목록 조회에 성공했습니다. */
+            200: {
+                headers: {
+                    [name: string]: unknown
+                }
+                content: {
+                    'application/json': components['schemas']['RsDataListExpressionResponse']
+                }
+            }
+            /** @description Forbidden */
+            403: {
+                headers: {
+                    [name: string]: unknown
+                }
+                content: {
+                    'application/json': components['schemas']['ErrorResponse']
+                }
+            }
+            /** @description Not Found */
+            404: {
                 headers: {
                     [name: string]: unknown
                 }

@@ -9,8 +9,24 @@ import client from '@/lib/backend/client'
 import { Keyword } from './videoTab/KeywordCard'
 
 type VideoResponse = components['schemas']['VideoResponse']
-type GptSubtitleResponse = components['schemas']['GptSubtitleResponse']
-type AnalyzeVideoResponse = components['schemas']['AnalyzeVideoResponse']
+
+type SubtitleResult = {
+    subtitleId: number
+    startTime?: string
+    endTime?: string
+    speaker?: string
+    original?: string
+    transcript?: string
+    keywords?: {
+        word: string
+        meaning: string
+        difficulty: number
+    }[]
+}
+
+type AnalyzeVideoResponse = {
+    subtitleResults: SubtitleResult[]
+}
 
 interface Props {
     video: VideoResponse
@@ -27,7 +43,7 @@ function parseTimeToSeconds(time: string) {
 function VideoLearning({ video, analysisData: initialAnalysisData, onBack, isLoading: initialIsLoading }: Props) {
     const [fontSize, setFontSize] = useState(16)
     const [analysisData, setAnalysisData] = useState<AnalyzeVideoResponse | null>(initialAnalysisData)
-    const [selectedSubtitle, setSelectedSubtitle] = useState<GptSubtitleResponse | null>(null)
+    const [selectedSubtitle, setSelectedSubtitle] = useState<SubtitleResult | null>(null)
     const [selectedTab, setSelectedTab] = useState<string>('overview')
     const [showTranscript, setShowTranscript] = useState(true)
     const [isLoading, setIsLoading] = useState(initialIsLoading)
@@ -164,7 +180,7 @@ function VideoLearning({ video, analysisData: initialAnalysisData, onBack, isLoa
     }, [selectedTab])
 
     // 스크립트 클릭 시 유튜브 플레이어 시간 이동
-    const handleSubtitleClick = (time: string, subtitle: GptSubtitleResponse) => {
+    const handleSubtitleClick = (time: string, subtitle: SubtitleResult) => {
         // 선택된 자막 설정
         setSelectedSubtitle(subtitle)
 
@@ -182,7 +198,9 @@ function VideoLearning({ video, analysisData: initialAnalysisData, onBack, isLoa
 
     // 현재 선택된 자막의 인덱스 계산
     const currentSubtitleIndex =
-        analysisData?.subtitleResults?.findIndex((subtitle) => subtitle.original === selectedSubtitle?.original) ?? 0
+        analysisData?.subtitleResults?.findIndex(
+            (subtitle: SubtitleResult) => subtitle.original === selectedSubtitle?.original,
+        ) ?? 0
 
     // 이전 자막으로 이동
     const handlePrevSubtitle = () => {

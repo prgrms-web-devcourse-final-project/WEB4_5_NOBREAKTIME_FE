@@ -1,13 +1,6 @@
 import Image from 'next/image'
 import { usePathname, useRouter } from 'next/navigation'
 
-interface Wordbook {
-    id: number
-    name: string
-    language: string
-    wordCount: number
-}
-
 interface Props {
     title: string
     descriptions: { text: string; strong: string[] }[]

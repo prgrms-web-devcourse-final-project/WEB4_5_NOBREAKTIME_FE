@@ -6,6 +6,7 @@ import { useParams, useSearchParams } from 'next/navigation'
 import { useEffect, useState } from 'react'
 import client from '@/lib/backend/client'
 import { components } from '@/lib/backend/apiV1/schema'
+import Link from 'next/link'
 
 type WordResponse = components['schemas']['WordResponse']
 
@@ -45,22 +46,7 @@ export default function WordLearning() {
                 console.log('API 응답 데이터:', data)
 
                 if (data?.data) {
-                    const apiWords = data.data.map((item: components['schemas']['WordResponse']) => ({
-                        word: item.word || '',
-                        pos: item.pos || '',
-                        meaning: item.meaning || '',
-                        difficulty: item.difficulty || 'EASY',
-                        exampleSentence: item.exampleSentence || '',
-                        translatedSentence: item.translatedSentence || '',
-                        videoId: item.videoId || '',
-                        subtitleId: item.subtitleId || 0,
-                        createdAt: item.createdAt || '',
-                    }))
-                    console.log(
-                        '예문 리스트:',
-                        apiWords.map((w) => w.exampleSentence),
-                    )
-                    setWords(apiWords)
+                    setWords(data.data)
                 } else {
                     setWords([])
                 }
@@ -182,6 +168,25 @@ export default function WordLearning() {
                         <p className="text-md text-center">{highlightWord(current.exampleSentence, current.word)}</p>
                         <p className="text-md text-center">{current.translatedSentence}</p>
                     </div>
+
+                    {current.videoId && (
+                        <Link
+                            href={`/dashboard/video/learning/${current.videoId}`}
+                            className="mt-4 block p-3 rounded-lg bg-gray-50 hover:bg-gray-100 transition-colors cursor-pointer"
+                        >
+                            <div className="flex items-center gap-2 justify-center">
+                                <div className="w-[80px] h-[45px] relative overflow-hidden rounded-md">
+                                    <Image
+                                        src={current.imageUrl || '/assets/default-thumbnail.png'}
+                                        alt="video thumbnail"
+                                        fill
+                                        className="object-cover"
+                                    />
+                                </div>
+                                <p className="text-md text-center flex-1">{current.videoTitle}</p>
+                            </div>
+                        </Link>
+                    )}
 
                     <div className="w-full flex justify-end">
                         <p className="text-sm text-gray-400">{formatDate(current.createdAt)}</p>

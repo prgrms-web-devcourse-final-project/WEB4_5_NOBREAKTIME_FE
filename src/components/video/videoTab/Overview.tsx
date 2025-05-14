@@ -91,7 +91,8 @@ const Overview: React.FC<OverviewProps> = ({
         if (onAddKeyword) {
             onAddKeyword(keyword)
         }
-        // 팝업을 닫지 않고 유지
+        // 호버 상태 초기화
+        setHoveredKeyword(null)
     }
 
     // 키워드 제거 처리
@@ -99,7 +100,8 @@ const Overview: React.FC<OverviewProps> = ({
         if (onRemoveKeyword) {
             onRemoveKeyword(keyword)
         }
-        // 팝업을 닫지 않고 유지
+        // 호버 상태 초기화
+        setHoveredKeyword(null)
     }
 
     // 키워드가 이미 추가되었는지 확인
@@ -220,46 +222,50 @@ const Overview: React.FC<OverviewProps> = ({
 
                 {/* 🔹 표현 버튼과 한글 자막 토글 버튼 */}
                 <div className="flex justify-between items-center mt-2">
-                    <div className="flex items-center gap-2">
-                        <button
-                            onClick={() => setShowTranscript(!showTranscript)}
-                            className={`w-12 h-6 rounded-full relative transition-colors ${
-                                showTranscript ? 'bg-[var(--color-main)]' : 'bg-gray-300'
-                            }`}
-                        >
-                            <span
-                                className={`absolute top-1 w-4 h-4 rounded-full bg-white transition-transform ${
-                                    showTranscript ? 'left-7' : 'left-1'
+                    <button
+                        onClick={handleAddExpression}
+                        disabled={isLoading}
+                        className="px-4 py-2 bg-[var(--color-main)] text-white rounded-lg hover:bg-[var(--color-sub-1)] transition-colors disabled:opacity-70"
+                    >
+                        {isLoading ? '표현 추가 중...' : '표현 추가'}
+                    </button>
+                    <div className="flex items-center gap-4">
+                        <div className="flex items-center gap-2">
+                            <button
+                                onClick={onPrevSubtitle}
+                                className={`px-2 py-1 rounded ${
+                                    onPrevSubtitle ? 'bg-gray-200' : 'bg-gray-100 text-gray-400 cursor-not-allowed'
                                 }`}
-                            />
-                        </button>
-                        <button
-                            onClick={handleAddExpression}
-                            className="px-4 py-2 bg-[var(--color-main)] text-white rounded-lg hover:bg-[var(--color-main-dark)] transition-colors"
-                        >
-                            표현 추가
-                        </button>
-                    </div>
-                    <div className="flex items-center gap-2">
-                        <button
-                            onClick={onPrevSubtitle}
-                            className={`px-2 py-1 rounded ${
-                                onPrevSubtitle ? 'bg-gray-200' : 'bg-gray-100 text-gray-400 cursor-not-allowed'
-                            }`}
-                            disabled={!onPrevSubtitle}
-                        >
-                            &larr;
-                        </button>
-                        <span className="text-sm font-medium">{subtitleIndex + 1}</span>
-                        <button
-                            onClick={onNextSubtitle}
-                            className={`px-2 py-1 rounded ${
-                                onNextSubtitle ? 'bg-gray-200' : 'bg-gray-100 text-gray-400 cursor-not-allowed'
-                            }`}
-                            disabled={!onNextSubtitle}
-                        >
-                            &rarr;
-                        </button>
+                                disabled={!onPrevSubtitle}
+                            >
+                                &larr;
+                            </button>
+                            <span className="text-sm font-medium">{subtitleIndex + 1}</span>
+                            <button
+                                onClick={onNextSubtitle}
+                                className={`px-2 py-1 rounded ${
+                                    onNextSubtitle ? 'bg-gray-200' : 'bg-gray-100 text-gray-400 cursor-not-allowed'
+                                }`}
+                                disabled={!onNextSubtitle}
+                            >
+                                &rarr;
+                            </button>
+                        </div>
+                        <div className="flex items-center gap-2">
+                            <span className="text-sm">한국어 자막</span>
+                            <button
+                                onClick={() => setShowTranscript(!showTranscript)}
+                                className={`w-12 h-6 rounded-full relative transition-colors ${
+                                    showTranscript ? 'bg-[var(--color-main)]' : 'bg-gray-300'
+                                }`}
+                            >
+                                <span
+                                    className={`absolute top-1 w-4 h-4 rounded-full bg-white transition-transform ${
+                                        showTranscript ? 'left-7' : 'left-1'
+                                    }`}
+                                />
+                            </button>
+                        </div>
                     </div>
                 </div>
             </div>
