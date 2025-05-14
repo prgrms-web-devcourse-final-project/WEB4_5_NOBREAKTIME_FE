@@ -9,7 +9,7 @@ import { Pencil } from 'lucide-react'
 import Image from 'next/image'
 import { useState } from 'react'
 
-type Language = 'ENGLISH' | 'JAPANESE' | 'NONE'
+type Language = 'ENGLISH' | 'JAPANESE' | 'NONE' | 'ALL'
 
 const LANGUAGES = [
     { code: 'ENGLISH' as Language, label: '영어', image: '/assets/america.svg' },
@@ -18,15 +18,18 @@ const LANGUAGES = [
 ]
 
 export default function MyPage() {
-    const { loginMember, setLoginMember } = useGlobalLoginMember()
+    const { loginMember, setLoginMember, logoutAndHome } = useGlobalLoginMember()
     const [profileImage, setProfileImage] = useState<string | null>(loginMember?.profileImage || '/assets/user.svg')
     const [isModalOpen, setIsModalOpen] = useState(false)
     const [isLanguageModalOpen, setIsLanguageModalOpen] = useState(false)
     const [nickname, setNickname] = useState(loginMember?.nickname || '')
-    const [selectedLanguage, setSelectedLanguage] = useState<Language>(loginMember?.language || 'NONE')
+    const [selectedLanguage, setSelectedLanguage] = useState<Language>((loginMember?.language as Language) || 'NONE')
     const [isLoading, setIsLoading] = useState(false)
     const [isLanguageLoading, setIsLanguageLoading] = useState(false)
     const [isImageLoading, setIsImageLoading] = useState(false)
+    const [isWithdrawModalOpen, setIsWithdrawModalOpen] = useState(false)
+    const [withdrawEmail, setWithdrawEmail] = useState('')
+    const [isWithdrawLoading, setIsWithdrawLoading] = useState(false)
 
     const getSocialIcon = (email: string) => {
         if (email.includes('@kakao.com')) return '/logo/kakao.png'
@@ -107,10 +110,9 @@ export default function MyPage() {
         setIsLoading(true)
         try {
             const { error } = await client.PATCH('/api/v1/members/me', {
-                params: {
-                    query: {
-                        nickname,
-                    } as any,
+                body: {
+                    nickname,
+                    email: loginMember.email,
                 },
             })
 
@@ -167,10 +169,37 @@ export default function MyPage() {
         }
     }
 
+    const handleWithdrawClick = () => {
+        setIsWithdrawModalOpen(true)
+    }
+
+    const handleWithdraw = async () => {
+        if (withdrawEmail !== loginMember.email) {
+            alert('이메일이 일치하지 않습니다.')
+            return
+        }
+        setIsWithdrawLoading(true)
+        try {
+            const { error } = await client.DELETE('/api/v1/members/me')
+            if (error) {
+                alert('회원 탈퇴에 실패했습니다.')
+                return
+            }
+            alert('회원 탈퇴가 완료되었습니다.')
+            // 로그아웃 처리 및 메인 페이지 이동
+            logoutAndHome()
+        } catch (e) {
+            alert('회원 탈퇴 중 오류가 발생했습니다.')
+        } finally {
+            setIsWithdrawLoading(false)
+        }
+    }
+
     if (!loginMember) {
         return null
     }
 
+    console.log(loginMember)
     const language = loginMember.language || 'NONE'
     const socialIcon = getSocialIcon(loginMember.email || '')
 
@@ -240,7 +269,7 @@ export default function MyPage() {
                                 </button>
                             </div>
                             <span className="text-sm text-gray-500">{loginMember.email}</span>
-                            <span className="text-sm text-gray-500">구독: {loginMember.subscription}</span>
+                            <span className="text-sm text-gray-500">구독: {loginMember.subscriptionType}</span>
                         </div>
                     </div>
 
@@ -284,6 +313,15 @@ export default function MyPage() {
                             프로필 수정
                         </button>
                     </div> */}
+                    <div className="flex justify-end mt-8">
+                        <Button
+                            variant="destructive"
+                            className="bg-red-500 hover:bg-red-700"
+                            onClick={handleWithdrawClick}
+                        >
+                            회원 탈퇴
+                        </Button>
+                    </div>
                 </div>
             </div>
 
@@ -356,6 +394,40 @@ export default function MyPage() {
                         </Button>
                         <Button onClick={handleLanguageSubmit} disabled={isLanguageLoading}>
                             {isLanguageLoading ? '수정 중...' : '수정하기'}
+                        </Button>
+                    </DialogFooter>
+                </DialogContent>
+            </Dialog>
+
+            {/* 회원 탈퇴 모달 */}
+            <Dialog open={isWithdrawModalOpen} onOpenChange={setIsWithdrawModalOpen}>
+                <DialogContent className="sm:max-w-[425px]">
+                    <DialogHeader>
+                        <DialogTitle>회원 탈퇴</DialogTitle>
+                    </DialogHeader>
+                    <div className="grid gap-4 py-4">
+                        <div className="grid gap-2">
+                            <label htmlFor="withdraw-email" className="text-sm font-medium">
+                                이메일
+                            </label>
+                            <Input
+                                id="withdraw-email"
+                                value={withdrawEmail}
+                                onChange={(e) => setWithdrawEmail(e.target.value)}
+                                placeholder="이메일을 입력해주세요"
+                            />
+                        </div>
+                    </div>
+                    <DialogFooter>
+                        <Button variant="outline" onClick={() => setIsWithdrawModalOpen(false)}>
+                            취소
+                        </Button>
+                        <Button
+                            className="bg-red-500 hover:bg-red-700"
+                            onClick={handleWithdraw}
+                            disabled={isWithdrawLoading}
+                        >
+                            {isWithdrawLoading ? '탈퇴 중...' : '탈퇴하기'}
                         </Button>
                     </DialogFooter>
                 </DialogContent>

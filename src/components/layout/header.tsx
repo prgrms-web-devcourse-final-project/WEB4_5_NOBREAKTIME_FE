@@ -25,9 +25,9 @@ export default function Header() {
 
     return (
         <header className="flex items-center justify-end h-16 px-6 relative">
-            <div className="flex items-center gap-4">
+            <div className="flex items-center gap-2">
                 {/* 프로필 아이콘 */}
-                <div className="w-6 h-6 rounded-full bg-[var(--color-main)] flex items-center justify-center overflow-hidden">
+                <div className="w-6 h-6 rounded-full border-2 border-[var(--color-main)] flex items-center justify-center overflow-hidden">
                     <Image
                         src={profileImg}
                         alt="profile image"
@@ -41,7 +41,7 @@ export default function Header() {
                 {/* 이름 + 레벨 + 드롭다운 */}
                 <div className="flex items-center gap-1 cursor-pointer" ref={dropdownRef}>
                     <span className="text-sm font-semibold text-gray-800">{loginMember.nickname}</span>
-                    <span className="text-sm text-gray-500">Lv. 0</span>
+                    <span className="text-sm text-gray-500">{loginMember.subscriptionType}</span>
                     <button onClick={() => setIsDropdownOpen(!isDropdownOpen)}>
                         <Image src="/assets/bottmBTN.svg" alt="dropdown" width={24} height={24} />
                     </button>

@@ -2,98 +2,100 @@
 
 import React, { useState, useEffect } from 'react'
 import client from '@/lib/backend/client'
-import { WordQuizType, WordQuizProps, WordQuizResult } from '@/types/video'
 import Image from 'next/image'
+import { components } from '@/lib/backend/apiV1/schema'
+import WordModal from '../wordModal'
 
-const WordQuiz: React.FC<WordQuizProps> = ({ fontSize, videoId, onQuizResult, wordQuizData = [] }) => {
-    // 단어 퀴즈 상태 관리
+type VideoLearningWordQuizItem = components['schemas']['VideoLearningWordQuizItem']
+type VideoLearningWordQuizListResponse = components['schemas']['VideoLearningWordQuizListResponse']
+
+// 내부 상태 관리를 위해 VideoLearningWordQuizItem 타입을 확장
+interface ExtendedVideoLearningWordQuizItem extends VideoLearningWordQuizItem {
+    originalWord?: string // 오답 처리 시 원래 단어를 저장하기 위한 필드
+}
+
+interface WordQuizProps {
+    fontSize: number
+    videoId: string
+    quizData: VideoLearningWordQuizItem[]
+}
+
+// 퀴즈 결과 타입 정의
+interface QuizResultItem {
+    quizItem: VideoLearningWordQuizItem // 원본 퀴즈 데이터
+    userAnswer: string // 사용자 입력
+    isCorrect: boolean // 정답 여부
+    isAnswered: boolean // 답변 여부
+}
+
+const WordQuiz: React.FC<WordQuizProps> = ({ fontSize, videoId, quizData }) => {
     const [currentQuizIndex, setCurrentQuizIndex] = useState(0)
     const [input, setInput] = useState('')
-    const [quizResult, setQuizResult] = useState<null | boolean>(null)
-    const [wordQuizzes, setWordQuizzes] = useState<WordQuizType[]>(wordQuizData)
-    const [quizResults, setQuizResults] = useState<WordQuizResult[]>([])
-    const [isLoading, setIsLoading] = useState(wordQuizData.length === 0)
-    const [allAnswered, setAllAnswered] = useState(false)
+    const [quizResults, setQuizResults] = useState<QuizResultItem[]>([])
+    const [isLoading, setIsLoading] = useState(true)
+    const [isModalOpen, setIsModalOpen] = useState(false)
 
-    // 전달받은 wordQuizData가 변경될 때 업데이트
+    // 초기 퀴즈 결과 설정
     useEffect(() => {
-        if (wordQuizData.length > 0) {
-            setWordQuizzes(wordQuizData)
-            setIsLoading(false)
-
-            // 결과 배열 초기화
-            const initialResults = wordQuizData.map((quiz) => ({
-                word: quiz.word || '',
-                meaning: quiz.meaning,
+        if (quizData.length > 0) {
+            // 각 퀴즈 항목에 대한 결과 초기화
+            const initialResults = quizData.map((quiz) => ({
+                quizItem: quiz,
+                userAnswer: '',
                 isCorrect: false,
+                isAnswered: false,
             }))
             setQuizResults(initialResults)
+            setIsLoading(false)
         }
-    }, [wordQuizData])
+    }, [quizData])
+
+    // 정답 확인
+    const handleSubmit = () => {
+        const currentQuiz = quizData[currentQuizIndex]
+        if (!currentQuiz || !currentQuiz.word) return
+
+        const userAnswer = input.trim()
+        const isCorrect = userAnswer.toLowerCase() === currentQuiz.word.toLowerCase()
+
+        // 현재 퀴즈 결과 업데이트
+        setQuizResults((prev) => {
+            const newResults = [...prev]
+            newResults[currentQuizIndex] = {
+                quizItem: currentQuiz,
+                userAnswer: userAnswer,
+                isCorrect: isCorrect,
+                isAnswered: true,
+            }
+            return newResults
+        })
+
+        setInput('')
+
+        // 마지막 문제가 아니면 다음 문제로
+        if (currentQuizIndex < quizResults.length - 1) {
+            setTimeout(() => {
+                setCurrentQuizIndex(currentQuizIndex + 1)
+            }, 1000)
+        }
+    }
 
     // 모든 문제를 풀었는지 확인
-    useEffect(() => {
-        if (quizResults.length > 0) {
-            const answered = quizResults.every((result) => result.isCorrect !== undefined)
-            setAllAnswered(answered)
-        }
-    }, [quizResults])
+    const areAllAnswered = () => {
+        return quizResults.every((result) => result.isAnswered)
+    }
 
-    // API 호출 - 전달받은 데이터가 없을 때만 실행
-    useEffect(() => {
-        // 이미 데이터가 있으면 API 호출하지 않음
-        if (wordQuizData.length > 0) {
-            return
-        }
-
-        const fetchWordQuiz = async () => {
-            try {
-                setIsLoading(true)
-                const { data, error } = await client.GET('/api/v1/videos/{videoId}/quiz/words', {
-                    params: {
-                        path: {
-                            videoId: videoId,
-                        },
-                    },
-                })
-
-                if (error) {
-                    console.error('단어 퀴즈 데이터 요청 실패:', error)
-                    return
-                }
-
-                console.log('단어 퀴즈 데이터:', data)
-                if (data?.data?.quiz) {
-                    const quizData = data.data.quiz as WordQuizType[]
-                    setWordQuizzes(quizData)
-
-                    // 결과 배열 초기화
-                    const initialResults = quizData.map((quiz) => ({
-                        word: quiz.word || '',
-                        meaning: quiz.meaning,
-                        isCorrect: false,
-                    }))
-                    setQuizResults(initialResults)
-                }
-            } catch (error) {
-                console.error('단어 퀴즈 데이터 요청 실패:', error)
-            } finally {
-                setIsLoading(false)
-            }
-        }
-
-        fetchWordQuiz()
-    }, [videoId, wordQuizData.length])
+    // 현재 퀴즈가 마지막 퀴즈인지 확인
+    const isLastQuiz = currentQuizIndex === quizData.length - 1
 
     // 현재 퀴즈
-    const currentQuiz = wordQuizzes[currentQuizIndex]
+    const currentQuiz = quizData[currentQuizIndex]
 
     // 다음 퀴즈로 이동
     const handleNextQuiz = () => {
-        if (currentQuizIndex < wordQuizzes.length - 1) {
+        if (currentQuizIndex < quizData.length - 1) {
             setCurrentQuizIndex(currentQuizIndex + 1)
             setInput('')
-            setQuizResult(null)
         }
     }
 
@@ -102,47 +104,6 @@ const WordQuiz: React.FC<WordQuizProps> = ({ fontSize, videoId, onQuizResult, wo
         if (currentQuizIndex > 0) {
             setCurrentQuizIndex(currentQuizIndex - 1)
             setInput('')
-            setQuizResult(null)
-        }
-    }
-
-    // 정답 확인
-    const handleSubmit = () => {
-        if (!currentQuiz || !currentQuiz.word) return
-
-        const isCorrect = input.trim().toLowerCase() === currentQuiz.word.toLowerCase()
-        setQuizResult(isCorrect)
-
-        // 결과 업데이트
-        const newResults = [...quizResults]
-        newResults[currentQuizIndex] = {
-            ...newResults[currentQuizIndex],
-            isCorrect: isCorrect,
-        }
-        setQuizResults(newResults)
-
-        // 결과 콜백 호출 - 모달을 열지 않도록 여기서는 호출하지 않음
-        // 최종 결과 확인 버튼을 클릭할 때만 호출
-
-        // 오답인 경우 잠시 후 자동으로 초기화
-        if (!isCorrect) {
-            setTimeout(() => {
-                handleReset()
-            }, 1500)
-        }
-    }
-
-    // 초기화
-    const handleReset = () => {
-        setInput('')
-        setQuizResult(null)
-    }
-
-    // 최종 결과 확인 및 단어장 추가 모달 열기
-    const handleCheckFinalResult = () => {
-        if (onQuizResult) {
-            // 최종 결과 확인 버튼을 클릭할 때만 결과 콜백 호출
-            onQuizResult(quizResults)
         }
     }
 
@@ -151,10 +112,12 @@ const WordQuiz: React.FC<WordQuizProps> = ({ fontSize, videoId, onQuizResult, wo
         if (!currentQuiz) return null
 
         const parts = currentQuiz.sentence?.split('{}') || []
+        const currentResult = quizResults[currentQuizIndex]
+
         return (
             <div>
                 <div className="mb-1" style={{ fontSize: `${fontSize}px` }}>
-                    {parts.map((part, idx) => (
+                    {parts.map((part: string, idx: number) => (
                         <span key={idx}>
                             {part}
                             {idx < parts.length - 1 && (
@@ -163,14 +126,14 @@ const WordQuiz: React.FC<WordQuizProps> = ({ fontSize, videoId, onQuizResult, wo
                                     value={input}
                                     onChange={(e) => setInput(e.target.value)}
                                     onKeyDown={(e) => {
-                                        if (e.key === 'Enter' && input.trim() !== '' && quizResult === null) {
+                                        if (e.key === 'Enter' && input.trim() !== '' && !currentResult?.isAnswered) {
                                             e.preventDefault()
                                             handleSubmit()
                                         }
                                     }}
                                     className="border-b-2 border-purple-400 w-32 mx-1 text-center outline-none"
                                     style={{ fontSize: `${fontSize}px` }}
-                                    disabled={quizResult !== null}
+                                    disabled={currentResult?.isAnswered}
                                 />
                             )}
                         </span>
@@ -180,10 +143,21 @@ const WordQuiz: React.FC<WordQuizProps> = ({ fontSize, videoId, onQuizResult, wo
                     className="bg-purple-50 p-2 rounded text-black-800 text-sm mb-3 mt-4"
                     style={{ fontSize: `${fontSize}px` }}
                 >
-                    {currentQuiz.sentenceMeaning}
+                    {currentQuiz.sentenceMeaning || currentQuiz.meaning}
                 </div>
             </div>
         )
+    }
+
+    // 모달에 전달할 단어 목록 생성
+    const getWordsForModal = () => {
+        return quizResults.map((result) => ({
+            word: result.quizItem.word || '',
+            description: result.quizItem.meaning || '',
+            checked: !result.isAnswered || !result.isCorrect, // 풀지 않았거나 틀린 문제는 체크
+            subtitleId: result.quizItem.subtitleId,
+            videoId: videoId, // props로 받은 videoId 사용
+        }))
     }
 
     if (isLoading) {
@@ -194,13 +168,15 @@ const WordQuiz: React.FC<WordQuizProps> = ({ fontSize, videoId, onQuizResult, wo
         )
     }
 
-    if (wordQuizzes.length === 0) {
+    if (quizData.length === 0) {
         return (
             <div className="w-full h-full flex items-center justify-center">
                 <div>사용 가능한 단어 퀴즈가 없습니다.</div>
             </div>
         )
     }
+
+    const currentResult = quizResults[currentQuizIndex]
 
     return (
         <div className="w-full h-full overflow-y-auto" style={{ fontSize: `${fontSize}px` }}>
@@ -213,15 +189,15 @@ const WordQuiz: React.FC<WordQuizProps> = ({ fontSize, videoId, onQuizResult, wo
                         <button
                             className="px-4 py-1 bg-purple-500 text-white rounded text-sm"
                             onClick={handleSubmit}
-                            disabled={input.trim() === '' || quizResult !== null}
+                            disabled={input.trim() === '' || currentResult?.isAnswered}
                         >
                             정답 확인
                         </button>
 
                         {/* 정답/오답 메시지 → 이미지로 대체 */}
-                        {quizResult !== null && (
+                        {currentResult?.isAnswered && (
                             <div className="ml-3 text-md font-bold flex items-center">
-                                {quizResult ? (
+                                {currentResult.isCorrect ? (
                                     <img src="/assets/ok.svg" alt="정답" className="w-6 h-6" />
                                 ) : (
                                     <img src="/assets/fail.svg" alt="오답" className="w-6 h-6" />
@@ -241,32 +217,90 @@ const WordQuiz: React.FC<WordQuizProps> = ({ fontSize, videoId, onQuizResult, wo
                             &larr;
                         </button>
                         <span className="px-2">
-                            {currentQuizIndex + 1}/{wordQuizzes.length}
+                            {currentQuizIndex + 1}/{quizData.length}
                         </span>
                         <button
                             onClick={handleNextQuiz}
                             className={`px-2 py-1 rounded ${
-                                currentQuizIndex < wordQuizzes.length - 1
+                                currentQuizIndex < quizData.length - 1
                                     ? 'bg-gray-200'
                                     : 'bg-gray-100 text-gray-400 cursor-not-allowed'
                             }`}
-                            disabled={currentQuizIndex === wordQuizzes.length - 1}
+                            disabled={currentQuizIndex >= quizData.length - 1}
                         >
                             &rarr;
                         </button>
-
-                        {/* 최종 결과 확인 버튼 - 마지막 퀴즈에서만 표시 */}
-                        {allAnswered && currentQuizIndex === wordQuizzes.length - 1 && (
+                        {isLastQuiz && (
                             <button
-                                onClick={handleCheckFinalResult}
+                                onClick={() => {
+                                    console.log('단어 추가 버튼 클릭됨')
+                                    setIsModalOpen(true)
+                                }}
                                 className="ml-4 px-4 py-1 bg-[var(--color-main)] text-white rounded-md font-bold hover:bg-purple-700 transition-colors"
                             >
-                                최종 결과 확인
+                                단어 추가
                             </button>
                         )}
                     </div>
                 </div>
             </div>
+
+            {/* 단어 추가 모달 */}
+            {isModalOpen && (
+                <WordModal
+                    title="단어를 단어장에 추가할까요?"
+                    description="풀지 않은 문제와 오답인 단어가 자동으로 선택되었습니다."
+                    onCancel={() => {
+                        console.log('모달 닫기')
+                        setIsModalOpen(false)
+                    }}
+                    onConfirm={async (selectedWords, selectedList) => {
+                        console.log('모달 확인 버튼 클릭됨')
+                        try {
+                            console.log('선택된 단어:', selectedWords)
+                            // 선택된 단어를 단어장에 추가
+                            const wordsToAdd = selectedWords
+                                .filter((word) => word.checked)
+                                .map((word) => ({
+                                    word: word.word,
+                                    subtitleId: word.subtitleId,
+                                    videoId: word.videoId,
+                                }))
+
+                            console.log('추가할 단어:', wordsToAdd)
+
+                            // 단어장에 단어 추가 API 호출
+                            const { data, error } = await client.POST('/api/v1/wordbooks/{wordbookId}/words', {
+                                params: {
+                                    path: {
+                                        wordbookId: parseInt(selectedList),
+                                    },
+                                },
+                                body: {
+                                    words: wordsToAdd,
+                                },
+                            })
+
+                            if (error) {
+                                console.error('단어 추가 실패:', error)
+                                throw new Error('단어 추가에 실패했습니다.')
+                            }
+
+                            // 성공 메시지 표시
+                            alert('단어가 성공적으로 추가되었습니다.')
+
+                            // 모달 닫기
+                            setIsModalOpen(false)
+                        } catch (error) {
+                            console.error('단어 추가 중 오류 발생:', error)
+                            alert('단어 추가에 실패했습니다. 다시 시도해주세요.')
+                        }
+                    }}
+                    confirmText="추가하기"
+                    cancelText="닫기"
+                    initialWords={getWordsForModal()}
+                />
+            )}
         </div>
     )
 }

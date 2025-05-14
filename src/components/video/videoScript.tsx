@@ -2,10 +2,28 @@
 
 import React, { useState, useEffect } from 'react'
 import Image from 'next/image'
-import { AnalysisData, SubtitleResult } from '@/types/video'
+import { components } from '@/lib/backend/apiV1/schema'
+
+type SubtitleResult = {
+    subtitleId: number
+    startTime?: string
+    endTime?: string
+    speaker?: string
+    original?: string
+    transcript?: string
+    keywords?: {
+        word: string
+        meaning: string
+        difficulty: number
+    }[]
+}
+
+type AnalyzeVideoResponse = {
+    subtitleResults: SubtitleResult[]
+}
 
 interface Props {
-    analysisData: AnalysisData | null
+    analysisData: AnalyzeVideoResponse | null
     onSubtitleClick?: (startTime: string, subtitle: SubtitleResult) => void
     showTranscript: boolean
     setShowTranscript: (show: boolean) => void
@@ -28,7 +46,9 @@ function VideoScript({
     // 외부에서 선택된 자막이 변경되면 인덱스 업데이트
     useEffect(() => {
         if (externalSelectedSubtitle && analysisData?.subtitleResults) {
-            const index = analysisData.subtitleResults.findIndex((subtitle) => subtitle === externalSelectedSubtitle)
+            const index = analysisData.subtitleResults.findIndex(
+                (subtitle: SubtitleResult) => subtitle === externalSelectedSubtitle,
+            )
             if (index !== -1) {
                 setSelectedIdx(index)
             }
@@ -91,7 +111,7 @@ function VideoScript({
                     </div>
                 ) : showTranscript && analysisData?.subtitleResults?.length ? (
                     <ul className="list-disc pl-8 space-y-2">
-                        {analysisData.subtitleResults.map((subtitle, idx) => (
+                        {analysisData.subtitleResults.map((subtitle: SubtitleResult, idx: number) => (
                             <li
                                 key={idx}
                                 onClick={() => {

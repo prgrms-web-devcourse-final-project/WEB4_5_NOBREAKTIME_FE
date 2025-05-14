@@ -73,7 +73,7 @@ export default function DashboardPage() {
                                 <br />
                                 오늘도 함께 시작해볼까요?
                             </p>
-                            <Link href="/dashboard/word-learning">
+                            <Link href="/dashboard/word/learning">
                                 <button className="mt-4 px-4 py-2 text-sm md:text-base lg:text-lg text-[var(--color-point)] bg-[var(--color-main)] rounded-full">
                                     Today's Study →
                                 </button>
@@ -108,7 +108,7 @@ export default function DashboardPage() {
                                     <h4 className="font-semibold text-lg md:text-xl lg:text-2xl">
                                         📺 최근 시청 영상 <small>({watchHistoryList.length})</small>
                                     </h4>
-                                    <Link href="/dashboard/video-learning">
+                                    <Link href="/dashboard/video/learning">
                                         <button className="text-sm text-[var(--color-main)] font-bold">+ 더보기</button>
                                     </Link>
                                 </div>

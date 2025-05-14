@@ -1,22 +1,14 @@
 import Card from '@/components/learning/card'
 import Image from 'next/image'
+import type { components } from '@/lib/backend/apiV1/schema'
 
-interface Description {
-    text: string
-    strong: string[]
-}
-
-interface Wordbook {
-    id: number
-    name: string
-    language: string
-}
+type WordbookResponse = components['schemas']['WordbookResponse']
 
 interface Props {
     title: string
-    descriptions: Description[]
-    wordbooks: Wordbook[]
-    isLoading?: boolean
+    descriptions: { text: string; strong: string[] }[]
+    wordbooks: WordbookResponse[]
+    isLoading: boolean
 }
 
 export default function LearningCard({ title, descriptions, wordbooks, isLoading = false }: Props) {
@@ -52,7 +44,17 @@ export default function LearningCard({ title, descriptions, wordbooks, isLoading
                 })}
             </div>
 
-            <Card wordbooks={wordbooks} isLoading={isLoading} />
+            <Card
+                title={title}
+                descriptions={descriptions}
+                wordbooks={wordbooks.map((wordbook) => ({
+                    id: wordbook.id || 0,
+                    name: wordbook.name || '',
+                    language: wordbook.language || 'ENGLISH',
+                    wordCount: 0,
+                }))}
+                isLoading={isLoading}
+            />
         </div>
     )
 }
