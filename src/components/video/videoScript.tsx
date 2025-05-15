@@ -22,6 +22,12 @@ type AnalyzeVideoResponse = {
     subtitleResults: SubtitleResult[]
 }
 
+type AnalysisStatus = {
+    stage: 'idle' | 'lockAcquired' | 'audioExtracted' | 'sttCompleted' | 'analysisComplete' | 'lockChecking'
+    message: string
+    progress: number
+}
+
 interface Props {
     analysisData: AnalyzeVideoResponse | null
     onSubtitleClick?: (startTime: string, subtitle: SubtitleResult) => void
@@ -30,6 +36,7 @@ interface Props {
     isLoading: boolean
     currentTime?: number
     selectedSubtitle?: SubtitleResult | null
+    analysisStatus: AnalysisStatus
 }
 
 function VideoScript({
@@ -40,6 +47,7 @@ function VideoScript({
     isLoading,
     currentTime = 0,
     selectedSubtitle: externalSelectedSubtitle,
+    analysisStatus,
 }: Props) {
     const [selectedIdx, setSelectedIdx] = useState(0)
 
@@ -106,8 +114,22 @@ function VideoScript({
 
             <div className="flex-grow flex w-full rounded-lg p-2 flex-col gap-2 bg-[var(--color-sub-2)] overflow-hidden overflow-y-auto">
                 {isLoading ? (
-                    <div className="flex items-center justify-center h-full text-gray-500 bg-[var(--color-white)]">
+                    <div className="flex flex-col items-center justify-center h-full text-gray-500 bg-[var(--color-white)]">
                         <Image src="/character/loading-2.gif" alt="loading" width={300} height={300} />
+                        {/* 분석 상태 표시 */}
+                        {analysisStatus.stage !== 'analysisComplete' && (
+                            <div className="w-full max-w-md p-6">
+                                <div className="flex flex-col items-center gap-4">
+                                    <div className="w-full bg-gray-200 rounded-full h-2.5">
+                                        <div
+                                            className="bg-[var(--color-main)] h-2.5 rounded-full transition-all duration-500"
+                                            style={{ width: `${analysisStatus.progress}%` }}
+                                        ></div>
+                                    </div>
+                                    <p className="text-center text-gray-600">{analysisStatus.message}</p>
+                                </div>
+                            </div>
+                        )}
                     </div>
                 ) : showTranscript && analysisData?.subtitleResults?.length ? (
                     <ul className="list-disc pl-8 space-y-2">

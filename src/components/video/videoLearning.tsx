@@ -28,11 +28,18 @@ type AnalyzeVideoResponse = {
     subtitleResults: SubtitleResult[]
 }
 
+type AnalysisStatus = {
+    stage: 'idle' | 'lockAcquired' | 'audioExtracted' | 'sttCompleted' | 'analysisComplete' | 'lockChecking'
+    message: string
+    progress: number
+}
+
 interface Props {
     video: VideoResponse
     analysisData: AnalyzeVideoResponse | null
     onBack: () => void
     isLoading: boolean
+    analysisStatus: AnalysisStatus
 }
 
 function parseTimeToSeconds(time: string) {
@@ -40,7 +47,13 @@ function parseTimeToSeconds(time: string) {
     return parseInt(h) * 3600 + parseInt(m) * 60 + parseFloat(s)
 }
 
-function VideoLearning({ video, analysisData: initialAnalysisData, onBack, isLoading: initialIsLoading }: Props) {
+function VideoLearning({
+    video,
+    analysisData: initialAnalysisData,
+    onBack,
+    isLoading: initialIsLoading,
+    analysisStatus,
+}: Props) {
     const [fontSize, setFontSize] = useState(16)
     const [analysisData, setAnalysisData] = useState<AnalyzeVideoResponse | null>(initialAnalysisData)
     const [selectedSubtitle, setSelectedSubtitle] = useState<SubtitleResult | null>(null)
@@ -258,7 +271,7 @@ function VideoLearning({ video, analysisData: initialAnalysisData, onBack, isLoa
             <div className="flex flex-col gap-2 flex-1 overflow-hidden">
                 {/* 비디오 + 트랜스크립트 */}
                 <div className="flex flex-row gap-4 w-full h-[calc(100%-240px)]">
-                    <div className="w-full aspect-video bg-gray-300 rounded-sm overflow-hidden">
+                    <div className="w-full aspect-video bg-gray-300 rounded-sm overflow-hidden relative">
                         <iframe
                             ref={playerRef}
                             src={`https://www.youtube-nocookie.com/embed/${video.videoId}?enablejsapi=1&rel=0&modestbranding=1`}
@@ -276,6 +289,7 @@ function VideoLearning({ video, analysisData: initialAnalysisData, onBack, isLoa
                         isLoading={isLoading}
                         currentTime={currentTime}
                         selectedSubtitle={selectedSubtitle}
+                        analysisStatus={analysisStatus}
                     />
                 </div>
 
