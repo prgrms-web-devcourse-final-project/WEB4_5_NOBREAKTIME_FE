@@ -9,6 +9,7 @@ interface Props {
         name: string
         language: string
         wordCount: number
+        learnedWordCount: number
     }[]
     isLoading: boolean
 }
@@ -51,7 +52,9 @@ export default function Card({ wordbooks, isLoading = false }: Props) {
                         <p className="font-semibold text-[var(--color-main)] mb-1">{wordbook.name}</p>
 
                         {/* 단어 수 */}
-                        <strong className="text-[var(--color-point)] text-xl mb-2">{wordbook.wordCount}개 단어</strong>
+                        <strong className="text-[var(--color-point)] text-xl mb-2">
+                            {wordbook.learnedWordCount}/{wordbook.wordCount}개 {isExpression ? '표현' : '단어'}
+                        </strong>
 
                         {/* 버튼 영역 */}
                         <div className="flex justify-end gap-2">

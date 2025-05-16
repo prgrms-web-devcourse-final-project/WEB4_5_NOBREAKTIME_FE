@@ -8,7 +8,7 @@ import { components } from '@/lib/backend/apiV1/schema'
 type Wordbook = components['schemas']['WordbookResponse']
 type AddWordToWordbookRequest = components['schemas']['AddWordToWordbookRequest']
 
-interface Word extends AddWordToWordbookRequest {
+export interface Word extends AddWordToWordbookRequest {
     description?: string
     checked?: boolean
 }
@@ -53,8 +53,8 @@ const WordModal = ({
                 if (data?.data) {
                     const wordbookData = data.data as Wordbook[]
                     setWordbooks(wordbookData)
-                    if (wordbookData.length > 0 && wordbookData[0].id) {
-                        setSelectedList(wordbookData[0].id.toString())
+                    if (wordbookData.length > 0 && wordbookData[0].wordbookId) {
+                        setSelectedList(wordbookData[0].wordbookId.toString())
                     }
                 }
             } catch (error) {
@@ -78,7 +78,8 @@ const WordModal = ({
             setIsAdding(true)
             const selectedWords = wordList.filter((w) => w.checked)
 
-            const response = await client.POST('/api/v1/wordbooks/{wordbookId}/words', {
+            // 선택된 단어장에 단어 추가
+            const { data, error } = await client.POST('/api/v1/wordbooks/{wordbookId}/words', {
                 params: {
                     path: {
                         wordbookId: parseInt(selectedList),
@@ -93,14 +94,17 @@ const WordModal = ({
                 },
             })
 
-            if (response.error) {
-                throw new Error('단어 추가 실패')
+            if (error) {
+                console.error('단어 추가 실패:', error)
+                alert('단어를 추가하지 못했습니다. 다시 시도해주세요.')
+                return
             }
 
+            alert('단어가 성공적으로 추가되었습니다.')
             onConfirm(selectedWords, selectedList)
         } catch (error) {
             console.error('단어 추가 중 오류 발생:', error)
-            alert('단어 추가에 실패했습니다.')
+            alert('단어 추가에 실패했습니다. 다시 시도해주세요.')
         } finally {
             setIsAdding(false)
         }
@@ -151,8 +155,8 @@ const WordModal = ({
                     >
                         {wordbooks.map(
                             (wordbook) =>
-                                wordbook.id && (
-                                    <option key={wordbook.id} value={wordbook.id.toString()}>
+                                wordbook.wordbookId && (
+                                    <option key={wordbook.wordbookId} value={wordbook.wordbookId.toString()}>
                                         {wordbook.name}
                                     </option>
                                 ),

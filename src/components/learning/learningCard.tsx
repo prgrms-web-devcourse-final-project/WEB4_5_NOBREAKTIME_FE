@@ -48,10 +48,11 @@ export default function LearningCard({ title, descriptions, wordbooks, isLoading
                 title={title}
                 descriptions={descriptions}
                 wordbooks={wordbooks.map((wordbook) => ({
-                    id: wordbook.id || 0,
+                    id: wordbook.wordbookId || 0,
                     name: wordbook.name || '',
                     language: wordbook.language || 'ENGLISH',
-                    wordCount: 0,
+                    wordCount: wordbook.wordCount || 0,
+                    learnedWordCount: wordbook.learnedWordCount || 0,
                 }))}
                 isLoading={isLoading}
             />

@@ -7,7 +7,6 @@ import client from '@/lib/backend/client'
 import { components } from '@/lib/backend/apiV1/schema'
 import { useRouter } from 'next/navigation'
 import { useEffect, useRef, useState } from 'react'
-import { mockVideoList } from './mockdata'
 
 type VideoResponse = components['schemas']['VideoResponse']
 
@@ -26,7 +25,6 @@ const CATEGORIES = {
 } as const
 
 export default function VideoLearningPage() {
-    const url = process.env.NEXT_PUBLIC_MOCK_URL
     const router = useRouter()
     const isFirstRender = useRef(true)
     const observerTarget = useRef<HTMLDivElement>(null)
@@ -38,14 +36,24 @@ export default function VideoLearningPage() {
     const [error, setError] = useState<string | null>(null)
     const [page, setPage] = useState(1)
     const [hasMore, setHasMore] = useState(true)
-    const itemsPerPage = 10
+    const itemsPerPage = 50
+    const displayPerPage = 10
+    const [displayCount, setDisplayCount] = useState(displayPerPage)
+    const [cachedVideos, setCachedVideos] = useState<VideoResponse[]>([])
 
     // 무한 스크롤 구현
     useEffect(() => {
         const observer = new IntersectionObserver(
             (entries) => {
-                if (entries[0].isIntersecting && hasMore && !isLoading) {
-                    setPage((prevPage) => prevPage + 1)
+                if (entries[0].isIntersecting && !isLoading) {
+                    // 캐시된 비디오가 있고, 현재 표시된 수가 캐시된 비디오 수보다 작으면
+                    if (cachedVideos.length > displayCount) {
+                        setDisplayCount((prev) => Math.min(prev + displayPerPage, cachedVideos.length))
+                    }
+                    // 캐시된 비디오를 모두 보여줬고, 더 불러올 데이터가 있으면
+                    else if (hasMore) {
+                        setPage((prev) => prev + 1)
+                    }
                 }
             },
             { threshold: 1.0 },
@@ -56,38 +64,36 @@ export default function VideoLearningPage() {
         }
 
         return () => observer.disconnect()
-    }, [hasMore, isLoading])
+    }, [hasMore, isLoading, cachedVideos.length, displayCount])
 
     // 비디오 데이터 로드 함수
     const loadVideos = async (pageNum: number, isNewSearch: boolean = false) => {
         try {
             setIsLoading(true)
 
-            // 필터링된 전체 데이터
-            const filteredVideos = mockVideoList.filter((video) => {
-                const matchesCategory =
-                    selectedCategory.id === 0 || (video.videoId && video.videoId.includes(String(selectedCategory.id)))
-                const matchesSearch =
-                    !searchKeyword ||
-                    video.title?.toLowerCase().includes(searchKeyword.toLowerCase()) ||
-                    video.description?.toLowerCase().includes(searchKeyword.toLowerCase())
-                return matchesCategory && matchesSearch
+            const category = selectedCategory.id === 0 ? undefined : String(selectedCategory.id)
+            const { data: response } = await client.GET('/api/v1/videos/list', {
+                params: {
+                    query: {
+                        q: searchKeyword || undefined,
+                        category,
+                        maxResults: itemsPerPage,
+                    },
+                },
             })
 
-            // 페이지네이션 적용
-            const start = (pageNum - 1) * itemsPerPage
-            const end = start + itemsPerPage
-            const paginatedVideos = filteredVideos.slice(start, end)
+            const videos = response?.data || []
 
-            // 더 불러올 데이터가 있는지 확인
-            setHasMore(end < filteredVideos.length)
-
-            // 새로운 검색이면 리스트를 교체하고, 아니면 기존 리스트에 추가
             if (isNewSearch) {
-                setVideoList(paginatedVideos)
+                setCachedVideos(videos)
+                setDisplayCount(displayPerPage)
+                setVideoList(videos.slice(0, displayPerPage))
             } else {
-                setVideoList((prev) => [...prev, ...paginatedVideos])
+                setCachedVideos((prev) => [...prev, ...videos])
+                setVideoList((prev) => [...prev, ...videos.slice(0, displayPerPage)])
             }
+
+            setHasMore(videos.length === itemsPerPage)
         } catch (err) {
             setError('비디오 리스트를 불러오는데 실패했습니다.')
             console.error(err)
@@ -95,6 +101,11 @@ export default function VideoLearningPage() {
             setIsLoading(false)
         }
     }
+
+    // displayCount가 변경될 때마다 화면에 표시되는 비디오 목록 업데이트
+    useEffect(() => {
+        setVideoList(cachedVideos.slice(0, displayCount))
+    }, [displayCount, cachedVideos])
 
     // 검색어나 카테고리 변경 시
     useEffect(() => {
@@ -115,16 +126,12 @@ export default function VideoLearningPage() {
 
     // 비디오 클릭 핸들러
     const handleVideoClick = (video: VideoResponse) => {
-        // URL 쿼리 파라미터로 비디오 정보 전달
+        // URL 쿼리 파라미터로 비디오 제목만 전달
         const queryParams = new URLSearchParams({
             title: video.title || '',
-            description: video.description || '',
         }).toString()
 
-        // thumbnailUrl이 있는 경우에만 추가
-        const thumbnailParam = video.thumbnailUrl ? `&thumbnail=${encodeURIComponent(video.thumbnailUrl)}` : ''
-
-        router.push(`/dashboard/video/learning/${video.videoId}?${queryParams}${thumbnailParam}`)
+        router.push(`/dashboard/video/learning/${video.videoId}?${queryParams}`)
     }
 
     // 카테고리 버튼 동작
@@ -140,16 +147,15 @@ export default function VideoLearningPage() {
         if (!videoId) return
 
         try {
-            // 목데이터에서 북마크 상태 토글
+            const video = videoList.find((v) => v.videoId === videoId)
+            const isBookmarked = video?.bookmarked
+
+            // 북마크 상태 토글
             setVideoList((prevList) =>
                 prevList.map((video) =>
                     video.videoId === videoId ? { ...video, bookmarked: !video.bookmarked } : video,
                 ),
             )
-
-            /* API 호출 주석 처리
-            const video = videoList.find((v) => v.videoId === videoId)
-            const isBookmarked = video?.bookmarked
 
             if (isBookmarked) {
                 await client.DELETE('/api/v1/bookmarks/{videoId}', {
@@ -160,12 +166,14 @@ export default function VideoLearningPage() {
                     params: { path: { videoId } },
                 })
             }
-
-            // 비디오 목록 업데이트
-            setVideoList((prev) => prev.map((v) => (v.videoId === videoId ? { ...v, bookmarked: !isBookmarked } : v)))
-            */
         } catch (err) {
             console.error('북마크 토글 중 오류 발생:', err)
+            // 실패 시 상태 복구
+            setVideoList((prevList) =>
+                prevList.map((video) =>
+                    video.videoId === videoId ? { ...video, bookmarked: !video.bookmarked } : video,
+                ),
+            )
         }
     }
 

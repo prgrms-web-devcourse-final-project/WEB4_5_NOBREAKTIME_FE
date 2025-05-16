@@ -49,27 +49,27 @@ function VideoLearningPage({ params }: { params: Promise<{ videoId: string }> })
         const statusMap: Record<string, Partial<AnalysisStatus>> = {
             lockAcquired: {
                 stage: 'lockAcquired',
-                message: message || 'Lock acquired, 곧 Audio 추출 시작합니다.',
+                message: '영상 분석을 진행 중 입니다.',
                 progress: 0,
             },
             audioExtracted: {
                 stage: 'audioExtracted',
-                message: 'Audio 추출 완료, STT 분석 시작합니다.',
+                message: '음성 추출을 진행 중이에요!!',
                 progress: 5,
             },
             sttCompleted: {
                 stage: 'sttCompleted',
-                message: 'STT 완료, GPT 분석 시작합니다.',
+                message: '자막을 생성하는 중이에요!!',
                 progress: 15,
             },
             analysisComplete: {
                 stage: 'analysisComplete',
-                message: '분석이 완료되었습니다.',
+                message: '얼마 안남았어요! 자막을 분석하는 중이에요~!!',
                 progress: 100,
             },
             lockChecking: {
                 stage: 'lockChecking',
-                message: message || '동일한 영상의 분석이 진행중입니다...',
+                message: message || '영상의 분석이 진행중입니다...',
                 progress: 0,
             },
         }
@@ -85,18 +85,16 @@ function VideoLearningPage({ params }: { params: Promise<{ videoId: string }> })
         const fetchData = async () => {
             setIsLoading(true)
             try {
-                // 쿼리 스트링에서 title과 description 가져오기
+                // 쿼리 스트링에서 title만 가져오기
                 const urlParams = new URLSearchParams(window.location.search)
                 const title = urlParams.get('title')
-                const description = urlParams.get('description')
-                const thumbnail = urlParams.get('thumbnail')
 
                 // URL 파라미터에서 비디오 정보 설정
                 setVideoData({
                     videoId,
                     title: title || '비디오 제목',
-                    description: description || '비디오 설명',
-                    thumbnailUrl: thumbnail || undefined,
+                    description: '',
+                    thumbnailUrl: undefined,
                     bookmarked: false,
                 })
 

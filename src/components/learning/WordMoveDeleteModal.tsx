@@ -6,7 +6,13 @@ type Wordbook = components['schemas']['WordbookResponse']
 interface Props {
     isOpen: boolean
     onClose: () => void
-    wordbooks: Wordbook[]
+    wordbooks: {
+        id: number
+        name: string
+        language: string
+        wordCount: number
+        learnedWordCount: number
+    }[]
     onMoveWords: (targetWordbookId: number) => Promise<void>
     onDeleteWords: () => Promise<void>
 }

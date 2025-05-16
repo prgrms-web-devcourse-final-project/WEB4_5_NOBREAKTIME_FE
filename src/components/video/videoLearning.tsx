@@ -249,7 +249,12 @@ function VideoLearning({
         selectedSubtitle: selectedSubtitle && {
             original: selectedSubtitle.original || '',
             transcript: selectedSubtitle.transcript || '',
-            keywords: selectedSubtitle.keywords || [],
+            keywords:
+                selectedSubtitle.keywords?.map((keyword) => ({
+                    ...keyword,
+                    subtitleId: selectedSubtitle.subtitleId,
+                    videoId: video.videoId!,
+                })) || [],
             subtitleId: selectedSubtitle.subtitleId,
         },
         selectedTab,

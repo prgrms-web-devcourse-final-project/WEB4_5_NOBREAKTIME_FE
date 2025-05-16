@@ -4,7 +4,7 @@
  */
 
 export interface paths {
-    '/api/v1/words/save': {
+    '/send': {
         parameters: {
             query?: never
             header?: never
@@ -13,11 +13,7 @@ export interface paths {
         }
         get?: never
         put?: never
-        /**
-         * 단어 저장
-         * @description 주어진 단어에 대한 품사, 해석, 난이도 정보를 조회 후 저장합니다.
-         */
-        post: operations['savedWord']
+        post: operations['sendSlackMessage']
         delete?: never
         options?: never
         head?: never
@@ -161,7 +157,91 @@ export interface paths {
         }
         get?: never
         put?: never
+        /**
+         * 결제 요청 정보 생성
+         * @description 로그인한 회원의 정보와 결제 요청 데이터를 받아 결제 요청 정보를 생성합니다.
+         */
         post: operations['createPaymentRequest']
+        delete?: never
+        options?: never
+        head?: never
+        patch?: never
+        trace?: never
+    }
+    '/api/v1/payment/fail': {
+        parameters: {
+            query?: never
+            header?: never
+            path?: never
+            cookie?: never
+        }
+        get?: never
+        put?: never
+        /**
+         * 결제 승인 실패 처리
+         * @description 결제 요청에 실패한 경우 결제 상태를 ABORTED로 변경하고 실패 로그를 기록합니다.
+         */
+        post: operations['failedPayment']
+        delete?: never
+        options?: never
+        head?: never
+        patch?: never
+        trace?: never
+    }
+    '/api/v1/payment/fail/issue-billing-key': {
+        parameters: {
+            query?: never
+            header?: never
+            path?: never
+            cookie?: never
+        }
+        get?: never
+        put?: never
+        /**
+         * 빌링 키 발급 실패 처리
+         * @description 카드 인증 실패 시 결제 상태를 중단 상태로 변경하는 API
+         */
+        post: operations['failedBillingPayment']
+        delete?: never
+        options?: never
+        head?: never
+        patch?: never
+        trace?: never
+    }
+    '/api/v1/payment/confirm': {
+        parameters: {
+            query?: never
+            header?: never
+            path?: never
+            cookie?: never
+        }
+        get?: never
+        put?: never
+        /**
+         * 결제 요청 성공 이후 결제 승인 로직
+         * @description 결제 승인 요청을 전송하고, 결제 상태를 업데이트하며, 권한 정보 및 JWT 토큰을 갱신합니다.
+         */
+        post: operations['succeedPayment']
+        delete?: never
+        options?: never
+        head?: never
+        patch?: never
+        trace?: never
+    }
+    '/api/v1/payment/confirm/issue-billing-key': {
+        parameters: {
+            query?: never
+            header?: never
+            path?: never
+            cookie?: never
+        }
+        get?: never
+        put?: never
+        /**
+         * 빌링 키 발급 및 결제 처리
+         * @description 빌링 키 발급부터 자동 결제 승인까지의 전체 프로세스를 처리하는 API
+         */
+        post: operations['succeedBillingPayment']
         delete?: never
         options?: never
         head?: never
@@ -216,8 +296,8 @@ export interface paths {
             cookie?: never
         }
         /**
-         * 표현함 전체 조회
-         * @description 로그인한 사용자의 모든 추가 표현함을 조회합니다.
+         * 표현함 목록 조회
+         * @description 로그인한 회원의 표현함 목록을 조회합니다.
          */
         get: operations['getAllByMember']
         put?: never
@@ -380,6 +460,22 @@ export interface paths {
         patch: operations['moveWords']
         trace?: never
     }
+    '/api/v1/payment/cancel': {
+        parameters: {
+            query?: never
+            header?: never
+            path?: never
+            cookie?: never
+        }
+        get?: never
+        put?: never
+        post?: never
+        delete?: never
+        options?: never
+        head?: never
+        patch: operations['cancelSubscription']
+        trace?: never
+    }
     '/api/v1/members/update-language': {
         parameters: {
             query?: never
@@ -512,6 +608,22 @@ export interface paths {
         patch: operations['updateGoal']
         trace?: never
     }
+    '/test/gpt': {
+        parameters: {
+            query?: never
+            header?: never
+            path?: never
+            cookie?: never
+        }
+        get: operations['testGptService']
+        put?: never
+        post?: never
+        delete?: never
+        options?: never
+        head?: never
+        patch?: never
+        trace?: never
+    }
     '/api/v1/words/search': {
         parameters: {
             query?: never
@@ -564,26 +676,6 @@ export interface paths {
          * @description 로그인한 사용자의 모든 단어장에 있는 단어들을 조회합니다.
          */
         get: operations['getWordbookItems']
-        put?: never
-        post?: never
-        delete?: never
-        options?: never
-        head?: never
-        patch?: never
-        trace?: never
-    }
-    '/api/v1/wordbooks/search': {
-        parameters: {
-            query?: never
-            header?: never
-            path?: never
-            cookie?: never
-        }
-        /**
-         * 단어 검색
-         * @description 내 단어장에서 단어를 검색합니다.
-         */
-        get: operations['searchWords']
         put?: never
         post?: never
         delete?: never
@@ -888,6 +980,38 @@ export interface paths {
         patch?: never
         trace?: never
     }
+    '/api/testMeasureExecutionTime': {
+        parameters: {
+            query?: never
+            header?: never
+            path?: never
+            cookie?: never
+        }
+        get: operations['test_1']
+        put?: never
+        post?: never
+        delete?: never
+        options?: never
+        head?: never
+        patch?: never
+        trace?: never
+    }
+    '/api/test/error': {
+        parameters: {
+            query?: never
+            header?: never
+            path?: never
+            cookie?: never
+        }
+        get: operations['triggerInternalServerError']
+        put?: never
+        post?: never
+        delete?: never
+        options?: never
+        head?: never
+        patch?: never
+        trace?: never
+    }
 }
 export type webhooks = Record<string, never>
 export interface components {
@@ -901,23 +1025,6 @@ export interface components {
             message?: string
             errors?: string[]
             path?: string
-        }
-        WordSearchRequest: {
-            word?: string
-        }
-        RsDataWordSearchResponse: {
-            code: string
-            msg: string
-            data?: components['schemas']['WordSearchResponse']
-        }
-        WordMeaning: {
-            partOfSpeech?: string
-            meaning?: string
-            /** Format: int32 */
-            difficulty?: number
-        }
-        WordSearchResponse: {
-            meanings?: components['schemas']['WordMeaning'][]
         }
         WordbookCreateRequest: {
             name?: string
@@ -934,8 +1041,8 @@ export interface components {
         AddWordToWordbookRequest: {
             word?: string
             /** Format: int64 */
-            subtitleId?: number
-            videoId?: string
+            subtitleId: number
+            videoId: string
         }
         RsDataVoid: {
             code: string
@@ -947,7 +1054,7 @@ export interface components {
         }
         WordDeleteItem: {
             /** Format: int64 */
-            wordbookId?: number
+            wordbookId: number
             word?: string
         }
         WordDeleteRequest: {
@@ -994,15 +1101,10 @@ export interface components {
              */
             amount?: number
             /**
-             * @description 성공 URL
-             * @example https://api.mallang.site/success
+             * @description 결제 통화 (원)
+             * @example KRW
              */
-            successUrl?: string
-            /**
-             * @description 실패 URL
-             * @example https://api.mallang.site/fail
-             */
-            failUrl?: string
+            currency?: string
         }
         /** @description 결제 요청 응답 Wrapper (문서화용) */
         PaymentRequestDocs: {
@@ -1019,6 +1121,82 @@ export interface components {
             /** @description 결제 응답 데이터 */
             data?: components['schemas']['Data']
         }
+        /** @description 결제 실패 정보 DTO */
+        PaymentFailureRequest: {
+            /**
+             * @description 실패 코드
+             * @example PAYMENT_FAILED
+             */
+            code?: string
+            /**
+             * @description 실패 메시지
+             * @example 결제에 실패했습니다.
+             */
+            message?: string
+            /**
+             * @description 주문 ID
+             * @example 250525-asQja-00001
+             */
+            orderId?: string
+        }
+        RsDataString: {
+            code: string
+            msg: string
+            data?: string
+        }
+        /** @description 결제 승인 요청 DTO */
+        PaymentApproveRequest: {
+            /**
+             * @description 멱등성 키 (Idempotency-Key). 중복 결제 승인 요청을 방지하기 위한 고유 값입니다.
+             * @example 랜덤값으로 30자 이내
+             */
+            idempotencyKey?: string
+            /**
+             * @description 결제 키. 토스페이먼츠 결제창에서 결제 성공 시 전달받은 고유 키입니다.
+             * @example tgrn_abcdef1234567890
+             */
+            paymentKey?: string
+            /**
+             * Format: int32
+             * @description 결제 금액(원).
+             * @example 10000
+             */
+            amount?: number
+            /**
+             * @description 주문 고유 ID. 결제 요청 시 생성한 주문의 식별자입니다.
+             * @example 20240510-랜덤값5글자-00001
+             */
+            orderId?: string
+        }
+        /** @description 카드 등록 승인 후 자동 결제 키(빌링 키)를 발급, 자동 결제 로직을 실행하기 위한 DTO */
+        BillingPaymentRequest: {
+            /**
+             * @description 고객 식별 키 (빌링 키 발급용)
+             * @example 랜덤한 30글자 이내의 값, 멱등성 토큰과 동일하게 제작
+             */
+            customerKey?: string
+            /**
+             * @description 카드 인증 성공 시 발급된 승인 키
+             * @example auth_9876543210
+             */
+            authKey?: string
+            /**
+             * @description 결제 주문 ID. 빌링 키 발급 후 결제 요청에 사용
+             * @example 250515-Ajks9-00001
+             */
+            orderId?: string
+            /**
+             * @description 주문명. 빌링 키 발급 후 결제 요청에 사용
+             * @example 프리미엄 정기 구독
+             */
+            orderName?: string
+            /**
+             * Format: int32
+             * @description 결제 금액. 빌링 키 발급 후 결제 요청에 사용
+             * @example 10000
+             */
+            amount?: number
+        }
         RsDataBoolean: {
             code: string
             msg: string
@@ -1032,24 +1210,34 @@ export interface components {
         ExpressionBookRequest: {
             name?: string
         }
-        ExpressionBookResponse: {
-            /** Format: int64 */
-            id?: number
-            name?: string
-            /** @enum {string} */
-            language?: 'ENGLISH' | 'JAPANESE' | 'NONE' | 'ALL'
-            /** Format: int64 */
-            memberId?: number
-        }
-        RsDataExpressionBookResponse: {
-            code: string
-            msg: string
-            data?: components['schemas']['ExpressionBookResponse']
-        }
         ExpressionSaveRequest: {
             videoId?: string
             /** Format: int64 */
             subtitleId?: number
+        }
+        /** @description 인증된 회원의 상세 정보 */
+        CustomUserDetails: {
+            /**
+             * Format: int64
+             * @description 회원 고유 식별자
+             * @example 12345
+             */
+            memberId?: number
+            /**
+             * @description 회원 권한
+             * @example ROLE_STANDARD
+             */
+            roleName?: string
+            password?: string
+            username?: string
+            authorities?: components['schemas']['GrantedAuthority'][]
+            enabled?: boolean
+            credentialsNonExpired?: boolean
+            accountNonExpired?: boolean
+            accountNonLocked?: boolean
+        }
+        GrantedAuthority: {
+            authority?: string
         }
         ExpressionQuizResultSaveRequest: {
             /** Format: int64 */
@@ -1074,22 +1262,17 @@ export interface components {
             msg: string
             data?: components['schemas']['LevelCheckResponse']
         }
-        RsDataString: {
-            code: string
-            msg: string
-            data?: string
-        }
         WordbookRenameRequest: {
             name?: string
         }
         WordMoveItem: {
             /** Format: int64 */
-            fromWordbookId?: number
+            fromWordbookId: number
             word?: string
         }
         WordMoveRequest: {
             /** Format: int64 */
-            destinationWordbookId?: number
+            destinationWordbookId: number
             words?: components['schemas']['WordMoveItem'][]
         }
         /** @description 회원 정보 수정 요청 DTO */
@@ -1134,6 +1317,23 @@ export interface components {
             /** Format: int32 */
             wordGoal?: number
         }
+        WordSearchRequest: {
+            word?: string
+        }
+        RsDataWordSearchResponse: {
+            code: string
+            msg: string
+            data?: components['schemas']['WordSearchResponse']
+        }
+        WordMeaning: {
+            partOfSpeech?: string
+            meaning?: string
+            /** Format: int32 */
+            difficulty?: number
+        }
+        WordSearchResponse: {
+            meanings?: components['schemas']['WordMeaning'][]
+        }
         RsDataListWordbookResponse: {
             code: string
             msg: string
@@ -1141,10 +1341,14 @@ export interface components {
         }
         WordbookResponse: {
             /** Format: int64 */
-            id?: number
+            wordbookId?: number
             name?: string
             /** @enum {string} */
             language?: 'ENGLISH' | 'JAPANESE' | 'NONE' | 'ALL'
+            /** Format: int32 */
+            wordCount?: number
+            /** Format: int32 */
+            learnedWordCount?: number
         }
         RsDataListWordResponse: {
             code: string
@@ -1168,18 +1372,29 @@ export interface components {
             /** Format: int64 */
             wordBookId?: number
         }
-        RsDataWordQuizResponse: {
+        RsDataWordbookQuizResponse: {
             code: string
             msg: string
-            data?: components['schemas']['WordQuizResponse']
+            data?: components['schemas']['WordbookQuizResponse']
         }
         WordQuizItem: {
             /** Format: int64 */
-            wordQuizItemId?: number
+            wordbookItemId?: number
             word?: string
             question?: string
             original?: string
             meaning?: string
+        }
+        WordbookQuizResponse: {
+            /** Format: int64 */
+            quizId?: number
+            wordbookName?: string
+            quizItems?: components['schemas']['WordQuizItem'][]
+        }
+        RsDataWordQuizResponse: {
+            code: string
+            msg: string
+            data?: components['schemas']['WordQuizResponse']
         }
         WordQuizResponse: {
             /** Format: int64 */
@@ -1247,6 +1462,39 @@ export interface components {
             /** Format: date-time */
             lastViewedAt?: string
         }
+        /** @description 구독 정보 DTO */
+        SubscriptionResponse: {
+            /**
+             * @description 구독 플랜 이름
+             * @example PREMIUM
+             * @enum {string}
+             */
+            planName?: 'STANDARD' | 'PREMIUM'
+            /**
+             * Format: int32
+             * @description 결제 금액(원)
+             * @example 8500
+             */
+            amount?: number
+            /**
+             * Format: date-time
+             * @description 구독 시작 날짜
+             * @example yyyy년 MM월 dd일
+             */
+            startedAt?: string
+            /**
+             * Format: date-time
+             * @description 구독 만료 날짜
+             * @example yyyy년 MM월 dd일
+             */
+            expiredAt?: string
+            /**
+             * @description 취소 가능 여부, 이게 true 이면 구독 갱신 중지가 가능합니다.
+             * @example true
+             * @enum {boolean}
+             */
+            isPossibleToCancel?: 'true' | 'false'
+        }
         /** @description 회원 전체 정보 조회 응답 DTO */
         UserProfileResponse: {
             /**
@@ -1275,6 +1523,19 @@ export interface components {
              * @enum {string}
              */
             language?: 'ENGLISH' | 'JAPANESE' | 'NONE' | 'ALL'
+            /** @description 구독 내역 */
+            subscriptions?: components['schemas']['SubscriptionResponse'][]
+        }
+        ExpressionBookResponse: {
+            /** Format: int64 */
+            expressionBookId?: number
+            name?: string
+            /** @enum {string} */
+            language?: 'ENGLISH' | 'JAPANESE' | 'NONE' | 'ALL'
+            /** Format: int32 */
+            expressionCount?: number
+            /** Format: int32 */
+            learnedExpressionCount?: number
         }
         RsDataListExpressionBookResponse: {
             code: string
@@ -1283,7 +1544,9 @@ export interface components {
         }
         ExpressionQuizItem: {
             /** Format: int64 */
-            expressionQuizItemId?: number
+            expressionId?: number
+            /** Format: int64 */
+            expressionBookId?: number
             question?: string
             original?: string
             choices?: string[]
@@ -1292,6 +1555,7 @@ export interface components {
         ExpressionQuizResponse: {
             /** Format: int64 */
             quizId?: number
+            expressionBookName?: string
             quizItems?: components['schemas']['ExpressionQuizItem'][]
         }
         RsDataExpressionQuizResponse: {
@@ -1373,30 +1637,6 @@ export interface components {
             msg: string
             data?: components['schemas']['LearningHistoryResponse']
         }
-        /** @description 인증된 회원의 상세 정보 */
-        CustomUserDetails: {
-            /**
-             * Format: int64
-             * @description 회원 고유 식별자
-             * @example 12345
-             */
-            memberId?: number
-            /**
-             * @description 회원 권한
-             * @example ROLE_STANDARD
-             */
-            roleName?: string
-            password?: string
-            authorities?: components['schemas']['GrantedAuthority'][]
-            username?: string
-            enabled?: boolean
-            credentialsNonExpired?: boolean
-            accountNonExpired?: boolean
-            accountNonLocked?: boolean
-        }
-        GrantedAuthority: {
-            authority?: string
-        }
     }
     responses: never
     parameters: never
@@ -1406,26 +1646,24 @@ export interface components {
 }
 export type $defs = Record<string, never>
 export interface operations {
-    savedWord: {
+    sendSlackMessage: {
         parameters: {
-            query?: never
+            query: {
+                message: string
+            }
             header?: never
             path?: never
             cookie?: never
         }
-        requestBody: {
-            content: {
-                'application/json': components['schemas']['WordSearchRequest']
-            }
-        }
+        requestBody?: never
         responses: {
-            /** @description 단어 저장 결과를 반환합니다. */
+            /** @description OK */
             200: {
                 headers: {
                     [name: string]: unknown
                 }
                 content: {
-                    'application/json': components['schemas']['RsDataWordSearchResponse']
+                    'application/json': string
                 }
             }
             /** @description Forbidden */
@@ -1443,7 +1681,7 @@ export interface operations {
                     [name: string]: unknown
                 }
                 content: {
-                    'application/json': unknown
+                    'application/json': components['schemas']['ErrorResponse']
                 }
             }
         }
@@ -1839,14 +2077,7 @@ export interface operations {
     createPaymentRequest: {
         parameters: {
             query?: never
-            header: {
-                /** @description 멱등성 토큰 (클라이언트에서 생성한 UUID)
-                 *     - 생성 규칙:
-                 *       1. 결제 시작 시 1회 생성합니다. (예: `crypto.randomUUID()`)
-                 *       2. 재시도 시 동일한 키 사용합니다. (로컬 스토리지 보관)
-                 *       3. 새 결제 시 새 키를 생성합니다. */
-                'Idempotency-pay-key': string
-            }
+            header?: never
             path?: never
             cookie?: never
         }
@@ -1856,6 +2087,146 @@ export interface operations {
             }
         }
         responses: {
+            /** @description Forbidden */
+            403: {
+                headers: {
+                    [name: string]: unknown
+                }
+                content: {
+                    'application/json': components['schemas']['ErrorResponse']
+                }
+            }
+            /** @description Not Found */
+            404: {
+                headers: {
+                    [name: string]: unknown
+                }
+                content: {
+                    'application/json': unknown
+                }
+            }
+            /** @description Internal Server Error */
+            500: {
+                headers: {
+                    [name: string]: unknown
+                }
+                content: {
+                    'application/json': components['schemas']['ErrorResponse']
+                }
+            }
+            /** @description default response */
+            default: {
+                headers: {
+                    [name: string]: unknown
+                }
+                content: {
+                    'application/json': components['schemas']['PaymentRequestDocs']
+                }
+            }
+        }
+    }
+    failedPayment: {
+        parameters: {
+            query?: never
+            header?: never
+            path?: never
+            cookie?: never
+        }
+        requestBody: {
+            content: {
+                'application/json': components['schemas']['PaymentFailureRequest']
+            }
+        }
+        responses: {
+            /** @description OK */
+            200: {
+                headers: {
+                    [name: string]: unknown
+                }
+                content: {
+                    'application/json': components['schemas']['RsDataString']
+                }
+            }
+            /** @description Forbidden */
+            403: {
+                headers: {
+                    [name: string]: unknown
+                }
+                content: {
+                    'application/json': components['schemas']['ErrorResponse']
+                }
+            }
+            /** @description Internal Server Error */
+            500: {
+                headers: {
+                    [name: string]: unknown
+                }
+                content: {
+                    'application/json': components['schemas']['ErrorResponse']
+                }
+            }
+        }
+    }
+    failedBillingPayment: {
+        parameters: {
+            query?: never
+            header?: never
+            path?: never
+            cookie?: never
+        }
+        requestBody?: never
+        responses: {
+            /** @description OK */
+            200: {
+                headers: {
+                    [name: string]: unknown
+                }
+                content: {
+                    'application/json': components['schemas']['RsDataString']
+                }
+            }
+            /** @description Forbidden */
+            403: {
+                headers: {
+                    [name: string]: unknown
+                }
+                content: {
+                    'application/json': components['schemas']['ErrorResponse']
+                }
+            }
+            /** @description Internal Server Error */
+            500: {
+                headers: {
+                    [name: string]: unknown
+                }
+                content: {
+                    'application/json': components['schemas']['ErrorResponse']
+                }
+            }
+        }
+    }
+    succeedPayment: {
+        parameters: {
+            query?: never
+            header?: never
+            path?: never
+            cookie?: never
+        }
+        requestBody: {
+            content: {
+                'application/json': components['schemas']['PaymentApproveRequest']
+            }
+        }
+        responses: {
+            /** @description OK */
+            200: {
+                headers: {
+                    [name: string]: unknown
+                }
+                content: {
+                    'application/json': components['schemas']['RsDataString']
+                }
+            }
             /** @description Forbidden */
             403: {
                 headers: {
@@ -1889,16 +2260,58 @@ export interface operations {
                     [name: string]: unknown
                 }
                 content: {
-                    'application/json': components['schemas']['ErrorResponse']
+                    'application/json': unknown
                 }
             }
-            /** @description default response */
-            default: {
+        }
+    }
+    succeedBillingPayment: {
+        parameters: {
+            query?: never
+            header?: never
+            path?: never
+            cookie?: never
+        }
+        requestBody: {
+            content: {
+                'application/json': components['schemas']['BillingPaymentRequest']
+            }
+        }
+        responses: {
+            /** @description OK */
+            200: {
                 headers: {
                     [name: string]: unknown
                 }
                 content: {
-                    'application/json': components['schemas']['PaymentRequestDocs']
+                    'application/json': components['schemas']['RsDataString']
+                }
+            }
+            /** @description Forbidden */
+            403: {
+                headers: {
+                    [name: string]: unknown
+                }
+                content: {
+                    'application/json': components['schemas']['ErrorResponse']
+                }
+            }
+            /** @description Not Found */
+            404: {
+                headers: {
+                    [name: string]: unknown
+                }
+                content: {
+                    'application/json': unknown
+                }
+            }
+            /** @description Internal Server Error */
+            500: {
+                headers: {
+                    [name: string]: unknown
+                }
+                content: {
+                    'application/json': unknown
                 }
             }
         }
@@ -2085,7 +2498,7 @@ export interface operations {
                     [name: string]: unknown
                 }
                 content: {
-                    'application/json': components['schemas']['RsDataExpressionBookResponse']
+                    'application/json': components['schemas']['RsDataLong']
                 }
             }
             /** @description Bad Request */
@@ -2128,7 +2541,9 @@ export interface operations {
     }
     saveExpression: {
         parameters: {
-            query?: never
+            query: {
+                userDetails: components['schemas']['CustomUserDetails']
+            }
             header?: never
             path: {
                 expressionBookId: number
@@ -2566,6 +2981,44 @@ export interface operations {
                 }
                 content: {
                     'application/json': unknown
+                }
+            }
+            /** @description Internal Server Error */
+            500: {
+                headers: {
+                    [name: string]: unknown
+                }
+                content: {
+                    'application/json': components['schemas']['ErrorResponse']
+                }
+            }
+        }
+    }
+    cancelSubscription: {
+        parameters: {
+            query?: never
+            header?: never
+            path?: never
+            cookie?: never
+        }
+        requestBody?: never
+        responses: {
+            /** @description OK */
+            200: {
+                headers: {
+                    [name: string]: unknown
+                }
+                content: {
+                    'application/json': components['schemas']['RsDataString']
+                }
+            }
+            /** @description Forbidden */
+            403: {
+                headers: {
+                    [name: string]: unknown
+                }
+                content: {
+                    'application/json': components['schemas']['ErrorResponse']
                 }
             }
             /** @description Internal Server Error */
@@ -3071,10 +3524,49 @@ export interface operations {
             }
         }
     }
+    testGptService: {
+        parameters: {
+            query?: never
+            header?: never
+            path?: never
+            cookie?: never
+        }
+        requestBody?: never
+        responses: {
+            /** @description OK */
+            200: {
+                headers: {
+                    [name: string]: unknown
+                }
+                content: {
+                    'application/json': string
+                }
+            }
+            /** @description Forbidden */
+            403: {
+                headers: {
+                    [name: string]: unknown
+                }
+                content: {
+                    'application/json': components['schemas']['ErrorResponse']
+                }
+            }
+            /** @description Internal Server Error */
+            500: {
+                headers: {
+                    [name: string]: unknown
+                }
+                content: {
+                    'application/json': components['schemas']['ErrorResponse']
+                }
+            }
+        }
+    }
     searchWord: {
         parameters: {
             query: {
                 wordSearchRequest: components['schemas']['WordSearchRequest']
+                userDetails: components['schemas']['CustomUserDetails']
             }
             header?: never
             path?: never
@@ -3137,7 +3629,7 @@ export interface operations {
                     [name: string]: unknown
                 }
                 content: {
-                    'application/json': components['schemas']['RsDataWordQuizResponse']
+                    'application/json': components['schemas']['RsDataWordbookQuizResponse']
                 }
             }
             /** @description Bad Request */
@@ -3179,55 +3671,6 @@ export interface operations {
         requestBody?: never
         responses: {
             /** @description 단어 목록이 조회되었습니다. */
-            200: {
-                headers: {
-                    [name: string]: unknown
-                }
-                content: {
-                    'application/json': components['schemas']['RsDataListWordResponse']
-                }
-            }
-            /** @description Forbidden */
-            403: {
-                headers: {
-                    [name: string]: unknown
-                }
-                content: {
-                    'application/json': components['schemas']['ErrorResponse']
-                }
-            }
-            /** @description Not Found */
-            404: {
-                headers: {
-                    [name: string]: unknown
-                }
-                content: {
-                    'application/json': unknown
-                }
-            }
-            /** @description Internal Server Error */
-            500: {
-                headers: {
-                    [name: string]: unknown
-                }
-                content: {
-                    'application/json': components['schemas']['ErrorResponse']
-                }
-            }
-        }
-    }
-    searchWords: {
-        parameters: {
-            query: {
-                keyword: string
-            }
-            header?: never
-            path?: never
-            cookie?: never
-        }
-        requestBody?: never
-        responses: {
-            /** @description 단어 검색 결과입니다. */
             200: {
                 headers: {
                     [name: string]: unknown
@@ -3933,6 +4376,82 @@ export interface operations {
             query: {
                 userDetails: components['schemas']['CustomUserDetails']
             }
+            header?: never
+            path?: never
+            cookie?: never
+        }
+        requestBody?: never
+        responses: {
+            /** @description OK */
+            200: {
+                headers: {
+                    [name: string]: unknown
+                }
+                content: {
+                    'application/json': string
+                }
+            }
+            /** @description Forbidden */
+            403: {
+                headers: {
+                    [name: string]: unknown
+                }
+                content: {
+                    'application/json': components['schemas']['ErrorResponse']
+                }
+            }
+            /** @description Internal Server Error */
+            500: {
+                headers: {
+                    [name: string]: unknown
+                }
+                content: {
+                    'application/json': components['schemas']['ErrorResponse']
+                }
+            }
+        }
+    }
+    test_1: {
+        parameters: {
+            query?: never
+            header?: never
+            path?: never
+            cookie?: never
+        }
+        requestBody?: never
+        responses: {
+            /** @description OK */
+            200: {
+                headers: {
+                    [name: string]: unknown
+                }
+                content: {
+                    'application/json': string
+                }
+            }
+            /** @description Forbidden */
+            403: {
+                headers: {
+                    [name: string]: unknown
+                }
+                content: {
+                    'application/json': components['schemas']['ErrorResponse']
+                }
+            }
+            /** @description Internal Server Error */
+            500: {
+                headers: {
+                    [name: string]: unknown
+                }
+                content: {
+                    'application/json': components['schemas']['ErrorResponse']
+                }
+            }
+        }
+    }
+    triggerInternalServerError: {
+        parameters: {
+            query?: never
             header?: never
             path?: never
             cookie?: never
