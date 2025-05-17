@@ -3,8 +3,8 @@
 import Search from '@/components/common/search'
 import BookmarkIcon from '@/components/icon/bookmarkIcon'
 import VideoIcon from '@/components/icon/videoIcon'
-import client from '@/lib/backend/client'
 import { components } from '@/lib/backend/apiV1/schema'
+import client from '@/lib/backend/client'
 import { useRouter } from 'next/navigation'
 import { useEffect, useRef, useState } from 'react'
 
@@ -71,13 +71,14 @@ export default function VideoLearningPage() {
         try {
             setIsLoading(true)
 
-            const category = selectedCategory.id === 0 ? undefined : String(selectedCategory.id)
             const { data: response } = await client.GET('/api/v1/videos/list', {
                 params: {
                     query: {
-                        q: searchKeyword || undefined,
-                        category,
-                        maxResults: itemsPerPage,
+                        req: {
+                            q: searchKeyword || undefined,
+                            category: selectedCategory.id === 0 ? undefined : String(selectedCategory.id),
+                            maxResults: itemsPerPage,
+                        },
                     },
                 },
             })
