@@ -41,42 +41,6 @@ const KeywordCard: React.FC<KeywordCardProps> = ({
     const addWordToDefaultWordbook = async () => {
         try {
             setIsLoading(true)
-
-            // 1. 단어장 목록 조회
-            const wordbooksResponse = await client.GET('/api/v1/wordbooks', {})
-
-            if (wordbooksResponse.error || !wordbooksResponse.data?.data) {
-                throw new Error('단어장 목록 조회 실패')
-            }
-
-            const wordbooks = wordbooksResponse.data.data as Wordbook[]
-            if (wordbooks.length === 0 || !wordbooks[0].id) {
-                throw new Error('기본 단어장을 찾을 수 없습니다')
-            }
-
-            // 2. 첫 번째 단어장(기본 단어장)에 단어 추가
-            const defaultWordbookId = wordbooks[0].id
-            const response = await client.POST('/api/v1/wordbooks/{wordbookId}/words', {
-                params: {
-                    path: {
-                        wordbookId: defaultWordbookId,
-                    },
-                },
-                body: {
-                    words: [
-                        {
-                            word: keyword.word,
-                            subtitleId: keyword.subtitleId,
-                            videoId: keyword.videoId,
-                        },
-                    ],
-                },
-            })
-
-            if (response.error) {
-                throw new Error('단어 추가 실패')
-            }
-
             // 성공 시 상태 업데이트 및 콜백 호출
             setIsLoading(false) // 로딩 상태 먼저 해제
             setIsAdded(true)

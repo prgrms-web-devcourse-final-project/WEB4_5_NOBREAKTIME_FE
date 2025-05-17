@@ -33,6 +33,7 @@ export default function ExpressionQuiz() {
             usedChoices: number[]
         }
     }>({})
+    const [warningMessage, setWarningMessage] = useState(false)
 
     const resetQuiz = useCallback(() => {
         if (!quizData?.quizItems) return
@@ -173,6 +174,7 @@ export default function ExpressionQuiz() {
     const parts = current.question?.split(/({}\.?)/g) || []
 
     const handleChoice = (choice: string, idx: number) => {
+        setWarningMessage(false) // 단어 선택 시 경고 메시지 초기화
         if (usedChoices.includes(idx)) {
             const choiceIndex = usedChoices.indexOf(idx)
             const newUsedChoices = usedChoices.filter((_, i) => i !== choiceIndex)
@@ -197,6 +199,10 @@ export default function ExpressionQuiz() {
     }
 
     const handleSubmit = () => {
+        if (blanks.includes('')) {
+            setWarningMessage(true)
+            return
+        }
         const blanksCopy = [...blanks]
         let userAnswer = parts
             .map((part) => {
@@ -225,7 +231,7 @@ export default function ExpressionQuiz() {
                 const response = await client.POST('/api/v1/expressionbooks/quiz/result', {
                     body: {
                         quizId: quizData.quizId,
-                        expressionBookId: current.expressionQuizItemId,
+                        expressionBookId: current.expressionId,
                         expressionId: expressionBookId,
                         correct: result,
                     },
@@ -376,7 +382,7 @@ export default function ExpressionQuiz() {
                         <button
                             className="w-18 h-18 disabled:opacity-50"
                             onClick={handleSubmit}
-                            disabled={blanks.includes('') || isCorrect !== null}
+                            disabled={isCorrect !== null}
                         >
                             <Image
                                 src={
@@ -384,15 +390,21 @@ export default function ExpressionQuiz() {
                                         ? '/assets/ok.svg'
                                         : isCorrect === false
                                         ? '/assets/fail.svg'
-                                        : '/assets/hint.svg'
+                                        : '/assets/check.svg'
                                 }
                                 alt="result"
                                 width={80}
                                 height={80}
                             />
                         </button>
-                        <p className="text-sm text-gray-500">
-                            {isCorrect === null ? '정답 확인' : isCorrect ? '정답입니다!' : '틀렸습니다.'}
+                        <p className={`text-sm ${warningMessage ? 'text-red-500' : 'text-gray-500'}`}>
+                            {warningMessage
+                                ? '빈칸을 모두 채워주세요'
+                                : isCorrect === null
+                                ? '정답 확인'
+                                : isCorrect
+                                ? '정답입니다!'
+                                : '틀렸습니다.'}
                         </p>
                     </div>
 

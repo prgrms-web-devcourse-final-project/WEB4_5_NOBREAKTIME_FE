@@ -39,6 +39,7 @@ const Overview: React.FC<OverviewProps> = ({
     const [expressionBooks, setExpressionBooks] = useState<{ id: number; name: string }[]>([])
     const [isLoading, setIsLoading] = useState(false)
     const [showTranscript, setShowTranscript] = useState(true)
+    const [addedKeywords, setAddedKeywords] = useState<Keyword[]>([])
 
     // 표현함 목록 가져오기
     useEffect(() => {
@@ -54,7 +55,7 @@ const Overview: React.FC<OverviewProps> = ({
                 if (data?.data) {
                     // 타입 안전하게 처리
                     const books = data.data.map((book) => ({
-                        id: book.id || 0,
+                        id: book.expressionBookId || 0,
                         name: book.name || '기본 표현함',
                     }))
                     setExpressionBooks(books)
@@ -88,25 +89,19 @@ const Overview: React.FC<OverviewProps> = ({
 
     // 키워드 추가 처리
     const handleAddKeyword = (keyword: Keyword) => {
-        if (onAddKeyword) {
-            onAddKeyword(keyword)
-        }
-        // 호버 상태 초기화
-        setHoveredKeyword(null)
+        setAddedKeywords((prev) => [...prev, keyword])
+        onAddKeyword?.(keyword)
     }
 
     // 키워드 제거 처리
     const handleRemoveKeyword = (keyword: Keyword) => {
-        if (onRemoveKeyword) {
-            onRemoveKeyword(keyword)
-        }
-        // 호버 상태 초기화
-        setHoveredKeyword(null)
+        setAddedKeywords((prev) => prev.filter((k) => k.word !== keyword.word))
+        onRemoveKeyword?.(keyword)
     }
 
     // 키워드가 이미 추가되었는지 확인
     const checkIsAdded = (keyword: Keyword) => {
-        return isKeywordAdded ? isKeywordAdded(keyword) : false
+        return addedKeywords.some((k) => k.word === keyword.word)
     }
 
     // 표현 추가 처리
@@ -129,6 +124,9 @@ const Overview: React.FC<OverviewProps> = ({
             const expressionBookId = expressionBooks[0].id
             const { data, error } = await client.POST(`/api/v1/expressionbooks/{expressionBookId}/expressions`, {
                 params: {
+                    query: {
+                        userDetails: {},
+                    },
                     path: {
                         expressionBookId,
                     },
@@ -152,6 +150,15 @@ const Overview: React.FC<OverviewProps> = ({
         } finally {
             setIsLoading(false)
         }
+    }
+
+    const handleKeywordHover = (keyword: Keyword, event: React.MouseEvent) => {
+        const rect = event.currentTarget.getBoundingClientRect()
+        setHoveredKeyword(keyword)
+        setHoverPosition({
+            x: rect.left + rect.width / 2,
+            y: rect.bottom + 10,
+        })
     }
 
     if (!selectedSubtitle) {
@@ -185,8 +192,8 @@ const Overview: React.FC<OverviewProps> = ({
                                     })
                                     setHoveredKeyword({
                                         ...keyword,
-                                        subtitleId: selectedSubtitle.subtitleId,
-                                        videoId: videoId,
+                                        subtitleId: selectedSubtitle.subtitleId || 0,
+                                        videoId: videoId || '',
                                     })
                                 }
                             }
@@ -205,8 +212,8 @@ const Overview: React.FC<OverviewProps> = ({
                                     })
                                     setHoveredKeyword({
                                         ...keyword,
-                                        subtitleId: selectedSubtitle.subtitleId,
-                                        videoId: videoId,
+                                        subtitleId: selectedSubtitle.subtitleId || 0,
+                                        videoId: videoId || '',
                                     })
                                 }
                             }

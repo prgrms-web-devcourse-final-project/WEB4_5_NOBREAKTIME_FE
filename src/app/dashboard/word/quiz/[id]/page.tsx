@@ -12,7 +12,7 @@ type WordQuizItem = components['schemas']['WordQuizItem']
 
 interface WordQuizItemWithIds extends WordQuizItem {
     quizId: number
-    wordQuizItemId: number
+    wordbookItemId: number
     word: string
     question: string
     original: string
@@ -50,18 +50,13 @@ export default function WordQuiz() {
 
                 if (response.data?.code === '200' && response.data?.data) {
                     const quizData = response.data.data
-                    console.log('퀴즈 데이터:', {
-                        quizId: quizData.quizId,
-                        quizItems: quizData.quizItems,
-                    })
-
                     const wordsWithIds = (quizData.quizItems || []).map((item) => ({
                         word: item.word || '',
                         meaning: item.meaning || '',
                         question: item.question || '',
                         original: item.original || '',
                         quizId: quizData.quizId,
-                        wordQuizItemId: item.wordQuizItemId || 0,
+                        wordbookItemId: item.wordbookItemId || 0,
                     })) as WordQuizItemWithIds[]
 
                     setOriginalWords(wordsWithIds)
@@ -92,10 +87,9 @@ export default function WordQuiz() {
                     if (quizResults[idx] !== null) {
                         const params = {
                             quizId: word.quizId,
-                            wordbookItemId: word.wordQuizItemId,
+                            wordbookItemId: word.wordbookItemId,
                             isCorrect: quizResults[idx],
                         }
-                        console.log('퀴즈 결과 저장 파라미터:', params)
                         return client.POST('/api/v1/wordbooks/quiz/result', {
                             body: params,
                         })
@@ -105,7 +99,6 @@ export default function WordQuiz() {
                 .filter(Boolean)
 
             await Promise.all(savePromises)
-            console.log('모든 결과 저장 완료')
         } catch (error) {
             console.error('결과 저장 실패:', error)
         }
@@ -279,7 +272,7 @@ export default function WordQuiz() {
     const getResultIcon = () => {
         if (quizResults[index] === true) return '/assets/ok.svg'
         if (quizResults[index] === false) return '/assets/fail.svg'
-        if (hintCounts[index] >= maxHint - 1) return '/assets/answer.svg'
+        if (hintCounts[index] >= maxHint - 1) return '/assets/check.svg'
         return '/assets/hint.svg'
     }
 
@@ -382,7 +375,6 @@ export default function WordQuiz() {
                                             newQuizResults[i] = false
                                         }
                                     }
-                                    console.log('퀴즈 최종 결과:', newQuizResults)
                                     setQuizResults(newQuizResults)
                                 }}
                                 className="flex-1 flex items-center justify-center bg-[var(--color-main)] text-white font-bold py-2 rounded-sm"

@@ -10,6 +10,7 @@ interface Props {
     selectedWordbookIds: number[]
     wordbooks: WordbookResponse[]
     onAddWord: (wordbookId: number, word: string) => Promise<void>
+    onWordbookSelect?: (id: number) => void
 }
 
 interface WordData {
@@ -23,15 +24,28 @@ export default function WordAddModal({
     selectedWordbookIds,
     wordbooks,
     onAddWord,
+    onWordbookSelect,
 }: Props) {
     const [newWordData, setNewWordData] = useState<WordData>({
         word: '',
     })
-    const [selectedId, setSelectedId] = useState<number | null>(selectedWordbookId)
+    const [selectedId, setSelectedId] = useState<number | null>(
+        wordbooks.find((wb) => wb.name === '기본 단어장')?.wordbookId ||
+            selectedWordbookId ||
+            wordbooks[0]?.wordbookId ||
+            null,
+    )
 
     useEffect(() => {
-        setSelectedId(selectedWordbookId)
-    }, [selectedWordbookId])
+        if (!selectedId && wordbooks.length > 0) {
+            const defaultWordbook = wordbooks.find((wb) => wb.name === '기본 단어장')
+            const id = defaultWordbook?.wordbookId || selectedWordbookId || wordbooks[0]?.wordbookId || null
+            setSelectedId(id)
+            if (id) {
+                onWordbookSelect?.(id)
+            }
+        }
+    }, [wordbooks, selectedWordbookId, onWordbookSelect, selectedId])
 
     const handleInputChange = (e: React.ChangeEvent<HTMLInputElement>) => {
         const { name, value } = e.target
@@ -42,7 +56,9 @@ export default function WordAddModal({
     }
 
     const handleWordbookChange = (e: React.ChangeEvent<HTMLSelectElement>) => {
-        setSelectedId(Number(e.target.value))
+        const newId = Number(e.target.value)
+        setSelectedId(newId)
+        onWordbookSelect?.(newId)
     }
 
     const handleAddWord = async () => {
@@ -98,16 +114,15 @@ export default function WordAddModal({
                         value={selectedId || ''}
                         onChange={handleWordbookChange}
                     >
-                        <option value="" disabled>
-                            단어장을 선택하세요
-                        </option>
-                        {wordbooks
-                            .filter((wordbook) => selectedWordbookIds.includes(wordbook.id || 0))
-                            .map((wordbook) => (
-                                <option key={wordbook.id} value={wordbook.id || 0}>
+                        {!selectedId && <option value="">단어장을 선택하세요</option>}
+                        {wordbooks.map((wordbook) => {
+                            const id = wordbook.wordbookId || 0
+                            return (
+                                <option key={`wordbook-${id}`} value={id}>
                                     {wordbook.name}
                                 </option>
-                            ))}
+                            )
+                        })}
                     </select>
                 </div>
 
