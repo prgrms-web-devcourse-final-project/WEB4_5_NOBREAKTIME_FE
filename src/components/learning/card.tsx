@@ -41,8 +41,8 @@ export default function Card({ wordbooks, isLoading = false }: Props) {
     }
 
     return (
-        <div className="flex-1 w-[40%] learning-box gap-4 flex flex-col">
-            <div className="flex-1 grid grid-cols-2 gap-4">
+        <div className="flex-1 w-full h-full learning-box gap-4 flex flex-col">
+            <div className="flex-1 grid grid-cols-2 gap-2 max-[1000px]:grid-cols-1">
                 {wordbooks.map((wordbook) => (
                     <div
                         key={wordbook.id}
@@ -76,7 +76,7 @@ export default function Card({ wordbooks, isLoading = false }: Props) {
                         <div className="flex justify-end gap-2 mt-4">
                             {!isExpression && (
                                 <button
-                                    className="bg-[var(--color-main)] text-white px-3 py-1 rounded text-sm"
+                                    className="bg-[var(--color-main)] text-white px-3 py-1 rounded text-sm max-[1030px]:text-[10px]"
                                     onClick={() =>
                                         router.push(
                                             `/${basePath}/learning/${wordbook.id}?title=${encodeURIComponent(
@@ -90,7 +90,7 @@ export default function Card({ wordbooks, isLoading = false }: Props) {
                             )}
 
                             <button
-                                className="bg-[var(--color-point)] text-white px-3 py-1 rounded text-sm"
+                                className="bg-[var(--color-point)] text-white px-3 py-1 rounded text-sm max-[1030px]:text-[10px]"
                                 onClick={() =>
                                     router.push(
                                         `/${basePath}/quiz/${wordbook.id}?title=${encodeURIComponent(wordbook.name)}`,
