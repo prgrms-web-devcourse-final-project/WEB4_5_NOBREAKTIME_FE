@@ -1,5 +1,6 @@
 'use client'
 
+import { useGlobalLoginMember } from '@/stores/auth/loginMember'
 import Image from 'next/image'
 import Link from 'next/link'
 import { usePathname } from 'next/navigation'
@@ -13,6 +14,8 @@ import AbcIcon from '../icon/wordIcon'
 function Nav() {
     // 현재 경로 감지
     const pathname = usePathname()
+
+    const { loginMember } = useGlobalLoginMember()
 
     return (
         <nav className="group flex flex-col h-screen bg-[var(--color-sub-2)] text-[var(--color-main)] w-[83px] hover:w-[280px] transition-all duration-300 overflow-hidden p-4 flex flex-col gap-6">
@@ -61,7 +64,9 @@ function Nav() {
                             />
                         </svg>
                     </div>
-                    <span className="text-xs text-center text-[var(--color-point)]">Premium</span>
+                    <span className="text-xs text-center text-[var(--color-point)]">
+                        {loginMember.subscriptionType}
+                    </span>
                 </Link>
             </div>
         </nav>

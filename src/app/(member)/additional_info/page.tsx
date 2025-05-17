@@ -13,7 +13,6 @@ type Language = 'ENGLISH' | 'JAPANESE' | 'NONE'
 const LANGUAGES = [
     { code: 'ENGLISH' as Language, label: 'English', image: '/assets/america.svg' },
     { code: 'JAPANESE' as Language, label: '日本語', image: '/assets/japan.svg' },
-    { code: 'NONE' as Language, label: '中文', image: '/assets/china.svg' },
 ]
 
 export default function LanguagePage() {
