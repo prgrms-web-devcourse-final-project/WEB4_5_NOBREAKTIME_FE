@@ -61,6 +61,8 @@ function VideoLearning({
     const [showTranscript, setShowTranscript] = useState(true)
     const [isLoading, setIsLoading] = useState(initialIsLoading)
     const [currentTime, setCurrentTime] = useState(0)
+    const [isLoopMode, setIsLoopMode] = useState(false)
+    const [loopInterval, setLoopInterval] = useState<NodeJS.Timeout | null>(null)
     const playerRef = useRef<HTMLIFrameElement | null>(null)
     const playerStateRef = useRef<any>(null)
 
@@ -243,6 +245,30 @@ function VideoLearning({
         }
     }
 
+    // 구간 반복 처리
+    useEffect(() => {
+        if (isLoopMode && selectedSubtitle?.startTime) {
+            const startTime = parseTimeToSeconds(selectedSubtitle.startTime)
+            const endTime = selectedSubtitle.endTime ? parseTimeToSeconds(selectedSubtitle.endTime) : startTime + 10
+
+            // 현재 시간이 구간을 벗어났는지 체크하는 인터벌 설정
+            const interval = setInterval(() => {
+                if (playerStateRef.current && playerStateRef.current.getCurrentTime) {
+                    const currentTime = playerStateRef.current.getCurrentTime()
+                    if (currentTime >= endTime) {
+                        playerStateRef.current.seekTo(startTime, true)
+                    }
+                }
+            }, 1000)
+
+            setLoopInterval(interval)
+            return () => clearInterval(interval)
+        } else if (loopInterval) {
+            clearInterval(loopInterval)
+            setLoopInterval(null)
+        }
+    }, [isLoopMode, selectedSubtitle])
+
     // VideoTab에 전달할 props
     const videoTabProps = {
         fontSize,
@@ -295,6 +321,8 @@ function VideoLearning({
                         currentTime={currentTime}
                         selectedSubtitle={selectedSubtitle}
                         analysisStatus={analysisStatus}
+                        isLoopMode={isLoopMode}
+                        setIsLoopMode={setIsLoopMode}
                     />
                 </div>
 

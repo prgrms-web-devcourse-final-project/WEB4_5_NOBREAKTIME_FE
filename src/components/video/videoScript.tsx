@@ -30,13 +30,15 @@ type AnalysisStatus = {
 
 interface Props {
     analysisData: AnalyzeVideoResponse | null
-    onSubtitleClick?: (startTime: string, subtitle: SubtitleResult) => void
+    onSubtitleClick: (time: string, subtitle: SubtitleResult) => void
     showTranscript: boolean
     setShowTranscript: (show: boolean) => void
     isLoading: boolean
     currentTime?: number
-    selectedSubtitle?: SubtitleResult | null
+    selectedSubtitle: SubtitleResult | null
     analysisStatus: AnalysisStatus
+    isLoopMode: boolean
+    setIsLoopMode: (isLoop: boolean) => void
 }
 
 function VideoScript({
@@ -48,6 +50,8 @@ function VideoScript({
     currentTime = 0,
     selectedSubtitle: externalSelectedSubtitle,
     analysisStatus,
+    isLoopMode,
+    setIsLoopMode,
 }: Props) {
     const [selectedIdx, setSelectedIdx] = useState(0)
 
@@ -103,13 +107,21 @@ function VideoScript({
         <div className="w-full flex flex-col gap-2 rounded-lg bg-[var(--color-white)] p-4 h-full">
             {/* 스크립트 내용 */}
             <div className="flex justify-between items-center">
-                <h2 className="text-2xl font-bold w-full">📄 Transcript</h2>
-                <button
-                    onClick={() => setShowTranscript(!showTranscript)}
-                    className="text-[var(--color-main)] font-semibold w-full text-right"
-                >
-                    {showTranscript ? '숨기기' : '보이기'}
-                </button>
+                <h2 className="text-2xl font-bold">📄 Transcript</h2>
+                <div className="flex items-center gap-4">
+                    <button
+                        onClick={() => setIsLoopMode(!isLoopMode)}
+                        className={`text-[var(--color-main)] font-semibold ${isLoopMode ? 'text-red-500' : ''}`}
+                    >
+                        {isLoopMode ? '반복 중지' : '구간 반복'}
+                    </button>
+                    <button
+                        onClick={() => setShowTranscript(!showTranscript)}
+                        className="text-[var(--color-main)] font-semibold"
+                    >
+                        {showTranscript ? '숨기기' : '보이기'}
+                    </button>
+                </div>
             </div>
 
             <div className="flex-grow flex w-full rounded-lg p-2 flex-col gap-2 bg-[var(--color-sub-2)] overflow-hidden overflow-y-auto">
