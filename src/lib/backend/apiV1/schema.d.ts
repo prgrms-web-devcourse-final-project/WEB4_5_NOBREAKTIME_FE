@@ -672,8 +672,8 @@ export interface paths {
             cookie?: never
         }
         /**
-         * 전체 단어 목록 조회
-         * @description 로그인한 사용자의 모든 단어장에 있는 단어들을 조회합니다.
+         * 여러 단어장의 단어 목록 조회
+         * @description 체크된 여러 단어장의 단어들을 등록 날짜 기준으로 정렬하여 조회합니다.
          */
         get: operations['getWordbookItems']
         put?: never
@@ -1229,12 +1229,12 @@ export interface components {
              */
             roleName?: string
             password?: string
-            username?: string
             authorities?: components['schemas']['GrantedAuthority'][]
+            username?: string
             enabled?: boolean
-            credentialsNonExpired?: boolean
             accountNonExpired?: boolean
             accountNonLocked?: boolean
+            credentialsNonExpired?: boolean
         }
         GrantedAuthority: {
             authority?: string
@@ -1437,6 +1437,18 @@ export interface components {
         }
         VideoLearningExpressionQuizListResponse: {
             quiz?: components['schemas']['VideoLearningExpressionQuizItem'][]
+        }
+        VideoListRequest: {
+            /** @description 검색어 (1~100자) */
+            q?: string
+            /** @description 유튜브 카테고리 ID */
+            category?: string
+            /**
+             * Format: int64
+             * @description 최대 조회 개수 (1~100)
+             * @default 100
+             */
+            maxResults: number
         }
         RsDataListVideoResponse: {
             code: string
@@ -3663,7 +3675,9 @@ export interface operations {
     }
     getWordbookItems: {
         parameters: {
-            query?: never
+            query?: {
+                wordbookIds?: number[]
+            }
             header?: never
             path?: never
             cookie?: never
@@ -3685,7 +3699,7 @@ export interface operations {
                     [name: string]: unknown
                 }
                 content: {
-                    'application/json': components['schemas']['ErrorResponse']
+                    'application/json': unknown
                 }
             }
             /** @description Not Found */
@@ -3895,10 +3909,8 @@ export interface operations {
     }
     getVideoList: {
         parameters: {
-            query?: {
-                q?: string
-                category?: string
-                maxResults?: number
+            query: {
+                req: components['schemas']['VideoListRequest']
             }
             header?: never
             path?: never
