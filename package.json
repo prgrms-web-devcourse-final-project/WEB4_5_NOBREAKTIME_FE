@@ -11,6 +11,7 @@
     "dependencies": {
         "@radix-ui/react-dialog": "^1.1.13",
         "@radix-ui/react-slot": "^1.2.2",
+        "@tosspayments/tosspayments-sdk": "^2.3.5",
         "class-variance-authority": "^0.7.1",
         "clsx": "^2.1.1",
         "date-fns": "^4.1.0",
