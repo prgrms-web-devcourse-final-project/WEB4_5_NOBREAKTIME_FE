@@ -11,9 +11,6 @@ function generateRandomString() {
     return '' // 서버 환경일 경우 기본값 반환
 }
 
-// TODO: clientKey는 개발자센터의 결제위젯 연동 키 > 클라이언트 키로 바꾸세요.
-// TODO: 구매자의 고유 아이디를 불러와서 customerKey로 설정하세요. 이메일・전화번호와 같이 유추가 가능한 값은 안전하지 않습니다.
-// @docs https://docs.tosspayments.com/sdk/v2/js#토스페이먼츠-초기화
 const clientKey = 'test_gck_docs_Ovk5rk1EwkEbP0W43n07xlzm'
 const customerKey = generateRandomString()
 
@@ -35,7 +32,7 @@ export default function PaymentWidget({ amount: initialAmount, subscriptionType,
     const [amount, setAmount] = useState<Amount>(
         initialAmount || {
             currency: 'KRW',
-            value: 50000,
+            value: 0,
         },
     )
     const [ready, setReady] = useState(false)
@@ -44,12 +41,8 @@ export default function PaymentWidget({ amount: initialAmount, subscriptionType,
     useEffect(() => {
         async function fetchPaymentWidgets() {
             try {
-                // ------  SDK 초기화 ------
-                // @docs https://docs.tosspayments.com/sdk/v2/js#토스페이먼츠-초기화
                 const tossPayments = await loadTossPayments(clientKey)
 
-                // 회원 결제
-                // @docs https://docs.tosspayments.com/sdk/v2/js#tosspaymentswidgets
                 const widgets = tossPayments.widgets({
                     customerKey,
                 })
@@ -72,23 +65,13 @@ export default function PaymentWidget({ amount: initialAmount, subscriptionType,
                 return
             }
 
-            // ------  주문서의 결제 금액 설정 ------
-            // TODO: 위젯의 결제금액을 결제하려는 금액으로 초기화하세요.
-            // TODO: renderPaymentMethods, renderAgreement, requestPayment 보다 반드시 선행되어야 합니다.
             await widgets.setAmount(amount)
 
-            // ------  결제 UI 렌더링 ------
-            // @docs https://docs.tosspayments.com/sdk/v2/js#widgetsrenderpaymentmethods
             await widgets.renderPaymentMethods({
                 selector: '#payment-method',
-                // 렌더링하고 싶은 결제 UI의 variantKey
-                // 결제 수단 및 스타일이 다른 멀티 UI를 직접 만들고 싶다면 계약이 필요해요.
-                // @docs https://docs.tosspayments.com/guides/v2/payment-widget/admin#새로운-결제-ui-추가하기
                 variantKey: 'DEFAULT',
             })
 
-            // ------  이용약관 UI 렌더링 ------
-            // @docs https://docs.tosspayments.com/reference/widget-sdk#renderagreement선택자-옵션
             await widgets.renderAgreement({
                 selector: '#agreement',
                 variantKey: 'AGREEMENT',
@@ -122,19 +105,30 @@ export default function PaymentWidget({ amount: initialAmount, subscriptionType,
 
             console.log('Payment request response:', response)
 
-            // 결제창 띄우기
-            await widgets!.requestPayment({
-                orderId: response.data.orderId,
-                orderName: response.data.orderName || `${subscriptionType} 멤버십 ${periodType} 구독`,
-                successUrl: window.location.origin + '/membership/success',
-                failUrl: window.location.origin + '/membership/fail',
-                customerEmail: 'customer123@gmail.com', // TODO: 실제 사용자 정보로 교체
-                customerName: '김토스', // TODO: 실제 사용자 정보로 교체
-                customerMobilePhone: '01012341234', // TODO: 실제 사용자 정보로 교체
-            })
+            try {
+                // 결제창 띄우기
+                await widgets!.requestPayment({
+                    orderId: response.data.orderId,
+                    orderName: response.data.orderName || `${subscriptionType} 멤버십 ${periodType} 구독`,
+                    successUrl: window.location.origin + '/membership/success',
+                    failUrl: window.location.origin + '/membership/fail',
+                    customerEmail: 'customer123@gmail.com', // TODO: 실제 사용자 정보로 교체
+                    customerName: '김토스', // TODO: 실제 사용자 정보로 교체
+                    customerMobilePhone: '01012341234', // TODO: 실제 사용자 정보로 교체
+                })
+            } catch (paymentError: any) {
+                // 결제 중복 요청(409) 에러 처리
+                if (paymentError?.code === '409-5' || paymentError?.status === 409) {
+                    window.location.href = window.location.origin + '/membership/fail?error=duplicate_payment'
+                    return
+                }
+                throw paymentError
+            }
         } catch (error) {
             console.error('결제 처리 중 오류가 발생했습니다:', error)
-            // TODO: 에러 처리 UI 추가
+            // 에러 메시지에 따라 적절한 실패 페이지로 리다이렉트
+            const errorMessage = error instanceof Error ? error.message : '알 수 없는 오류가 발생했습니다.'
+            window.location.href = `${window.location.origin}/membership/fail?error=${encodeURIComponent(errorMessage)}`
         }
     }
 
@@ -145,33 +139,15 @@ export default function PaymentWidget({ amount: initialAmount, subscriptionType,
                 <div id="payment-method" />
                 {/* 이용약관 UI */}
                 <div id="agreement" />
-                {/* 쿠폰 체크박스 */}
-                <div style={{ paddingLeft: '24px' }}>
-                    <div className="checkable typography--p">
-                        <label htmlFor="coupon-box" className="checkable__label typography--regular">
-                            <input
-                                id="coupon-box"
-                                className="checkable__input"
-                                type="checkbox"
-                                aria-checked="true"
-                                disabled={!ready}
-                                // ------  주문서의 결제 금액이 변경되었을 경우 결제 금액 업데이트 ------
-                                // @docs https://docs.tosspayments.com/sdk/v2/js#widgetssetamount
-                                onChange={async (event) => {
-                                    await updateAmount({
-                                        currency: amount.currency,
-                                        value: event.target.checked ? amount.value - 5000 : amount.value + 5000,
-                                    })
-                                }}
-                            />
-                            <span className="checkable__label-text">5,000원 쿠폰 적용</span>
-                        </label>
-                    </div>
-                </div>
 
                 {/* 결제하기 버튼 */}
-                <button className="button" style={{ marginTop: '30px' }} disabled={!ready} onClick={handlePayment}>
-                    결제하기
+                <button
+                    className="w-[200px] py-2.5 px-4 bg-blue-600 text-white text-sm font-medium rounded-md shadow-sm hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-opacity-50 transition-colors duration-200 disabled:bg-gray-400 disabled:cursor-not-allowed disabled:opacity-70 mx-auto block"
+                    style={{ marginTop: '20px' }}
+                    disabled={!ready}
+                    onClick={handlePayment}
+                >
+                    {ready ? '결제하기' : '결제 준비중...'}
                 </button>
             </div>
         </div>
