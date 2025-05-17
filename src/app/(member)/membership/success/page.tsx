@@ -21,7 +21,16 @@ export default function SuccessPage() {
             const paymentKey = searchParams.get('paymentKey')
             const amount = searchParams.get('amount')
 
-            if (!orderId || !paymentKey || !amount) {
+            // 로컬 스토리지에서 idempotencyKey 가져오기
+            let idempotencyKey = localStorage.getItem('payment_idempotency_key')
+
+            // idempotencyKey가 없으면 새로 생성
+            if (!idempotencyKey) {
+                idempotencyKey = crypto.randomUUID()
+                localStorage.setItem('payment_idempotency_key', idempotencyKey)
+            }
+
+            if (!orderId || !paymentKey || !amount || !idempotencyKey) {
                 setErrorMessage('필수 결제 정보가 누락되었습니다.')
                 setStatus('error')
                 return
@@ -33,14 +42,18 @@ export default function SuccessPage() {
                         paymentKey,
                         orderId,
                         amount: Number(amount),
-                        idempotencyKey: orderId,
+                        idempotencyKey,
                     },
                 })
+
+                // 결제 성공 후 idempotencyKey 삭제
+                localStorage.removeItem('payment_idempotency_key')
 
                 if (error) {
                     const paymentError = error as PaymentError
                     if (paymentError.status === 409) {
-                        setStatus('success')
+                        setErrorMessage('이미 처리된 결제입니다.')
+                        setStatus('error')
                         return
                     }
                     throw error
@@ -51,7 +64,8 @@ export default function SuccessPage() {
                 console.error('결제 승인 중 오류가 발생했습니다:', e)
                 const paymentError = e as PaymentError
                 if (paymentError.status === 409) {
-                    setStatus('success')
+                    setErrorMessage('이미 처리된 결제입니다.')
+                    setStatus('error')
                     return
                 }
                 setErrorMessage(paymentError.message || '결제 처리 중 오류가 발생했습니다.')

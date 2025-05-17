@@ -1,7 +1,5 @@
 'use client'
 
-import Header from '@/components/layout/header'
-import Nav from '@/components/layout/nav'
 import PaymentWidget from '@/components/payment/PaymentWidget'
 import Image from 'next/image'
 import { useState } from 'react'
@@ -98,9 +96,7 @@ export default function Membership() {
 
     return (
         <div className="flex min-h-screen">
-            <Nav />
             <div className="flex-1 flex flex-col">
-                <Header />
                 <main className="flex-1 px-12 py-8 flex flex-col items-center justify-center">
                     {/* 헤더 */}
                     <div className="text-center mb-12">
