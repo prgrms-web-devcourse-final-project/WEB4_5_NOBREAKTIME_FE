@@ -2,6 +2,7 @@
 
 import PaymentWidget from '@/components/payment/PaymentWidget'
 import Image from 'next/image'
+import Link from 'next/link'
 import { useState } from 'react'
 
 export default function Membership() {
@@ -97,8 +98,10 @@ export default function Membership() {
     return (
         <div className="flex min-h-screen">
             <div className="flex-1 flex flex-col">
+                <Link href="/">
+                    <Image src="/logo/all-logo.svg" alt="logo" width={180} height={180} className="ml-10 mt-5" />
+                </Link>
                 <main className="flex-1 px-12 py-8 flex flex-col items-center justify-center">
-                    {/* 헤더 */}
                     <div className="text-center mb-12">
                         <h1 className="text-4xl font-bold text-[var(--color-black)] mb-4">
                             프리미엄 멤버십으로 더 효과적인 학습을
