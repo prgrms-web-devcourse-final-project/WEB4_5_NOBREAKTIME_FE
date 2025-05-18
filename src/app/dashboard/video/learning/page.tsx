@@ -3,11 +3,10 @@
 import Search from '@/components/common/search'
 import BookmarkIcon from '@/components/icon/bookmarkIcon'
 import VideoIcon from '@/components/icon/videoIcon'
-import client from '@/lib/backend/client'
 import { components } from '@/lib/backend/apiV1/schema'
+import client from '@/lib/backend/client'
 import { useRouter } from 'next/navigation'
 import { useEffect, useRef, useState } from 'react'
-import { mockVideoList } from './mockdata'
 
 type VideoResponse = components['schemas']['VideoResponse']
 
@@ -26,110 +25,101 @@ const CATEGORIES = {
 } as const
 
 export default function VideoLearningPage() {
-    const url = process.env.NEXT_PUBLIC_MOCK_URL
     const router = useRouter()
     const isFirstRender = useRef(true)
+    const observerTarget = useRef<HTMLDivElement>(null)
 
     const [selectedCategory, setSelectedCategory] = useState<Category>(CATEGORIES.ALL)
     const [searchKeyword, setSearchKeyword] = useState<string>('')
     const [videoList, setVideoList] = useState<VideoResponse[]>([])
     const [isLoading, setIsLoading] = useState(true)
     const [error, setError] = useState<string | null>(null)
+    const [page, setPage] = useState(1)
+    const [hasMore, setHasMore] = useState(true)
+    const itemsPerPage = 50
+    const displayPerPage = 10
+    const [displayCount, setDisplayCount] = useState(displayPerPage)
+    const [cachedVideos, setCachedVideos] = useState<VideoResponse[]>([])
 
-    // api/v1/video/list 호출
+    // 무한 스크롤 구현
     useEffect(() => {
-        const loadVideos = async () => {
-            try {
-                setIsLoading(true)
-                // API 호출 대신 목데이터 필터링
-                const filteredVideos = mockVideoList.filter((video) => {
-                    const matchesCategory =
-                        selectedCategory.id === 0 ||
-                        (video.videoId && video.videoId.includes(String(selectedCategory.id)))
-                    const matchesSearch =
-                        !searchKeyword ||
-                        video.title?.toLowerCase().includes(searchKeyword.toLowerCase()) ||
-                        video.description?.toLowerCase().includes(searchKeyword.toLowerCase())
-                    return matchesCategory && matchesSearch
-                })
-                setVideoList(filteredVideos)
+        const observer = new IntersectionObserver(
+            (entries) => {
+                if (entries[0].isIntersecting && !isLoading) {
+                    // 캐시된 비디오가 있고, 현재 표시된 수가 캐시된 비디오 수보다 작으면
+                    if (cachedVideos.length > displayCount) {
+                        setDisplayCount((prev) => Math.min(prev + displayPerPage, cachedVideos.length))
+                    }
+                    // 캐시된 비디오를 모두 보여줬고, 더 불러올 데이터가 있으면
+                    else if (hasMore) {
+                        setPage((prev) => prev + 1)
+                    }
+                }
+            },
+            { threshold: 1.0 },
+        )
 
-                /* API 호출 주석 처리
-                const { data, error } = await client.GET('/api/v1/videos/list', {
-                    params: {
-                        query: {
-                            maxResults: 10,
-                            ...(selectedCategory.id !== 0 && { category: String(selectedCategory.id) }),
-                            ...(searchKeyword && { q: searchKeyword.trim().toLowerCase() }),
+        if (observerTarget.current) {
+            observer.observe(observerTarget.current)
+        }
+
+        return () => observer.disconnect()
+    }, [hasMore, isLoading, cachedVideos.length, displayCount])
+
+    // 비디오 데이터 로드 함수
+    const loadVideos = async (pageNum: number, isNewSearch: boolean = false) => {
+        try {
+            setIsLoading(true)
+
+            const { data: response } = await client.GET('/api/v1/videos/list', {
+                params: {
+                    query: {
+                        req: {
+                            q: searchKeyword || undefined,
+                            category: selectedCategory.id === 0 ? undefined : String(selectedCategory.id),
+                            maxResults: itemsPerPage,
                         },
                     },
-                })
+                },
+            })
 
-                if (error) {
-                    console.error('API 오류:', error)
-                    throw new Error('비디오 리스트를 불러오는데 실패했습니다.')
-                }
+            const videos = response?.data || []
 
-                console.log('비디오 데이터:', data)
-                if (data?.data) {
-                    // @ts-ignore - 타입 에러 무시
-                    setVideoList(data.data)
-                }
-                */
-            } catch (err) {
-                setError('비디오 리스트를 불러오는데 실패했습니다.')
-                console.error(err)
-            } finally {
-                setIsLoading(false)
+            if (isNewSearch) {
+                setCachedVideos(videos)
+                setDisplayCount(displayPerPage)
+                setVideoList(videos.slice(0, displayPerPage))
+            } else {
+                setCachedVideos((prev) => [...prev, ...videos])
+                setVideoList((prev) => [...prev, ...videos.slice(0, displayPerPage)])
             }
-        }
 
-        // 첫 렌더링 시에는 실행하지 않음
-        if (isFirstRender.current) {
-            isFirstRender.current = false
-            return
+            setHasMore(videos.length === itemsPerPage)
+        } catch (err) {
+            setError('비디오 리스트를 불러오는데 실패했습니다.')
+            console.error(err)
+        } finally {
+            setIsLoading(false)
         }
+    }
 
-        loadVideos()
+    // displayCount가 변경될 때마다 화면에 표시되는 비디오 목록 업데이트
+    useEffect(() => {
+        setVideoList(cachedVideos.slice(0, displayCount))
+    }, [displayCount, cachedVideos])
+
+    // 검색어나 카테고리 변경 시
+    useEffect(() => {
+        setPage(1)
+        loadVideos(1, true)
     }, [selectedCategory, searchKeyword])
 
-    // 컴포넌트 마운트 시 최초 1회 데이터 로드
+    // 페이지 변경 시
     useEffect(() => {
-        const loadInitialVideos = async () => {
-            try {
-                setIsLoading(true)
-                // 초기 데이터로 목데이터 사용
-                setVideoList(mockVideoList)
-
-                /* API 호출 주석 처리
-                const { data, error } = await client.GET('/api/v1/videos/list', {
-                    params: {
-                        query: {
-                            maxResults: 10,
-                        },
-                    },
-                })
-
-                if (error) {
-                    console.error('API 오류:', error)
-                    throw new Error('비디오 리스트를 불러오는데 실패했습니다.')
-                }
-
-                if (data?.data) {
-                    // @ts-ignore - 타입 에러 무시
-                    setVideoList(data.data)
-                }
-                */
-            } catch (err) {
-                setError('비디오 리스트를 불러오는데 실패했습니다.')
-                console.error(err)
-            } finally {
-                setIsLoading(false)
-            }
+        if (page > 1) {
+            loadVideos(page)
         }
-
-        loadInitialVideos()
-    }, [])
+    }, [page])
 
     const handleSearch = (keyword: string) => {
         setSearchKeyword(keyword)
@@ -137,16 +127,12 @@ export default function VideoLearningPage() {
 
     // 비디오 클릭 핸들러
     const handleVideoClick = (video: VideoResponse) => {
-        // URL 쿼리 파라미터로 비디오 정보 전달
+        // URL 쿼리 파라미터로 비디오 제목만 전달
         const queryParams = new URLSearchParams({
             title: video.title || '',
-            description: video.description || '',
         }).toString()
 
-        // thumbnailUrl이 있는 경우에만 추가
-        const thumbnailParam = video.thumbnailUrl ? `&thumbnail=${encodeURIComponent(video.thumbnailUrl)}` : ''
-
-        router.push(`/dashboard/video/learning/${video.videoId}?${queryParams}${thumbnailParam}`)
+        router.push(`/dashboard/video/learning/${video.videoId}?${queryParams}`)
     }
 
     // 카테고리 버튼 동작
@@ -162,16 +148,15 @@ export default function VideoLearningPage() {
         if (!videoId) return
 
         try {
-            // 목데이터에서 북마크 상태 토글
+            const video = videoList.find((v) => v.videoId === videoId)
+            const isBookmarked = video?.bookmarked
+
+            // 북마크 상태 토글
             setVideoList((prevList) =>
                 prevList.map((video) =>
                     video.videoId === videoId ? { ...video, bookmarked: !video.bookmarked } : video,
                 ),
             )
-
-            /* API 호출 주석 처리
-            const video = videoList.find((v) => v.videoId === videoId)
-            const isBookmarked = video?.bookmarked
 
             if (isBookmarked) {
                 await client.DELETE('/api/v1/bookmarks/{videoId}', {
@@ -182,12 +167,14 @@ export default function VideoLearningPage() {
                     params: { path: { videoId } },
                 })
             }
-
-            // 비디오 목록 업데이트
-            setVideoList((prev) => prev.map((v) => (v.videoId === videoId ? { ...v, bookmarked: !isBookmarked } : v)))
-            */
         } catch (err) {
             console.error('북마크 토글 중 오류 발생:', err)
+            // 실패 시 상태 복구
+            setVideoList((prevList) =>
+                prevList.map((video) =>
+                    video.videoId === videoId ? { ...video, bookmarked: !video.bookmarked } : video,
+                ),
+            )
         }
     }
 
@@ -274,7 +261,17 @@ export default function VideoLearningPage() {
                         </div>
                     ))}
 
-                    {videoList.length === 0 && (
+                    {/* 로딩 상태 표시 */}
+                    {isLoading && (
+                        <div className="text-center py-4">
+                            <div className="inline-block h-8 w-8 animate-spin rounded-full border-4 border-solid border-current border-r-transparent align-[-0.125em] motion-reduce:animate-[spin_1.5s_linear_infinite]" />
+                        </div>
+                    )}
+
+                    {/* Intersection Observer 타겟 */}
+                    <div ref={observerTarget} style={{ height: '10px' }} />
+
+                    {!isLoading && videoList.length === 0 && (
                         <div className="text-gray-500 text-center mt-10">검색 결과가 없습니다.</div>
                     )}
                 </div>

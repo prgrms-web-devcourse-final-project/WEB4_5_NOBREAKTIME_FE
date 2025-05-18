@@ -48,7 +48,7 @@ export default function BookmarkPage() {
                             className="flex gap-4 bg-[var(--color-white)] rounded-lg p-4 cursor-pointer hover:bg-gray-50"
                             onClick={() => handleVideoClick(video.videoId || '')}
                         >
-                            <div className="w-120 h-80 bg-gray-200 rounded-md">
+                            <div className="w-[450px] h-[300px] bg-gray-200 rounded-md overflow-hidden flex-shrink-0">
                                 {video.thumbnailUrl && (
                                     <img
                                         src={video.thumbnailUrl}

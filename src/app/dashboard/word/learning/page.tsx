@@ -38,8 +38,11 @@ export default function WordLearningPage() {
 
     const handleWordbookSelect = (ids: number[]) => {
         setSelectedWordbookIds(ids)
-        if (ids.length > 0 && !selectedWordbookId) {
-            setSelectedWordbookId(ids[0])
+        // 기본 단어장이나 첫 번째 단어장을 선택
+        const defaultWordbook = wordbooks.find((wb) => wb.name === '기본 단어장')
+        if (ids.length > 0) {
+            const newSelectedId = defaultWordbook?.wordbookId || ids[0]
+            setSelectedWordbookId(newSelectedId)
         }
     }
 
@@ -79,8 +82,12 @@ export default function WordLearningPage() {
 
     const handleDeleteWords = async () => {
         try {
+            if (!selectedWordbookId) {
+                throw new Error('단어장이 선택되지 않았습니다.')
+            }
+
             const deleteItems = selectedWords.map((word) => ({
-                wordbookId: selectedWordbookId ?? undefined,
+                wordbookId: selectedWordbookId,
                 word: word.word,
             }))
 
@@ -203,7 +210,6 @@ export default function WordLearningPage() {
     }
 
     const handleSelectedWordsChange = (words: WordResponse[]) => {
-        console.log('선택된 단어 목록:', words)
         setSelectedWords(words)
     }
 
@@ -219,13 +225,7 @@ export default function WordLearningPage() {
                 }
 
                 if (data?.data) {
-                    const wordbookData = data.data.map((item: any) => ({
-                        id: item.id || 0,
-                        name: item.name || '',
-                        language: item.language || 'ENGLISH',
-                        wordCount: item.wordCount || 0,
-                    }))
-                    setWordbooks(wordbookData)
+                    setWordbooks(data.data)
                 }
             } catch (error) {
                 console.error('단어장 데이터 요청 실패:', error)
@@ -239,35 +239,22 @@ export default function WordLearningPage() {
 
     useEffect(() => {
         const fetchWords = async () => {
-            if (selectedWordbookIds.length === 0) {
-                setWords([])
-                return
-            }
-
             try {
                 setIsLoading(true)
-                const promises = selectedWordbookIds.map((id) =>
-                    client.GET('/api/v1/wordbooks/{wordbookId}/words', {
-                        params: {
-                            path: {
-                                wordbookId: id,
-                            },
-                        },
-                    }),
-                )
+                const { data, error } = await client.GET('/api/v1/wordbooks/view', {})
 
-                const responses = await Promise.all(promises)
+                if (error || !data?.data) {
+                    console.error('단어 데이터 요청 실패:', error)
+                    return
+                }
 
-                const allWords = responses.flatMap((response) => {
-                    if (response.error || !response.data?.data) {
-                        console.error('단어 데이터 요청 실패:', response.error)
-                        return []
-                    }
-                    return response.data.data
-                })
+                // 선택된 단어장의 단어들만 필터링
+                const filteredWords =
+                    selectedWordbookIds.length > 0
+                        ? data.data.filter((word) => selectedWordbookIds.includes(word.wordBookId || 0))
+                        : data.data
 
-                console.log('변환된 단어 목록:', allWords)
-                setWords(allWords)
+                setWords(filteredWords)
             } catch (error) {
                 console.error('단어 데이터 요청 실패:', error)
             } finally {
@@ -378,22 +365,25 @@ export default function WordLearningPage() {
                 selectedWordbookId={selectedWordbookId}
                 selectedWordbookIds={selectedWordbookIds}
                 wordbooks={wordbooks.map((wb) => ({
-                    id: wb.id || 0,
+                    wordbookId: wb.wordbookId || 0,
                     name: wb.name || '',
                     language: wb.language || 'ENGLISH',
-                    wordCount: 0,
+                    wordCount: wb.wordCount || 0,
+                    learnedWordCount: wb.learnedWordCount || 0,
                 }))}
                 onAddWord={handleAddWord}
+                onWordbookSelect={setSelectedWordbookId}
             />
 
             <WordMoveDeleteModal
                 isOpen={isMoveDeleteModalOpen}
                 onClose={() => setIsMoveDeleteModalOpen(false)}
                 wordbooks={wordbooks.map((wb) => ({
-                    id: wb.id || 0,
+                    id: wb.wordbookId || 0,
                     name: wb.name || '',
                     language: wb.language || 'ENGLISH',
-                    wordCount: 0,
+                    wordCount: wb.wordCount || 0,
+                    learnedWordCount: wb.learnedWordCount || 0,
                 }))}
                 onMoveWords={handleMoveWords}
                 onDeleteWords={handleDeleteWords}

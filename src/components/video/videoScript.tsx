@@ -22,14 +22,23 @@ type AnalyzeVideoResponse = {
     subtitleResults: SubtitleResult[]
 }
 
+type AnalysisStatus = {
+    stage: 'idle' | 'lockAcquired' | 'audioExtracted' | 'sttCompleted' | 'analysisComplete' | 'lockChecking'
+    message: string
+    progress: number
+}
+
 interface Props {
     analysisData: AnalyzeVideoResponse | null
-    onSubtitleClick?: (startTime: string, subtitle: SubtitleResult) => void
+    onSubtitleClick: (time: string, subtitle: SubtitleResult) => void
     showTranscript: boolean
     setShowTranscript: (show: boolean) => void
     isLoading: boolean
     currentTime?: number
-    selectedSubtitle?: SubtitleResult | null
+    selectedSubtitle: SubtitleResult | null
+    analysisStatus: AnalysisStatus
+    isLoopMode: boolean
+    setIsLoopMode: (isLoop: boolean) => void
 }
 
 function VideoScript({
@@ -40,6 +49,9 @@ function VideoScript({
     isLoading,
     currentTime = 0,
     selectedSubtitle: externalSelectedSubtitle,
+    analysisStatus,
+    isLoopMode,
+    setIsLoopMode,
 }: Props) {
     const [selectedIdx, setSelectedIdx] = useState(0)
 
@@ -95,19 +107,41 @@ function VideoScript({
         <div className="w-full flex flex-col gap-2 rounded-lg bg-[var(--color-white)] p-4 h-full">
             {/* 스크립트 내용 */}
             <div className="flex justify-between items-center">
-                <h2 className="text-2xl font-bold w-full">📄 Transcript</h2>
-                <button
-                    onClick={() => setShowTranscript(!showTranscript)}
-                    className="text-[var(--color-main)] font-semibold w-full text-right"
-                >
-                    {showTranscript ? '숨기기' : '보이기'}
-                </button>
+                <h2 className="text-2xl font-bold">📄 Transcript</h2>
+                <div className="flex items-center gap-4">
+                    <button
+                        onClick={() => setIsLoopMode(!isLoopMode)}
+                        className={`text-[var(--color-main)] font-semibold ${isLoopMode ? 'text-red-500' : ''}`}
+                    >
+                        {isLoopMode ? '반복 중지' : '구간 반복'}
+                    </button>
+                    <button
+                        onClick={() => setShowTranscript(!showTranscript)}
+                        className="text-[var(--color-main)] font-semibold"
+                    >
+                        {showTranscript ? '숨기기' : '보이기'}
+                    </button>
+                </div>
             </div>
 
             <div className="flex-grow flex w-full rounded-lg p-2 flex-col gap-2 bg-[var(--color-sub-2)] overflow-hidden overflow-y-auto">
                 {isLoading ? (
-                    <div className="flex items-center justify-center h-full text-gray-500 bg-[var(--color-white)]">
+                    <div className="flex flex-col items-center justify-center h-full text-gray-500 bg-[var(--color-white)]">
                         <Image src="/character/loading-2.gif" alt="loading" width={300} height={300} />
+                        {/* 분석 상태 표시 */}
+                        {analysisStatus.stage !== 'analysisComplete' && (
+                            <div className="w-full max-w-md p-6">
+                                <div className="flex flex-col items-center gap-4">
+                                    <div className="w-full bg-gray-200 rounded-full h-2.5">
+                                        <div
+                                            className="bg-[var(--color-main)] h-2.5 rounded-full transition-all duration-500"
+                                            style={{ width: `${analysisStatus.progress}%` }}
+                                        ></div>
+                                    </div>
+                                    <p className="text-center text-gray-600">{analysisStatus.message}</p>
+                                </div>
+                            </div>
+                        )}
                     </div>
                 ) : showTranscript && analysisData?.subtitleResults?.length ? (
                     <ul className="list-disc pl-8 space-y-2">

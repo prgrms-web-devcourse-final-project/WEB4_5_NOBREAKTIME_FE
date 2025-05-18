@@ -18,7 +18,9 @@ export default function ExpressionMoveDeleteModal({
     onMoveExpressions,
     onDeleteExpressions,
 }: Props) {
-    const [moveTargetExpressionBookId, setMoveTargetExpressionBookId] = useState<number>(expressionBooks[0]?.id || 0)
+    const [moveTargetExpressionBookId, setMoveTargetExpressionBookId] = useState<number>(
+        expressionBooks[0]?.expressionBookId || 0,
+    )
 
     if (!isOpen) return null
 
@@ -58,7 +60,7 @@ export default function ExpressionMoveDeleteModal({
                         onChange={handleMoveTargetChange}
                     >
                         {expressionBooks.map((expressionBook) => (
-                            <option key={expressionBook.id} value={expressionBook.id}>
+                            <option key={expressionBook.expressionBookId} value={expressionBook.expressionBookId}>
                                 {expressionBook.name}
                             </option>
                         ))}

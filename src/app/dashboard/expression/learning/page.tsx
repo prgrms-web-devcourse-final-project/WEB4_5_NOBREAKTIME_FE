@@ -1,6 +1,6 @@
 'use client'
 
-import { useEffect, useState } from 'react'
+import { useEffect, useState, useRef } from 'react'
 import DropdownCheckBox from '@/components/common/dropdownCheckBox'
 import Search from '@/components/common/search'
 import ExpressionIcon from '@/components/icon/expressionIcon'
@@ -17,6 +17,8 @@ export default function ExpressionPage() {
     const [expressionBooks, setExpressionBooks] = useState<ExpressionBookResponse[]>([])
     const [expressions, setExpressions] = useState<ExpressionResponse[]>([])
     const [filteredExpressions, setFilteredExpressions] = useState<ExpressionResponse[]>([])
+    const [displayCount, setDisplayCount] = useState(10)
+    const observerRef = useRef<HTMLDivElement>(null)
     const [searchTerm, setSearchTerm] = useState('')
     const [isLoading, setIsLoading] = useState(true)
     const [selectedExpressionBookIds, setSelectedExpressionBookIds] = useState<number[]>([])
@@ -74,6 +76,31 @@ export default function ExpressionPage() {
         fetchExpressionBooks()
         fetchExpressions()
     }, [])
+
+    useEffect(() => {
+        const observer = new IntersectionObserver(
+            (entries) => {
+                if (entries[0].isIntersecting && displayCount < filteredExpressions.length) {
+                    setDisplayCount((prev) => Math.min(prev + 10, filteredExpressions.length))
+                }
+            },
+            { threshold: 0.5 },
+        )
+
+        if (observerRef.current) {
+            observer.observe(observerRef.current)
+        }
+
+        return () => observer.disconnect()
+    }, [displayCount, filteredExpressions.length])
+
+    useEffect(() => {
+        // 검색어가 변경되면 displayCount 초기화
+        setDisplayCount(10)
+    }, [searchTerm])
+
+    // 화면에 표시할 표현들
+    const displayedExpressions = filteredExpressions.slice(0, displayCount)
 
     const handleWordbookSelect = (ids: number[]) => {
         setSelectedExpressionBookIds(ids)
@@ -164,7 +191,12 @@ export default function ExpressionPage() {
                             { text: '내 {title}장에서 톡톡 랜덤 등장!', strong: ['랜덤'] },
                             { text: '반복과 호기심 학습을 한번에!', strong: ['반복', '호기심'] },
                         ]}
-                        wordbooks={expressionBooks}
+                        wordbooks={expressionBooks.map((book) => ({
+                            ...book,
+                            wordbookId: book.expressionBookId,
+                            wordCount: book.expressionCount,
+                            learnedWordCount: book.learnedExpressionCount,
+                        }))}
                         isLoading={isLoading}
                     />
                 </div>
@@ -174,7 +206,15 @@ export default function ExpressionPage() {
                     <div className="flex justify-between items-center">
                         <h1 className="text-2xl font-bold">📚 내 문장</h1>
                         <div className="flex items-center gap-2">
-                            <DropdownCheckBox wordbooks={expressionBooks} onWordbookSelect={handleWordbookSelect} />
+                            <DropdownCheckBox
+                                wordbooks={expressionBooks.map((book) => ({
+                                    ...book,
+                                    wordbookId: book.expressionBookId,
+                                    wordCount: book.expressionCount,
+                                    learnedWordCount: book.learnedExpressionCount,
+                                }))}
+                                onWordbookSelect={handleWordbookSelect}
+                            />
                             <button
                                 onClick={openAddModal}
                                 className="flex items-center gap-1 bg-[var(--color-main)] text-white px-3 py-2 rounded-md text-sm font-medium hover:bg-opacity-90 transition-colors"
@@ -220,7 +260,7 @@ export default function ExpressionPage() {
 
                     {/* 카드 리스트 */}
                     <div className="grid grid-cols-2 flex-1 overflow-y-auto p-2 gap-4">
-                        {filteredExpressions.map((expression) => (
+                        {displayedExpressions.map((expression) => (
                             <ExpressionCard
                                 key={expression.expressionId}
                                 expression={expression}
@@ -245,6 +285,11 @@ export default function ExpressionPage() {
                         {filteredExpressions.length === 0 && (
                             <div className="col-span-2 flex items-center justify-center text-gray-500 py-8">
                                 검색 결과가 없습니다.
+                            </div>
+                        )}
+                        {displayCount < filteredExpressions.length && (
+                            <div ref={observerRef} className="col-span-2 h-20 flex items-center justify-center">
+                                <div className="animate-spin rounded-full h-8 w-8 border-t-2 border-b-2 border-[var(--color-main)]"></div>
                             </div>
                         )}
                     </div>

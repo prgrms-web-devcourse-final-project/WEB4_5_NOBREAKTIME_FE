@@ -34,8 +34,6 @@ const ExpressionQuiz: React.FC<ExpressionQuizProps> = ({ fontSize, videoId }) =>
                     console.error('표현 퀴즈 데이터 요청 실패:', error)
                     return
                 }
-
-                console.log('표현 퀴즈 데이터:', data)
                 if (data?.data?.quiz) {
                     setExpressionQuizzes(data.data.quiz as ExpressionQuizItem[])
                 }
@@ -62,7 +60,7 @@ const ExpressionQuiz: React.FC<ExpressionQuizProps> = ({ fontSize, videoId }) =>
         setExpressionBlanks(Array(expressionBlankCount).fill(''))
         setUsedChoices([])
         setExpressionResult(null)
-    }, [expressionQuiz?.expressionQuizItemId, expressionBlankCount])
+    }, [expressionQuiz?.expressionId, expressionBlankCount])
 
     // 표현 퀴즈 - 빈칸에 단어 채우기
     const handleChoice = (choice: string, idx: number) => {

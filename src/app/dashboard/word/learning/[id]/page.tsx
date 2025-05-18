@@ -42,9 +42,6 @@ export default function WordLearning() {
                         },
                     },
                 })
-
-                console.log('API 응답 데이터:', data)
-
                 if (data?.data) {
                     setWords(data.data)
                 } else {

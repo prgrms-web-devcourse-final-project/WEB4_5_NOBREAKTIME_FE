@@ -9,6 +9,7 @@ interface Props {
         name: string
         language: string
         wordCount: number
+        learnedWordCount: number
     }[]
     isLoading: boolean
 }
@@ -16,16 +17,16 @@ interface Props {
 export default function Card({ wordbooks, isLoading = false }: Props) {
     const router = useRouter()
     const pathname = usePathname()
-    const isExpression = pathname.startsWith('/dashboard/expression')
+    const isExpression = pathname.includes('expression')
     const basePath = isExpression ? 'dashboard/expression' : 'dashboard/word'
 
     if (isLoading) {
         return (
-            <div className="flex-1 grid grid-cols-2 gap-2">
-                {[1, 2].map((i) => (
+            <div className="flex-1 grid grid-cols-2 gap-4">
+                {[1, 2, 3, 4].map((i) => (
                     <div
                         key={i}
-                        className="bg-[var(--color-white)] rounded-lg p-4 shadow flex flex-col justify-between h-32 border border-gray-200 animate-pulse"
+                        className="bg-[var(--color-white)] rounded-lg p-4 shadow flex flex-col justify-between h-[180px] border border-gray-200 animate-pulse"
                     >
                         <div className="h-4 bg-gray-200 rounded w-3/4 mb-4"></div>
                         <div className="h-5 bg-gray-200 rounded w-1/2 mb-4"></div>
@@ -40,24 +41,42 @@ export default function Card({ wordbooks, isLoading = false }: Props) {
     }
 
     return (
-        <div className="flex-1 w-[50%] learning-box gap-4 flex flex-col">
-            <div className="flex-1 grid grid-cols-2 gap-2">
+        <div className="flex-1 w-full h-full learning-box gap-4 flex flex-col">
+            <div className="flex-1 grid grid-cols-2 gap-2 max-[1000px]:grid-cols-1">
                 {wordbooks.map((wordbook) => (
                     <div
                         key={wordbook.id}
-                        className="bg-[var(--color-white)] rounded-lg p-4 shadow flex flex-col justify-between h-30 border border-gray-200"
+                        className="bg-[var(--color-white)] rounded-lg p-4 shadow flex flex-col h-[180px] border border-gray-200"
                     >
-                        {/* 날짜 + 제목 */}
-                        <p className="font-semibold text-[var(--color-main)] mb-1">{wordbook.name}</p>
+                        <div className="flex-1">
+                            {/* 날짜 + 제목 */}
+                            <p className="font-semibold text-[var(--color-main)] mb-3">{wordbook.name}</p>
 
-                        {/* 단어 수 */}
-                        <strong className="text-[var(--color-point)] text-xl mb-2">{wordbook.wordCount}개 단어</strong>
+                            {/* 단어 수 */}
+                            <strong className="text-[var(--color-point)] text-xl block mb-3">
+                                {wordbook.learnedWordCount}/{wordbook.wordCount}개 {isExpression ? '표현' : '단어'}
+                            </strong>
+
+                            {/* 프로그레스 바 */}
+                            <div className="w-full bg-gray-200 rounded-full h-2">
+                                <div
+                                    className="bg-[var(--color-point)] h-2 rounded-full transition-all duration-500"
+                                    style={{
+                                        width: `${
+                                            wordbook.wordCount > 0
+                                                ? (wordbook.learnedWordCount / wordbook.wordCount) * 100
+                                                : 0
+                                        }%`,
+                                    }}
+                                ></div>
+                            </div>
+                        </div>
 
                         {/* 버튼 영역 */}
-                        <div className="flex justify-end gap-2">
+                        <div className="flex justify-end gap-2 mt-4">
                             {!isExpression && (
                                 <button
-                                    className="bg-[var(--color-main)] text-white px-3 py-1 rounded text-sm"
+                                    className="bg-[var(--color-main)] text-white px-3 py-1 rounded text-sm max-[1030px]:text-[10px]"
                                     onClick={() =>
                                         router.push(
                                             `/${basePath}/learning/${wordbook.id}?title=${encodeURIComponent(
@@ -71,7 +90,7 @@ export default function Card({ wordbooks, isLoading = false }: Props) {
                             )}
 
                             <button
-                                className="bg-[var(--color-point)] text-white px-3 py-1 rounded text-sm"
+                                className="bg-[var(--color-point)] text-white px-3 py-1 rounded text-sm max-[1030px]:text-[10px]"
                                 onClick={() =>
                                     router.push(
                                         `/${basePath}/quiz/${wordbook.id}?title=${encodeURIComponent(wordbook.name)}`,

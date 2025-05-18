@@ -28,11 +28,18 @@ type AnalyzeVideoResponse = {
     subtitleResults: SubtitleResult[]
 }
 
+type AnalysisStatus = {
+    stage: 'idle' | 'lockAcquired' | 'audioExtracted' | 'sttCompleted' | 'analysisComplete' | 'lockChecking'
+    message: string
+    progress: number
+}
+
 interface Props {
     video: VideoResponse
     analysisData: AnalyzeVideoResponse | null
     onBack: () => void
     isLoading: boolean
+    analysisStatus: AnalysisStatus
 }
 
 function parseTimeToSeconds(time: string) {
@@ -40,7 +47,13 @@ function parseTimeToSeconds(time: string) {
     return parseInt(h) * 3600 + parseInt(m) * 60 + parseFloat(s)
 }
 
-function VideoLearning({ video, analysisData: initialAnalysisData, onBack, isLoading: initialIsLoading }: Props) {
+function VideoLearning({
+    video,
+    analysisData: initialAnalysisData,
+    onBack,
+    isLoading: initialIsLoading,
+    analysisStatus,
+}: Props) {
     const [fontSize, setFontSize] = useState(16)
     const [analysisData, setAnalysisData] = useState<AnalyzeVideoResponse | null>(initialAnalysisData)
     const [selectedSubtitle, setSelectedSubtitle] = useState<SubtitleResult | null>(null)
@@ -48,6 +61,8 @@ function VideoLearning({ video, analysisData: initialAnalysisData, onBack, isLoa
     const [showTranscript, setShowTranscript] = useState(true)
     const [isLoading, setIsLoading] = useState(initialIsLoading)
     const [currentTime, setCurrentTime] = useState(0)
+    const [isLoopMode, setIsLoopMode] = useState(false)
+    const [loopInterval, setLoopInterval] = useState<NodeJS.Timeout | null>(null)
     const playerRef = useRef<HTMLIFrameElement | null>(null)
     const playerStateRef = useRef<any>(null)
 
@@ -230,13 +245,42 @@ function VideoLearning({ video, analysisData: initialAnalysisData, onBack, isLoa
         }
     }
 
+    // 구간 반복 처리
+    useEffect(() => {
+        if (isLoopMode && selectedSubtitle?.startTime) {
+            const startTime = parseTimeToSeconds(selectedSubtitle.startTime)
+            const endTime = selectedSubtitle.endTime ? parseTimeToSeconds(selectedSubtitle.endTime) : startTime + 10
+
+            // 현재 시간이 구간을 벗어났는지 체크하는 인터벌 설정
+            const interval = setInterval(() => {
+                if (playerStateRef.current && playerStateRef.current.getCurrentTime) {
+                    const currentTime = playerStateRef.current.getCurrentTime()
+                    if (currentTime >= endTime) {
+                        playerStateRef.current.seekTo(startTime, true)
+                    }
+                }
+            }, 1000)
+
+            setLoopInterval(interval)
+            return () => clearInterval(interval)
+        } else if (loopInterval) {
+            clearInterval(loopInterval)
+            setLoopInterval(null)
+        }
+    }, [isLoopMode, selectedSubtitle])
+
     // VideoTab에 전달할 props
     const videoTabProps = {
         fontSize,
         selectedSubtitle: selectedSubtitle && {
             original: selectedSubtitle.original || '',
             transcript: selectedSubtitle.transcript || '',
-            keywords: selectedSubtitle.keywords || [],
+            keywords:
+                selectedSubtitle.keywords?.map((keyword) => ({
+                    ...keyword,
+                    subtitleId: selectedSubtitle.subtitleId,
+                    videoId: video.videoId!,
+                })) || [],
             subtitleId: selectedSubtitle.subtitleId,
         },
         selectedTab,
@@ -258,7 +302,7 @@ function VideoLearning({ video, analysisData: initialAnalysisData, onBack, isLoa
             <div className="flex flex-col gap-2 flex-1 overflow-hidden">
                 {/* 비디오 + 트랜스크립트 */}
                 <div className="flex flex-row gap-4 w-full h-[calc(100%-240px)]">
-                    <div className="w-full aspect-video bg-gray-300 rounded-sm overflow-hidden">
+                    <div className="w-full aspect-video bg-gray-300 rounded-sm overflow-hidden relative">
                         <iframe
                             ref={playerRef}
                             src={`https://www.youtube-nocookie.com/embed/${video.videoId}?enablejsapi=1&rel=0&modestbranding=1`}
@@ -276,6 +320,9 @@ function VideoLearning({ video, analysisData: initialAnalysisData, onBack, isLoa
                         isLoading={isLoading}
                         currentTime={currentTime}
                         selectedSubtitle={selectedSubtitle}
+                        analysisStatus={analysisStatus}
+                        isLoopMode={isLoopMode}
+                        setIsLoopMode={setIsLoopMode}
                     />
                 </div>
 

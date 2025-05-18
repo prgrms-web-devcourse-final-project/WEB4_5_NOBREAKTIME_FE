@@ -3,7 +3,7 @@
 import WordIcon from '@/components/icon/wordIcon'
 import Image from 'next/image'
 import { useParams, useSearchParams } from 'next/navigation'
-import { useEffect, useRef, useState } from 'react'
+import { useEffect, useState } from 'react'
 import client from '@/lib/backend/client'
 import QuizComplete from '@/components/learning/Quiz/QuizComplete'
 import { components } from '@/lib/backend/apiV1/schema'
@@ -12,7 +12,7 @@ type WordQuizItem = components['schemas']['WordQuizItem']
 
 interface WordQuizItemWithIds extends WordQuizItem {
     quizId: number
-    wordQuizItemId: number
+    wordbookItemId: number
     word: string
     question: string
     original: string
@@ -30,8 +30,9 @@ export default function WordQuiz() {
     const [isLoading, setIsLoading] = useState(true)
     const [index, setIndex] = useState(0)
     const [userInputs, setUserInputs] = useState<string[]>([])
-    const [hintCounts, setHintCounts] = useState<number[]>([])
     const [quizResults, setQuizResults] = useState<(boolean | null)[]>([])
+    const [hintCounts, setHintCounts] = useState<number[]>([])
+    const [showButtons, setShowButtons] = useState<boolean[]>([])
     const maxHint = 3
 
     // 퀴즈 데이터 불러오기
@@ -50,10 +51,8 @@ export default function WordQuiz() {
 
                 if (response.data?.code === '200' && response.data?.data) {
                     const quizData = response.data.data
-                    console.log('퀴즈 데이터:', {
-                        quizId: quizData.quizId,
-                        quizItems: quizData.quizItems,
-                    })
+                    console.log('단어 퀴즈 데이터:', quizData)
+                    console.log('퀴즈 아이템:', quizData.quizItems)
 
                     const wordsWithIds = (quizData.quizItems || []).map((item) => ({
                         word: item.word || '',
@@ -61,14 +60,17 @@ export default function WordQuiz() {
                         question: item.question || '',
                         original: item.original || '',
                         quizId: quizData.quizId,
-                        wordQuizItemId: item.wordQuizItemId || 0,
+                        wordbookItemId: item.wordbookItemId || 0,
                     })) as WordQuizItemWithIds[]
+
+                    console.log('가공된 퀴즈 데이터:', wordsWithIds)
 
                     setOriginalWords(wordsWithIds)
                     setWords(wordsWithIds)
                     setUserInputs(new Array(wordsWithIds.length).fill(''))
-                    setHintCounts(new Array(wordsWithIds.length).fill(0))
                     setQuizResults(new Array(wordsWithIds.length).fill(null))
+                    setHintCounts(new Array(wordsWithIds.length).fill(0))
+                    setShowButtons(new Array(wordsWithIds.length).fill(false))
                 }
 
                 setIsLoading(false)
@@ -88,14 +90,12 @@ export default function WordQuiz() {
         try {
             const savePromises = words
                 .map((word, idx) => {
-                    // null이 아닌 모든 결과(정답/오답) 저장
                     if (quizResults[idx] !== null) {
                         const params = {
                             quizId: word.quizId,
-                            wordbookItemId: word.wordQuizItemId,
+                            wordbookItemId: word.wordbookItemId,
                             isCorrect: quizResults[idx],
                         }
-                        console.log('퀴즈 결과 저장 파라미터:', params)
                         return client.POST('/api/v1/wordbooks/quiz/result', {
                             body: params,
                         })
@@ -105,72 +105,105 @@ export default function WordQuiz() {
                 .filter(Boolean)
 
             await Promise.all(savePromises)
-            console.log('모든 결과 저장 완료')
         } catch (error) {
             console.error('결과 저장 실패:', error)
         }
     }
 
+    const getHintPlaceholder = (index: number) => {
+        if (hintCounts[index] === 0) return ''
+
+        const word = words[index].word
+        if (!word) return ''
+
+        const oneThird = Math.ceil(word.length / 3)
+        const hintLength = Math.min(oneThird * hintCounts[index], word.length)
+
+        // 단어의 1/3씩만 보여줌
+        return word.slice(0, hintLength)
+    }
+
     const handleHint = async () => {
-        if (hintCounts[index] >= maxHint || quizResults[index] !== null) return
+        if (hintCounts[index] >= maxHint) return
 
-        // 마지막 힌트(정답 보기)를 사용하는 경우
-        if (hintCounts[index] === maxHint - 1) {
-            const newUserInputs = [...userInputs]
-            newUserInputs[index] = words[index].word
-            setUserInputs(newUserInputs)
+        // 힌트 카운트 증가
+        const newHintCounts = [...hintCounts]
+        newHintCounts[index] = hintCounts[index] + 1
+        setHintCounts(newHintCounts)
 
-            const newHintCounts = [...hintCounts]
-            newHintCounts[index] = hintCounts[index] + 1
-            setHintCounts(newHintCounts)
+        // 사용자 입력 초기화
+        const newUserInputs = [...userInputs]
+        newUserInputs[index] = ''
+        setUserInputs(newUserInputs)
 
-            saveQuizResult(index, false)
-            return
-        }
+        // 힌트를 한 번이라도 사용하면 오답 처리
+        if (newHintCounts[index] === 1) {
+            const newQuizResults = [...quizResults]
+            newQuizResults[index] = false
+            setQuizResults(newQuizResults)
 
-        // 힌트 사용 시 다음 글자 하나 보여주기
-        const answer = words[index].word
-        const currentInput = userInputs[index]
-        let matchLength = 0
-        for (let i = 0; i < currentInput.length && i < answer.length; i++) {
-            if (currentInput[i] === answer[i]) {
-                matchLength++
-            } else {
-                break
+            // 서버에 오답 결과 저장
+            try {
+                await client.POST('/api/v1/wordbooks/quiz/result', {
+                    body: {
+                        quizId: words[index].quizId,
+                        wordbookItemId: words[index].wordbookItemId,
+                        isCorrect: false,
+                    },
+                })
+            } catch (error) {
+                console.error('힌트 사용으로 인한 오답 처리 중 오류:', error)
             }
-        }
-
-        if (matchLength < answer.length) {
-            const newInput = answer.slice(0, matchLength + 1)
-            const newUserInputs = [...userInputs]
-            newUserInputs[index] = newInput
-            setUserInputs(newUserInputs)
-
-            const newHintCounts = [...hintCounts]
-            newHintCounts[index] = hintCounts[index] + 1
-            setHintCounts(newHintCounts)
         }
     }
 
     const handleInputChange = (e: React.ChangeEvent<HTMLInputElement>) => {
-        if (quizResults[index] !== null || hintCounts[index] >= maxHint) return
+        // 정답을 맞췄거나 이동 버튼이 표시된 상태면 입력 불가
+        if (quizResults[index] === true || showButtons[index]) return
+
         const newUserInputs = [...userInputs]
         newUserInputs[index] = e.target.value
         setUserInputs(newUserInputs)
     }
 
     const handleKeyDown = async (e: React.KeyboardEvent<HTMLInputElement>) => {
-        if (e.key === 'Enter' && quizResults[index] === null && hintCounts[index] < maxHint) {
+        if (e.key === 'Enter') {
             const isAnswerCorrect = userInputs[index].toLowerCase() === (words[index].word || '').toLowerCase()
 
-            // 오답인 경우 정답 표시
-            if (!isAnswerCorrect) {
-                const newUserInputs = [...userInputs]
-                newUserInputs[index] = words[index].word
-                setUserInputs(newUserInputs)
-            }
+            if (hintCounts[index] === 0) {
+                // 힌트를 사용하지 않은 경우
+                if (isAnswerCorrect) {
+                    // 정답 처리
+                    saveQuizResult(index, true)
+                    const newShowButtons = [...showButtons]
+                    newShowButtons[index] = true
+                    setShowButtons(newShowButtons)
+                } else {
+                    // 오답 처리
+                    const newQuizResults = [...quizResults]
+                    newQuizResults[index] = false
+                    setQuizResults(newQuizResults)
 
-            saveQuizResult(index, isAnswerCorrect)
+                    // 서버에 오답 결과 저장
+                    try {
+                        await client.POST('/api/v1/wordbooks/quiz/result', {
+                            body: {
+                                quizId: words[index].quizId,
+                                wordbookItemId: words[index].wordbookItemId,
+                                isCorrect: false,
+                            },
+                        })
+                    } catch (error) {
+                        console.error('오답 처리 중 오류:', error)
+                    }
+                }
+            } else if (isAnswerCorrect) {
+                // 힌트를 사용한 상태에서 정답을 맞춘 경우
+                // 이동 버튼 표시
+                const newShowButtons = [...showButtons]
+                newShowButtons[index] = true
+                setShowButtons(newShowButtons)
+            }
         }
     }
 
@@ -213,7 +246,7 @@ export default function WordQuiz() {
         const newLength = incorrectWords.length || originalWords.length
         setQuizResults(new Array(newLength).fill(null))
         setUserInputs(new Array(newLength).fill(''))
-        setHintCounts(new Array(newLength).fill(0))
+        setShowButtons(new Array(newLength).fill(false))
     }
 
     const restartQuiz = () => {
@@ -221,7 +254,7 @@ export default function WordQuiz() {
         setIndex(0)
         setQuizResults(new Array(originalWords.length).fill(null))
         setUserInputs(new Array(originalWords.length).fill(''))
-        setHintCounts(new Array(originalWords.length).fill(0))
+        setShowButtons(new Array(originalWords.length).fill(false))
     }
 
     if (isLoading) {
@@ -278,8 +311,8 @@ export default function WordQuiz() {
     const current = words[index]
     const getResultIcon = () => {
         if (quizResults[index] === true) return '/assets/ok.svg'
-        if (quizResults[index] === false) return '/assets/fail.svg'
-        if (hintCounts[index] >= maxHint - 1) return '/assets/answer.svg'
+        if (hintCounts[index] >= maxHint) return '/assets/fail.svg'
+        if (hintCounts[index] === maxHint - 1) return '/assets/check.svg'
         return '/assets/hint.svg'
     }
 
@@ -314,14 +347,15 @@ export default function WordQuiz() {
                         value={userInputs[index]}
                         onChange={handleInputChange}
                         onKeyDown={handleKeyDown}
+                        placeholder={getHintPlaceholder(index)}
                         className={`w-44 min-w-[140px] h-[50px] text-2xl text-center rounded-md bg-[#ECEAFC] border-2 border-[#D1CFFA] focus:outline-none focus:border-[var(--color-main)] ${
                             quizResults[index] === true
                                 ? 'text-green-500 border-green-500 bg-green-100'
-                                : quizResults[index] === false || hintCounts[index] >= maxHint
-                                ? 'text-red-500 border-red-500 bg-red-100'
-                                : ''
-                        }`}
-                        readOnly={quizResults[index] !== null || hintCounts[index] >= maxHint}
+                                : quizResults[index] === false
+                                ? 'text-[var(--color-black)] border-red-500 bg-red-100'
+                                : 'text-[var(--color-black)]'
+                        } placeholder-gray-400`}
+                        readOnly={quizResults[index] === true || showButtons[index]}
                     />
                     <span className="break-keep">{parts[1]}</span>
                 </div>
@@ -351,52 +385,62 @@ export default function WordQuiz() {
 
                     <div className="flex flex-col items-center gap-2">
                         <button
-                            className="w-18 h-18 disabled:opacity-50"
+                            className="w-18 h-18 disabled:opacity-50 relative group"
                             onClick={handleHint}
-                            disabled={hintCounts[index] >= maxHint || quizResults[index] !== null}
+                            disabled={hintCounts[index] >= maxHint || quizResults[index] === true || showButtons[index]}
                         >
+                            {hintCounts[index] === 0 && (
+                                <div className="absolute invisible group-hover:visible bg-black text-white text-sm px-3 py-1 rounded -top-10 left-1/2 transform -translate-x-1/2 whitespace-nowrap">
+                                    힌트를 쓰면 틀린 것으로 간주됩니다
+                                </div>
+                            )}
                             <Image src={getResultIcon()} alt="result" width={80} height={80} />
                         </button>
                         <p className="text-sm text-gray-500">
-                            {hintCounts[index] >= maxHint - 1
-                                ? '정답 보기'
+                            {quizResults[index] === true
+                                ? '정답'
+                                : hintCounts[index] >= maxHint
+                                ? '오답'
                                 : `힌트 사용: ${hintCounts[index]} / ${maxHint}`}
                         </p>
                     </div>
 
                     <div className="flex gap-2 w-full">
-                        <button
-                            onClick={handlePrev}
-                            className="flex-1 flex items-center justify-center bg-[var(--color-sub-2)] border-[var(--color-main)] border-2 rounded-sm disabled:opacity-50"
-                            disabled={index === 0}
-                        >
-                            <Image src="/assets/left.svg" alt="left" width={40} height={40} />
-                        </button>
-                        {index === words.length - 1 ? (
-                            <button
-                                onClick={() => {
-                                    // 풀지 않은 문제들을 오답으로 처리
-                                    const newQuizResults = [...quizResults]
-                                    for (let i = 0; i < newQuizResults.length; i++) {
-                                        if (newQuizResults[i] === null) {
-                                            newQuizResults[i] = false
-                                        }
-                                    }
-                                    console.log('퀴즈 최종 결과:', newQuizResults)
-                                    setQuizResults(newQuizResults)
-                                }}
-                                className="flex-1 flex items-center justify-center bg-[var(--color-main)] text-white font-bold py-2 rounded-sm"
-                            >
-                                결과 제출
-                            </button>
-                        ) : (
-                            <button
-                                onClick={handleNext}
-                                className="flex-1 flex items-center justify-center bg-[var(--color-sub-2)] border-[var(--color-main)] border-2 rounded-sm disabled:opacity-50"
-                                disabled={index === words.length - 1}
-                            >
-                                <Image src="/assets/right.svg" alt="right" width={40} height={40} />
-                            </button>
+                        {/* 정답을 맞췄거나, 오답 상태에서 정답을 입력했을 때 이동 버튼 표시 */}
+                        {(quizResults[index] === true || showButtons[index]) && (
+                            <>
+                                <button
+                                    onClick={handlePrev}
+                                    className="flex-1 flex items-center justify-center bg-[var(--color-sub-2)] border-[var(--color-main)] border-2 rounded-sm disabled:opacity-50"
+                                    disabled={index === 0}
+                                >
+                                    <Image src="/assets/left.svg" alt="left" width={40} height={40} />
+                                </button>
+                                {index === words.length - 1 ? (
+                                    <button
+                                        onClick={() => {
+                                            const newQuizResults = [...quizResults]
+                                            for (let i = 0; i < newQuizResults.length; i++) {
+                                                if (newQuizResults[i] === null) {
+                                                    newQuizResults[i] = false
+                                                }
+                                            }
+                                            setQuizResults(newQuizResults)
+                                        }}
+                                        className="flex-1 flex items-center justify-center bg-[var(--color-main)] text-white font-bold py-2 rounded-sm"
+                                    >
+                                        결과 제출
+                                    </button>
+                                ) : (
+                                    <button
+                                        onClick={handleNext}
+                                        className="flex-1 flex items-center justify-center bg-[var(--color-sub-2)] border-[var(--color-main)] border-2 rounded-sm disabled:opacity-50"
+                                        disabled={index === words.length - 1}
+                                    >
+                                        <Image src="/assets/right.svg" alt="right" width={40} height={40} />
+                                    </button>
+                                )}
+                            </>
                         )}
                     </div>
                 </div>
