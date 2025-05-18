@@ -63,25 +63,19 @@ export default function BillingWidget({ amount, subscriptionType }: BillingWidge
         if (!billingWidget || !loginMember.email || !loginMember.nickname) return
 
         try {
-            const { error: requestError, data: requestData } = await client.POST<
-                PaymentRequestResponse,
-                PaymentRequestBody
-            >('/api/v1/payment/request', {
-                body: {
-                    type: subscriptionType,
-                    period: 'MONTHLY',
-                },
+            const { error: requestError, data: requestData } = await client.POST('/api/v1/payment/request', {
+                body: { type: subscriptionType, period: 'MONTHLY' },
             })
 
             if (requestError || !requestData) throw requestError || new Error('결제 요청 실패')
 
-            const { orderId } = requestData.data
+            const { orderId } = (requestData as { data?: { orderId?: string } }).data || {}
 
             const successUrl = new URL('/membership/success', window.location.origin)
             const failUrl = new URL('/membership/fail', window.location.origin)
 
             const commonParams = {
-                orderId,
+                orderId: orderId ?? '',
                 amount: amount.value.toString(),
                 subscriptionType,
                 periodType: 'MONTHLY',

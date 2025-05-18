@@ -74,14 +74,18 @@ export default function PaymentsWidget({ amount, subscriptionType, periodType }:
 
             if (requestError || !requestData) throw requestError || new Error('결제 요청 실패')
 
-            const { orderId, orderName, amount: responseAmount } = requestData.data
+            const {
+                orderId,
+                orderName,
+                amount: responseAmount,
+            } = (requestData as { data?: { orderId?: string; orderName?: string; amount?: number } }).data || {}
 
             const successUrl = new URL('/membership/success', window.location.origin)
             const failUrl = new URL('/membership/fail', window.location.origin)
 
             const commonParams = {
-                orderId,
-                amount: responseAmount.toString(),
+                orderId: orderId ?? '',
+                amount: (responseAmount ?? '').toString(),
                 subscriptionType,
                 periodType,
             }
@@ -92,8 +96,8 @@ export default function PaymentsWidget({ amount, subscriptionType, periodType }:
             })
 
             await paymentsWidget.requestPayment({
-                orderId,
-                orderName,
+                orderId: orderId ?? '',
+                orderName: orderName ?? '',
                 successUrl: successUrl.toString(),
                 failUrl: failUrl.toString(),
                 customerName: loginMember.nickname,
