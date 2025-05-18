@@ -1,63 +1,85 @@
 'use client'
 
-import { components } from '@/lib/backend/apiV1/schema'
 import client from '@/lib/backend/client'
-import { useSearchParams } from 'next/navigation'
+import { useRouter, useSearchParams } from 'next/navigation'
 import { useEffect, useState } from 'react'
 
-type PaymentFailureRequest = components['schemas']['PaymentFailureRequest']
+interface PaymentError {
+    status?: number
+    message?: string
+}
 
 export default function FailPage() {
     const searchParams = useSearchParams()
-    const [isProcessing, setIsProcessing] = useState(true)
+    const router = useRouter()
+    const [errorMessage, setErrorMessage] = useState<string>('')
 
     useEffect(() => {
         async function handlePaymentFail() {
+            const orderId = searchParams.get('orderId')
+            const errorCode = searchParams.get('error')
+            const isBillingKey = searchParams.get('isBillingKey') === 'true'
+            const subscriptionType = searchParams.get('subscriptionType')
+            const periodType = searchParams.get('periodType')
+
+            if (!orderId) {
+                setErrorMessage('주문 정보를 찾을 수 없습니다.')
+                return
+            }
+
             try {
-                const { error } = await client.POST('/api/v1/payment/fail', {
+                // 빌링키 발급과 일반 결제 구분하여 처리
+                const endpoint = isBillingKey ? '/api/v1/payment/fail/issue-billing-key' : '/api/v1/payment/fail'
+
+                const { error } = await client.POST(endpoint, {
                     body: {
-                        code: searchParams.get('code') || undefined,
-                        message: searchParams.get('message') || undefined,
-                        orderId: searchParams.get('orderId') || '',
-                    } as PaymentFailureRequest,
+                        orderId,
+                        errorCode,
+                        subscriptionType,
+                        periodType,
+                    },
                 })
 
                 if (error) {
-                    throw new Error(error.message)
+                    throw error
                 }
-            } catch (err) {
-                console.error('결제 실패 처리 중 오류 발생:', err)
-            } finally {
-                setIsProcessing(false)
+
+                // 에러 메시지 설정
+                switch (errorCode) {
+                    case 'duplicate_payment':
+                        setErrorMessage('이미 처리된 결제입니다.')
+                        break
+                    case 'card_error':
+                        setErrorMessage('카드 정보가 올바르지 않습니다.')
+                        break
+                    case 'insufficient_funds':
+                        setErrorMessage('잔액이 부족합니다.')
+                        break
+                    case 'expired_card':
+                        setErrorMessage('만료된 카드입니다.')
+                        break
+                    case 'cancelled':
+                        setErrorMessage('결제가 취소되었습니다.')
+                        break
+                    default:
+                        setErrorMessage('결제 처리 중 오류가 발생했습니다.')
+                }
+            } catch (e) {
+                console.error('결제 실패 처리 중 오류가 발생했습니다:', e)
+                const paymentError = e as PaymentError
+                setErrorMessage(paymentError.message || '결제 실패 처리 중 오류가 발생했습니다.')
             }
         }
 
         handlePaymentFail()
     }, [searchParams])
 
-    const errorCode = searchParams.get('code')
-    const errorMessage = searchParams.get('message') || '결제 처리 중 오류가 발생했습니다.'
-
-    if (isProcessing) {
-        return (
-            <div className="flex min-h-screen items-center justify-center">
-                <div className="text-center">
-                    <h1 className="text-2xl font-bold text-[var(--color-main)] mb-4">처리 중...</h1>
-                    <p className="text-[var(--color-sub)]">잠시만 기다려주세요.</p>
-                </div>
-            </div>
-        )
-    }
-
     return (
         <div className="flex min-h-screen items-center justify-center">
             <div className="text-center">
                 <h1 className="text-2xl font-bold text-red-500 mb-4">결제 실패</h1>
-                {errorCode && <p className="text-sm text-gray-500 mb-2">에러 코드: {errorCode}</p>}
                 <p className="text-[var(--color-sub)] mb-4">{errorMessage}</p>
-                <p className="text-sm text-gray-500 mb-8">
-                    결제에 실패했습니다. 다시 시도하시거나 다른 결제 수단을 이용해주세요.
-                </p>
+                <p className="text-sm text-gray-500 mb-8">문제가 지속되면 고객센터로 문의해주세요.</p>
                 <a
                     href="/membership"
                     className="inline-block px-6 py-3 bg-[var(--color-point)] text-white rounded-lg hover:bg-opacity-90 transition-colors"

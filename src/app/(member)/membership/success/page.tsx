@@ -20,6 +20,10 @@ export default function SuccessPage() {
             const orderId = searchParams.get('orderId')
             const paymentKey = searchParams.get('paymentKey')
             const amount = searchParams.get('amount')
+            const isBillingKey = searchParams.get('isBillingKey') === 'true'
+            const subscriptionType = searchParams.get('subscriptionType')
+            const periodType = searchParams.get('periodType')
+            const authKey = searchParams.get('authKey')
 
             // 로컬 스토리지에서 idempotencyKey 가져오기
             let idempotencyKey = localStorage.getItem('payment_idempotency_key')
@@ -30,21 +34,49 @@ export default function SuccessPage() {
                 localStorage.setItem('payment_idempotency_key', idempotencyKey)
             }
 
-            if (!orderId || !paymentKey || !amount || !idempotencyKey) {
+            if (!orderId || !amount || !idempotencyKey || !subscriptionType || !periodType) {
                 setErrorMessage('필수 결제 정보가 누락되었습니다.')
                 setStatus('error')
                 return
             }
 
+            // 빌링키 발급의 경우 authKey가 필요
+            if (isBillingKey && !authKey) {
+                setErrorMessage('카드 인증 정보가 누락되었습니다.')
+                setStatus('error')
+                return
+            }
+
+            // 일반 결제의 경우 paymentKey가 필요
+            if (!isBillingKey && !paymentKey) {
+                setErrorMessage('결제 정보가 누락되었습니다.')
+                setStatus('error')
+                return
+            }
+
             try {
-                const { error, data } = await client.POST('/api/v1/payment/confirm', {
-                    body: {
-                        paymentKey,
-                        orderId,
-                        amount: Number(amount),
-                        idempotencyKey,
-                    },
+                // 빌링키 발급과 일반 결제 구분하여 처리
+                const endpoint = isBillingKey ? '/api/v1/payment/confirm/issue-billing-key' : '/api/v1/payment/confirm'
+
+                const requestBody = isBillingKey
+                    ? {
+                          customerKey: idempotencyKey,
+                          authKey,
+                          orderId,
+                          orderName: `${subscriptionType} 멤버십 ${periodType} 구독`,
+                          amount: Number(amount),
+                      }
+                    : {
+                          idempotencyKey,
+                          paymentKey,
+                          amount: Number(amount),
+                          orderId,
+                      }
+
+                const response = await client.POST(endpoint, {
+                    body: requestBody,
                 })
+                const { error, data } = response
 
                 // 결제 성공 후 idempotencyKey 삭제
                 localStorage.removeItem('payment_idempotency_key')
@@ -57,6 +89,10 @@ export default function SuccessPage() {
                         return
                     }
                     throw error
+                }
+
+                if (!data) {
+                    throw new Error('결제 승인 응답이 없습니다.')
                 }
 
                 setStatus('success')
@@ -81,7 +117,7 @@ export default function SuccessPage() {
         if (status === 'success') {
             const timer = setTimeout(() => {
                 router.push('/dashboard')
-            }, 2000) // 2초 후 리다이렉트
+            }, 2000)
 
             return () => clearTimeout(timer)
         }

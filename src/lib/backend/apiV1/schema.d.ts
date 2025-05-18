@@ -4,1069 +4,1069 @@
  */
 
 export interface paths {
-    '/send': {
+    "/send": {
         parameters: {
-            query?: never
-            header?: never
-            path?: never
-            cookie?: never
-        }
-        get?: never
-        put?: never
-        post: operations['sendSlackMessage']
-        delete?: never
-        options?: never
-        head?: never
-        patch?: never
-        trace?: never
-    }
-    '/api/v1/wordbooks': {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get?: never;
+        put?: never;
+        post: operations["sendSlackMessage"];
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/api/v1/wordbooks": {
         parameters: {
-            query?: never
-            header?: never
-            path?: never
-            cookie?: never
-        }
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
         /**
          * 단어장 목록 조회
          * @description 로그인한 사용자의 모든 단어장을 조회합니다.
          */
-        get: operations['getWordbooks']
-        put?: never
+        get: operations["getWordbooks"];
+        put?: never;
         /**
          * 단어장 생성
          * @description 추가 단어장을 생성합니다.
          */
-        post: operations['createWordbook']
-        delete?: never
-        options?: never
-        head?: never
-        patch?: never
-        trace?: never
-    }
-    '/api/v1/wordbooks/{wordbookId}/words': {
+        post: operations["createWordbook"];
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/api/v1/wordbooks/{wordbookId}/words": {
         parameters: {
-            query?: never
-            header?: never
-            path?: never
-            cookie?: never
-        }
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
         /**
          * 단어 목록 조회
          * @description 특정 단어장의 단어 목록을 무작위로 조회합니다.
          */
-        get: operations['getWords']
-        put?: never
+        get: operations["getWords"];
+        put?: never;
         /**
          * 영상 학습 중 단어 추가
          * @description 영상 학습 중 1개 이상의 단어를 추가합니다.
          */
-        post: operations['addWords']
-        delete?: never
-        options?: never
-        head?: never
-        patch?: never
-        trace?: never
-    }
-    '/api/v1/wordbooks/{wordbookId}/words/custom': {
+        post: operations["addWords"];
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/api/v1/wordbooks/{wordbookId}/words/custom": {
         parameters: {
-            query?: never
-            header?: never
-            path?: never
-            cookie?: never
-        }
-        get?: never
-        put?: never
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get?: never;
+        put?: never;
         /**
          * 사용자 정의 단어 추가
          * @description 회원이 직접 입력한 단어를 추가합니다.
          */
-        post: operations['addWordCustom']
-        delete?: never
-        options?: never
-        head?: never
-        patch?: never
-        trace?: never
-    }
-    '/api/v1/wordbooks/words/delete': {
+        post: operations["addWordCustom"];
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/api/v1/wordbooks/words/delete": {
         parameters: {
-            query?: never
-            header?: never
-            path?: never
-            cookie?: never
-        }
-        get?: never
-        put?: never
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get?: never;
+        put?: never;
         /**
          * 단어 일괄 삭제
          * @description 단어장을 선택하여 단어들을 일괄 삭제합니다.
          */
-        post: operations['deleteWords']
-        delete?: never
-        options?: never
-        head?: never
-        patch?: never
-        trace?: never
-    }
-    '/api/v1/wordbooks/quiz/total/result': {
+        post: operations["deleteWords"];
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/api/v1/wordbooks/quiz/total/result": {
         parameters: {
-            query?: never
-            header?: never
-            path?: never
-            cookie?: never
-        }
-        get?: never
-        put?: never
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get?: never;
+        put?: never;
         /**
          * 통합 퀴즈 결과 저장
          * @description 통합(오늘의 학습) 퀴즈 결과를 저장합니다.
          */
-        post: operations['saveWordbookTotalQuizResult']
-        delete?: never
-        options?: never
-        head?: never
-        patch?: never
-        trace?: never
-    }
-    '/api/v1/wordbooks/quiz/result': {
+        post: operations["saveWordbookTotalQuizResult"];
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/api/v1/wordbooks/quiz/result": {
         parameters: {
-            query?: never
-            header?: never
-            path?: never
-            cookie?: never
-        }
-        get?: never
-        put?: never
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get?: never;
+        put?: never;
         /**
          * 단어장 퀴즈 결과 저장
          * @description 단어장 아이템에 대한 퀴즈 결과를 저장합니다.
          */
-        post: operations['saveWordbookQuizResult']
-        delete?: never
-        options?: never
-        head?: never
-        patch?: never
-        trace?: never
-    }
-    '/api/v1/payment/request': {
+        post: operations["saveWordbookQuizResult"];
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/api/v1/payment/request": {
         parameters: {
-            query?: never
-            header?: never
-            path?: never
-            cookie?: never
-        }
-        get?: never
-        put?: never
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get?: never;
+        put?: never;
         /**
          * 결제 요청 정보 생성
          * @description 로그인한 회원의 정보와 결제 요청 데이터를 받아 결제 요청 정보를 생성합니다.
          */
-        post: operations['createPaymentRequest']
-        delete?: never
-        options?: never
-        head?: never
-        patch?: never
-        trace?: never
-    }
-    '/api/v1/payment/fail': {
+        post: operations["createPaymentRequest"];
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/api/v1/payment/fail": {
         parameters: {
-            query?: never
-            header?: never
-            path?: never
-            cookie?: never
-        }
-        get?: never
-        put?: never
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get?: never;
+        put?: never;
         /**
          * 결제 승인 실패 처리
          * @description 결제 요청에 실패한 경우 결제 상태를 ABORTED로 변경하고 실패 로그를 기록합니다.
          */
-        post: operations['failedPayment']
-        delete?: never
-        options?: never
-        head?: never
-        patch?: never
-        trace?: never
-    }
-    '/api/v1/payment/fail/issue-billing-key': {
+        post: operations["failedPayment"];
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/api/v1/payment/fail/issue-billing-key": {
         parameters: {
-            query?: never
-            header?: never
-            path?: never
-            cookie?: never
-        }
-        get?: never
-        put?: never
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get?: never;
+        put?: never;
         /**
          * 빌링 키 발급 실패 처리
          * @description 카드 인증 실패 시 결제 상태를 중단 상태로 변경하는 API
          */
-        post: operations['failedBillingPayment']
-        delete?: never
-        options?: never
-        head?: never
-        patch?: never
-        trace?: never
-    }
-    '/api/v1/payment/confirm': {
+        post: operations["failedBillingPayment"];
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/api/v1/payment/confirm": {
         parameters: {
-            query?: never
-            header?: never
-            path?: never
-            cookie?: never
-        }
-        get?: never
-        put?: never
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get?: never;
+        put?: never;
         /**
          * 결제 요청 성공 이후 결제 승인 로직
          * @description 결제 승인 요청을 전송하고, 결제 상태를 업데이트하며, 권한 정보 및 JWT 토큰을 갱신합니다.
          */
-        post: operations['succeedPayment']
-        delete?: never
-        options?: never
-        head?: never
-        patch?: never
-        trace?: never
-    }
-    '/api/v1/payment/confirm/issue-billing-key': {
+        post: operations["succeedPayment"];
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/api/v1/payment/confirm/issue-billing-key": {
         parameters: {
-            query?: never
-            header?: never
-            path?: never
-            cookie?: never
-        }
-        get?: never
-        put?: never
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get?: never;
+        put?: never;
         /**
          * 빌링 키 발급 및 결제 처리
          * @description 빌링 키 발급부터 자동 결제 승인까지의 전체 프로세스를 처리하는 API
          */
-        post: operations['succeedBillingPayment']
-        delete?: never
-        options?: never
-        head?: never
-        patch?: never
-        trace?: never
-    }
-    '/api/v1/members/check-nickname': {
+        post: operations["succeedBillingPayment"];
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/api/v1/members/check-nickname": {
         parameters: {
-            query?: never
-            header?: never
-            path?: never
-            cookie?: never
-        }
-        get?: never
-        put?: never
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get?: never;
+        put?: never;
         /**
          * 닉네임 중복 체크
          * @description 닉네임이 사용 가능한지 여부를 확인합니다.
          */
-        post: operations['checkNickname']
-        delete?: never
-        options?: never
-        head?: never
-        patch?: never
-        trace?: never
-    }
-    '/api/v1/members/check-email': {
+        post: operations["checkNickname"];
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/api/v1/members/check-email": {
         parameters: {
-            query?: never
-            header?: never
-            path?: never
-            cookie?: never
-        }
-        get?: never
-        put?: never
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get?: never;
+        put?: never;
         /**
          * 이메일 중복 체크
          * @description 이메일이 사용 가능한지 확인합니다.
          */
-        post: operations['checkEmail']
-        delete?: never
-        options?: never
-        head?: never
-        patch?: never
-        trace?: never
-    }
-    '/api/v1/expressionbooks': {
+        post: operations["checkEmail"];
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/api/v1/expressionbooks": {
         parameters: {
-            query?: never
-            header?: never
-            path?: never
-            cookie?: never
-        }
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
         /**
          * 표현함 목록 조회
          * @description 로그인한 회원의 표현함 목록을 조회합니다.
          */
-        get: operations['getAllByMember']
-        put?: never
+        get: operations["getAllByMember"];
+        put?: never;
         /**
          * 추가 표현함 생성
          * @description 추가 표현함 생성 요청을 처리합니다.
          */
-        post: operations['create']
-        delete?: never
-        options?: never
-        head?: never
-        patch?: never
-        trace?: never
-    }
-    '/api/v1/expressionbooks/{expressionBookId}/expressions': {
+        post: operations["create"];
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/api/v1/expressionbooks/{expressionBookId}/expressions": {
         parameters: {
-            query?: never
-            header?: never
-            path?: never
-            cookie?: never
-        }
-        get?: never
-        put?: never
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get?: never;
+        put?: never;
         /**
          * 표현함에 표현 저장
          * @description 새 표현을 분석하고 저장합니다.
          */
-        post: operations['saveExpression']
-        delete?: never
-        options?: never
-        head?: never
-        patch?: never
-        trace?: never
-    }
-    '/api/v1/expressionbooks/quiz/result': {
+        post: operations["saveExpression"];
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/api/v1/expressionbooks/quiz/result": {
         parameters: {
-            query?: never
-            header?: never
-            path?: never
-            cookie?: never
-        }
-        get?: never
-        put?: never
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get?: never;
+        put?: never;
         /**
          * 표현함 퀴즈 결과 저장
          * @description 표현함 아이템에 대한 퀴즈 결과를 저장합니다.
          */
-        post: operations['saveExpressionQuizResult']
-        delete?: never
-        options?: never
-        head?: never
-        patch?: never
-        trace?: never
-    }
-    '/api/v1/expressionbooks/expressions/delete': {
+        post: operations["saveExpressionQuizResult"];
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/api/v1/expressionbooks/expressions/delete": {
         parameters: {
-            query?: never
-            header?: never
-            path?: never
-            cookie?: never
-        }
-        get?: never
-        put?: never
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get?: never;
+        put?: never;
         /**
          * 표현 삭제
          * @description 특정 표현함에서 표현을 삭제합니다.
          */
-        post: operations['deleteExpressionsFromBook']
-        delete?: never
-        options?: never
-        head?: never
-        patch?: never
-        trace?: never
-    }
-    '/api/v1/dashboard/level': {
+        post: operations["deleteExpressionsFromBook"];
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/api/v1/dashboard/level": {
         parameters: {
-            query?: never
-            header?: never
-            path?: never
-            cookie?: never
-        }
-        get?: never
-        put?: never
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get?: never;
+        put?: never;
         /**
          * 학습 레벨 측정
          * @description 최근 퀴즈 결과에 대한 학습 레벨을 측정합니다.
          */
-        post: operations['levelCheck']
-        delete?: never
-        options?: never
-        head?: never
-        patch?: never
-        trace?: never
-    }
-    '/api/v1/bookmarks/{videoId}': {
+        post: operations["levelCheck"];
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/api/v1/bookmarks/{videoId}": {
         parameters: {
-            query?: never
-            header?: never
-            path?: never
-            cookie?: never
-        }
-        get?: never
-        put?: never
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get?: never;
+        put?: never;
         /**
          * 영상 북마크 추가
          * @description 특정 영상을 북마크에 추가합니다.
          */
-        post: operations['add']
+        post: operations["add"];
         /**
          * 영상 북마크 제거
          * @description 특정 영상을 북마크에서 제거합니다.
          */
-        delete: operations['remove']
-        options?: never
-        head?: never
-        patch?: never
-        trace?: never
-    }
-    '/api/v1/wordbooks/{wordbookId}': {
+        delete: operations["remove"];
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/api/v1/wordbooks/{wordbookId}": {
         parameters: {
-            query?: never
-            header?: never
-            path?: never
-            cookie?: never
-        }
-        get?: never
-        put?: never
-        post?: never
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get?: never;
+        put?: never;
+        post?: never;
         /**
          * 단어장 삭제
          * @description 특정 단어장을 삭제합니다.
          */
-        delete: operations['deleteWordbook']
-        options?: never
-        head?: never
+        delete: operations["deleteWordbook"];
+        options?: never;
+        head?: never;
         /**
          * 단어장 이름 변경
          * @description 단어장의 이름을 변경합니다.
          */
-        patch: operations['renameWordbook']
-        trace?: never
-    }
-    '/api/v1/wordbooks/words/move': {
+        patch: operations["renameWordbook"];
+        trace?: never;
+    };
+    "/api/v1/wordbooks/words/move": {
         parameters: {
-            query?: never
-            header?: never
-            path?: never
-            cookie?: never
-        }
-        get?: never
-        put?: never
-        post?: never
-        delete?: never
-        options?: never
-        head?: never
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get?: never;
+        put?: never;
+        post?: never;
+        delete?: never;
+        options?: never;
+        head?: never;
         /**
          * 단어 이동
          * @description 단어를 다른 단어장으로 이동합니다.
          */
-        patch: operations['moveWords']
-        trace?: never
-    }
-    '/api/v1/payment/cancel': {
+        patch: operations["moveWords"];
+        trace?: never;
+    };
+    "/api/v1/payment/cancel": {
         parameters: {
-            query?: never
-            header?: never
-            path?: never
-            cookie?: never
-        }
-        get?: never
-        put?: never
-        post?: never
-        delete?: never
-        options?: never
-        head?: never
-        patch: operations['cancelSubscription']
-        trace?: never
-    }
-    '/api/v1/members/update-language': {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get?: never;
+        put?: never;
+        post?: never;
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch: operations["cancelSubscription"];
+        trace?: never;
+    };
+    "/api/v1/members/update-language": {
         parameters: {
-            query?: never
-            header?: never
-            path?: never
-            cookie?: never
-        }
-        get?: never
-        put?: never
-        post?: never
-        delete?: never
-        options?: never
-        head?: never
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get?: never;
+        put?: never;
+        post?: never;
+        delete?: never;
+        options?: never;
+        head?: never;
         /**
          * 사용자 학습 언어 변경
          * @description 로그인한 사용자의 학습 언어를 변경합니다.
          */
-        patch: operations['updateUserLanguage']
-        trace?: never
-    }
-    '/api/v1/members/me': {
+        patch: operations["updateUserLanguage"];
+        trace?: never;
+    };
+    "/api/v1/members/me": {
         parameters: {
-            query?: never
-            header?: never
-            path?: never
-            cookie?: never
-        }
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
         /**
          * 내 정보 조회
          * @description 로그인한 사용자의 프로필 정보를 조회합니다.
          */
-        get: operations['getMyProfile']
-        put?: never
-        post?: never
+        get: operations["getMyProfile"];
+        put?: never;
+        post?: never;
         /**
          * 회원 탈퇴
          * @description 인증된 회원의 탈퇴 요청을 처리합니다.
          */
-        delete: operations['delete']
-        options?: never
-        head?: never
+        delete: operations["delete"];
+        options?: never;
+        head?: never;
         /**
          * 회원 정보 변경
          * @description 회원의 닉네임 / 이메일을 변경할 수 있습니다.
          */
-        patch: operations['changeMemberInformation']
-        trace?: never
-    }
-    '/api/v1/members/me/profile': {
+        patch: operations["changeMemberInformation"];
+        trace?: never;
+    };
+    "/api/v1/members/me/profile": {
         parameters: {
-            query?: never
-            header?: never
-            path?: never
-            cookie?: never
-        }
-        get?: never
-        put?: never
-        post?: never
-        delete?: never
-        options?: never
-        head?: never
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get?: never;
+        put?: never;
+        post?: never;
+        delete?: never;
+        options?: never;
+        head?: never;
         /**
          * 프로필 이미지 변경
          * @description 인증된 회원의 프로필 이미지를 변경합니다.
          */
-        patch: operations['changeProfileImage']
-        trace?: never
-    }
-    '/api/v1/expressionbooks/{expressionBookId}': {
+        patch: operations["changeProfileImage"];
+        trace?: never;
+    };
+    "/api/v1/expressionbooks/{expressionBookId}": {
         parameters: {
-            query?: never
-            header?: never
-            path?: never
-            cookie?: never
-        }
-        get?: never
-        put?: never
-        post?: never
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get?: never;
+        put?: never;
+        post?: never;
         /**
          * 표현함 삭제
          * @description 특정 추가 표현함을 삭제합니다.
          */
-        delete: operations['delete_1']
-        options?: never
-        head?: never
+        delete: operations["delete_1"];
+        options?: never;
+        head?: never;
         /**
          * 표현함 이름 수정
          * @description 특정 추가 표현함의 이름을 수정합니다.
          */
-        patch: operations['updateName']
-        trace?: never
-    }
-    '/api/v1/expressionbooks/expressions/move': {
+        patch: operations["updateName"];
+        trace?: never;
+    };
+    "/api/v1/expressionbooks/expressions/move": {
         parameters: {
-            query?: never
-            header?: never
-            path?: never
-            cookie?: never
-        }
-        get?: never
-        put?: never
-        post?: never
-        delete?: never
-        options?: never
-        head?: never
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get?: never;
+        put?: never;
+        post?: never;
+        delete?: never;
+        options?: never;
+        head?: never;
         /**
          * 표현 이동
          * @description 특정 표현함에서 다른 표현함으로 표현을 이동합니다.
          */
-        patch: operations['moveExpressionsBetweenBooks']
-        trace?: never
-    }
-    '/api/v1/dashboard/goal': {
+        patch: operations["moveExpressionsBetweenBooks"];
+        trace?: never;
+    };
+    "/api/v1/dashboard/goal": {
         parameters: {
-            query?: never
-            header?: never
-            path?: never
-            cookie?: never
-        }
-        get?: never
-        put?: never
-        post?: never
-        delete?: never
-        options?: never
-        head?: never
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get?: never;
+        put?: never;
+        post?: never;
+        delete?: never;
+        options?: never;
+        head?: never;
         /**
          * 학습 목표 설정
          * @description 영상 학습 목표, 단어 학습 목표를 설정합니다.
          */
-        patch: operations['updateGoal']
-        trace?: never
-    }
-    '/test/gpt': {
+        patch: operations["updateGoal"];
+        trace?: never;
+    };
+    "/test/gpt": {
         parameters: {
-            query?: never
-            header?: never
-            path?: never
-            cookie?: never
-        }
-        get: operations['testGptService']
-        put?: never
-        post?: never
-        delete?: never
-        options?: never
-        head?: never
-        patch?: never
-        trace?: never
-    }
-    '/api/v1/words/search': {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get: operations["testGptService"];
+        put?: never;
+        post?: never;
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/api/v1/words/search": {
         parameters: {
-            query?: never
-            header?: never
-            path?: never
-            cookie?: never
-        }
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
         /**
          * 단어 검색
          * @description 주어진 단어에 대한 품사, 해석, 난이도 정보를 조회합니다.
          */
-        get: operations['searchWord']
-        put?: never
-        post?: never
-        delete?: never
-        options?: never
-        head?: never
-        patch?: never
-        trace?: never
-    }
-    '/api/v1/wordbooks/{wordbookId}/quiz': {
+        get: operations["searchWord"];
+        put?: never;
+        post?: never;
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/api/v1/wordbooks/{wordbookId}/quiz": {
         parameters: {
-            query?: never
-            header?: never
-            path?: never
-            cookie?: never
-        }
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
         /**
          * 단어장 퀴즈 조회
          * @description 단어장에 대한 퀴즈를 요청합니다.
          */
-        get: operations['getWordbookQuiz']
-        put?: never
-        post?: never
-        delete?: never
-        options?: never
-        head?: never
-        patch?: never
-        trace?: never
-    }
-    '/api/v1/wordbooks/view': {
+        get: operations["getWordbookQuiz"];
+        put?: never;
+        post?: never;
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/api/v1/wordbooks/view": {
         parameters: {
-            query?: never
-            header?: never
-            path?: never
-            cookie?: never
-        }
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
         /**
          * 여러 단어장의 단어 목록 조회
          * @description 체크된 여러 단어장의 단어들을 등록 날짜 기준으로 정렬하여 조회합니다.
          */
-        get: operations['getWordbookItems']
-        put?: never
-        post?: never
-        delete?: never
-        options?: never
-        head?: never
-        patch?: never
-        trace?: never
-    }
-    '/api/v1/wordbooks/quiz/total': {
+        get: operations["getWordbookItems"];
+        put?: never;
+        post?: never;
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/api/v1/wordbooks/quiz/total": {
         parameters: {
-            query?: never
-            header?: never
-            path?: never
-            cookie?: never
-        }
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
         /**
          * 통합 퀴즈 조회
          * @description 통합(오늘의 학습) 퀴즈를 요청합니다.
          */
-        get: operations['getWordbookTotalQuiz']
-        put?: never
-        post?: never
-        delete?: never
-        options?: never
-        head?: never
-        patch?: never
-        trace?: never
-    }
-    '/api/v1/videos/{youtubeVideoId}/analysis': {
+        get: operations["getWordbookTotalQuiz"];
+        put?: never;
+        post?: never;
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/api/v1/videos/{youtubeVideoId}/analysis": {
         parameters: {
-            query?: never
-            header?: never
-            path?: never
-            cookie?: never
-        }
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
         /**
          * 영상 분석
          * @description Youtube ID로 영상을 분석하여 자막과 핵심 단어를 반환합니다.
          */
-        get: operations['videoAnalysis']
-        put?: never
-        post?: never
-        delete?: never
-        options?: never
-        head?: never
-        patch?: never
-        trace?: never
-    }
-    '/api/v1/videos/{videoId}/quiz/words': {
+        get: operations["videoAnalysis"];
+        put?: never;
+        post?: never;
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/api/v1/videos/{videoId}/quiz/words": {
         parameters: {
-            query?: never
-            header?: never
-            path?: never
-            cookie?: never
-        }
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
         /**
          * 영상 단어 퀴즈 조회
          * @description 주어진 영상 ID로 단어 퀴즈 리스트를 조회합니다.
          */
-        get: operations['getWordsQuiz']
-        put?: never
-        post?: never
-        delete?: never
-        options?: never
-        head?: never
-        patch?: never
-        trace?: never
-    }
-    '/api/v1/videos/{videoId}/quiz/expressions': {
+        get: operations["getWordsQuiz"];
+        put?: never;
+        post?: never;
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/api/v1/videos/{videoId}/quiz/expressions": {
         parameters: {
-            query?: never
-            header?: never
-            path?: never
-            cookie?: never
-        }
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
         /**
          * 영상 표현 퀴즈 조회
          * @description 주어진 영상 ID로 표현 퀴즈 리스트를 조회합니다.
          */
-        get: operations['getExpressionQuiz']
-        put?: never
-        post?: never
-        delete?: never
-        options?: never
-        head?: never
-        patch?: never
-        trace?: never
-    }
-    '/api/v1/videos/list': {
+        get: operations["getExpressionQuiz"];
+        put?: never;
+        post?: never;
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/api/v1/videos/list": {
         parameters: {
-            query?: never
-            header?: never
-            path?: never
-            cookie?: never
-        }
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
         /**
          * 영상 목록 조회
          * @description 조건에 맞는 영상 목록을 조회합니다.
          */
-        get: operations['getVideoList']
-        put?: never
-        post?: never
-        delete?: never
-        options?: never
-        head?: never
-        patch?: never
-        trace?: never
-    }
-    '/api/v1/videohistory/videos/summary': {
+        get: operations["getVideoList"];
+        put?: never;
+        post?: never;
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/api/v1/videohistory/videos/summary": {
         parameters: {
-            query?: never
-            header?: never
-            path?: never
-            cookie?: never
-        }
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
         /**
          * 최근 시청 기록 조회
          * @description 최근에 시청한 영상 5개의 기록을 조회합니다.
          */
-        get: operations['getRecentVideos']
-        put?: never
-        post?: never
-        delete?: never
-        options?: never
-        head?: never
-        patch?: never
-        trace?: never
-    }
-    '/api/v1/videohistory/videos/history': {
+        get: operations["getRecentVideos"];
+        put?: never;
+        post?: never;
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/api/v1/videohistory/videos/history": {
         parameters: {
-            query?: never
-            header?: never
-            path?: never
-            cookie?: never
-        }
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
         /**
          * 전체 시청 기록 조회
          * @description 사용자가 지금까지 시청한 모든 영상 기록을 조회합니다.
          */
-        get: operations['getFullHistory']
-        put?: never
-        post?: never
-        delete?: never
-        options?: never
-        head?: never
-        patch?: never
-        trace?: never
-    }
-    '/api/v1/members/logout': {
+        get: operations["getFullHistory"];
+        put?: never;
+        post?: never;
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/api/v1/members/logout": {
         parameters: {
-            query?: never
-            header?: never
-            path?: never
-            cookie?: never
-        }
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
         /**
          * 회원 로그아웃
          * @description 현재 로그인한 사용자의 세션 및 토큰을 만료시켜 로그아웃 처리합니다.
          */
-        get: operations['logout']
-        put?: never
-        post?: never
-        delete?: never
-        options?: never
-        head?: never
-        patch?: never
-        trace?: never
-    }
-    '/api/v1/expressionbooks/{expressionBookId}/quiz': {
+        get: operations["logout"];
+        put?: never;
+        post?: never;
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/api/v1/expressionbooks/{expressionBookId}/quiz": {
         parameters: {
-            query?: never
-            header?: never
-            path?: never
-            cookie?: never
-        }
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
         /**
          * 표현함 퀴즈 조회
          * @description 표현함에 대한 퀴즈를 요청합니다.
          */
-        get: operations['getExpressionBookQuiz']
-        put?: never
-        post?: never
-        delete?: never
-        options?: never
-        head?: never
-        patch?: never
-        trace?: never
-    }
-    '/api/v1/expressionbooks/view': {
+        get: operations["getExpressionBookQuiz"];
+        put?: never;
+        post?: never;
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/api/v1/expressionbooks/view": {
         parameters: {
-            query?: never
-            header?: never
-            path?: never
-            cookie?: never
-        }
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
         /**
          * 전체 표현 목록 조회
          * @description 모든 표현함의 표현들을 등록 날짜 기준으로 정렬하여 조회합니다.
          */
-        get: operations['getExpressionsByBook']
-        put?: never
-        post?: never
-        delete?: never
-        options?: never
-        head?: never
-        patch?: never
-        trace?: never
-    }
-    '/api/v1/expressionbooks/search': {
+        get: operations["getExpressionsByBook"];
+        put?: never;
+        post?: never;
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/api/v1/expressionbooks/search": {
         parameters: {
-            query?: never
-            header?: never
-            path?: never
-            cookie?: never
-        }
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
         /**
          * 표현 검색
          * @description 키워드로 표현을 검색합니다.
          */
-        get: operations['searchExpressions']
-        put?: never
-        post?: never
-        delete?: never
-        options?: never
-        head?: never
-        patch?: never
-        trace?: never
-    }
-    '/api/v1/dashboard/statistics': {
+        get: operations["searchExpressions"];
+        put?: never;
+        post?: never;
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/api/v1/dashboard/statistics": {
         parameters: {
-            query?: never
-            header?: never
-            path?: never
-            cookie?: never
-        }
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
         /**
          * 대시보드 조회
          * @description 대시보드 정보를 조회합니다.
          */
-        get: operations['statistics']
-        put?: never
-        post?: never
-        delete?: never
-        options?: never
-        head?: never
-        patch?: never
-        trace?: never
-    }
-    '/api/v1/dashboard/calendar': {
+        get: operations["statistics"];
+        put?: never;
+        post?: never;
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/api/v1/dashboard/calendar": {
         parameters: {
-            query?: never
-            header?: never
-            path?: never
-            cookie?: never
-        }
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
         /**
          * 기간별 학습 통계
          * @description 특정 기간에 대한 학습 통계 정보를 조회합니다.
          */
-        get: operations['getCalendarsData']
-        put?: never
-        post?: never
-        delete?: never
-        options?: never
-        head?: never
-        patch?: never
-        trace?: never
-    }
-    '/api/v1/bookmarks': {
+        get: operations["getCalendarsData"];
+        put?: never;
+        post?: never;
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/api/v1/bookmarks": {
         parameters: {
-            query?: never
-            header?: never
-            path?: never
-            cookie?: never
-        }
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
         /**
          * 북마크 영상 전체 조회
          * @description 사용자가 북마크한 모든 영상을 조회합니다.
          */
-        get: operations['getAll']
-        put?: never
-        post?: never
-        delete?: never
-        options?: never
-        head?: never
-        patch?: never
-        trace?: never
-    }
-    '/api/test': {
+        get: operations["getAll"];
+        put?: never;
+        post?: never;
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/api/test": {
         parameters: {
-            query?: never
-            header?: never
-            path?: never
-            cookie?: never
-        }
-        get: operations['test']
-        put?: never
-        post?: never
-        delete?: never
-        options?: never
-        head?: never
-        patch?: never
-        trace?: never
-    }
-    '/api/testMeasureExecutionTime': {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get: operations["test"];
+        put?: never;
+        post?: never;
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/api/testMeasureExecutionTime": {
         parameters: {
-            query?: never
-            header?: never
-            path?: never
-            cookie?: never
-        }
-        get: operations['test_1']
-        put?: never
-        post?: never
-        delete?: never
-        options?: never
-        head?: never
-        patch?: never
-        trace?: never
-    }
-    '/api/test/error': {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get: operations["test_1"];
+        put?: never;
+        post?: never;
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/api/test/error": {
         parameters: {
-            query?: never
-            header?: never
-            path?: never
-            cookie?: never
-        }
-        get: operations['triggerInternalServerError']
-        put?: never
-        post?: never
-        delete?: never
-        options?: never
-        head?: never
-        patch?: never
-        trace?: never
-    }
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get: operations["triggerInternalServerError"];
+        put?: never;
+        post?: never;
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
 }
-export type webhooks = Record<string, never>
+export type webhooks = Record<string, never>;
 export interface components {
     schemas: {
         ErrorResponse: {
             /** Format: date-time */
-            timestamp?: string
+            timestamp?: string;
             /** Format: int32 */
-            status?: number
-            code?: string
-            message?: string
-            errors?: string[]
-            path?: string
-        }
+            status?: number;
+            code?: string;
+            message?: string;
+            errors?: string[];
+            path?: string;
+        };
         WordbookCreateRequest: {
-            name?: string
-        }
+            name?: string;
+        };
         RsDataLong: {
-            code: string
-            msg: string
+            code: string;
+            msg: string;
             /** Format: int64 */
-            data?: number
-        }
+            data?: number;
+        };
         AddWordToWordbookListRequest: {
-            words?: components['schemas']['AddWordToWordbookRequest'][]
-        }
+            words?: components["schemas"]["AddWordToWordbookRequest"][];
+        };
         AddWordToWordbookRequest: {
-            word?: string
+            word?: string;
             /** Format: int64 */
-            subtitleId: number
-            videoId: string
-        }
+            subtitleId: number;
+            videoId: string;
+        };
         RsDataVoid: {
-            code: string
-            msg: string
-            data?: Record<string, never>
-        }
+            code: string;
+            msg: string;
+            data?: Record<string, never>;
+        };
         AddWordRequest: {
-            word?: string
-        }
+            word?: string;
+        };
         WordDeleteItem: {
             /** Format: int64 */
-            wordbookId: number
-            word?: string
-        }
+            wordbookId: number;
+            word?: string;
+        };
         WordDeleteRequest: {
-            words?: components['schemas']['WordDeleteItem'][]
-        }
+            words?: components["schemas"]["WordDeleteItem"][];
+        };
         WordQuizResultSaveRequest: {
             /** Format: int64 */
-            quizId?: number
+            quizId?: number;
             /** Format: int64 */
-            wordbookItemId?: number
-            isCorrect?: boolean
-        }
+            wordbookItemId?: number;
+            isCorrect?: boolean;
+        };
         /** @description 결제 요청 정보 반환을 위해 클라이언트 측에서 전송하는 DTO 객체 */
         PaymentSimpleRequest: {
             /**
@@ -1074,147 +1074,147 @@ export interface components {
              * @example STANDARD
              * @enum {string}
              */
-            type: 'NONE' | 'BASIC' | 'STANDARD' | 'PREMIUM' | 'ADMIN'
+            type: "NONE" | "BASIC" | "STANDARD" | "PREMIUM" | "ADMIN";
             /**
              * @description 플랜 정보
              * @example MONTHLY
              * @enum {string}
              */
-            period: 'MONTHLY' | 'SIX_MONTHS' | 'YEAR'
-        }
+            period: "MONTHLY" | "SIX_MONTHS" | "YEAR";
+        };
         /** @description 결제 응답 데이터 (문서화용) */
         Data: {
             /**
              * @description 주문 고유번호
              * @example 20240510-랜덤값5글자-1
              */
-            orderId?: string
+            orderId?: string;
             /**
              * @description 주문명
              * @example STANDARD 정기 구독
              */
-            orderName?: string
+            orderName?: string;
             /**
              * Format: int32
              * @description 결제 금액
              * @example 15000
              */
-            amount?: number
+            amount?: number;
             /**
              * @description 결제 통화 (원)
              * @example KRW
              */
-            currency?: string
-        }
+            currency?: string;
+        };
         /** @description 결제 요청 응답 Wrapper (문서화용) */
         PaymentRequestDocs: {
             /**
              * @description 응답 코드
              * @example 200
              */
-            code?: string
+            code?: string;
             /**
              * @description 응답 메시지
              * @example 성공
              */
-            msg?: string
+            msg?: string;
             /** @description 결제 응답 데이터 */
-            data?: components['schemas']['Data']
-        }
+            data?: components["schemas"]["Data"];
+        };
         /** @description 결제 실패 정보 DTO */
         PaymentFailureRequest: {
             /**
              * @description 실패 코드
              * @example PAYMENT_FAILED
              */
-            code?: string
+            code?: string;
             /**
              * @description 실패 메시지
              * @example 결제에 실패했습니다.
              */
-            message?: string
+            message?: string;
             /**
              * @description 주문 ID
              * @example 250525-asQja-00001
              */
-            orderId?: string
-        }
+            orderId?: string;
+        };
         RsDataString: {
-            code: string
-            msg: string
-            data?: string
-        }
+            code: string;
+            msg: string;
+            data?: string;
+        };
         /** @description 결제 승인 요청 DTO */
         PaymentApproveRequest: {
             /**
              * @description 멱등성 키 (Idempotency-Key). 중복 결제 승인 요청을 방지하기 위한 고유 값입니다.
              * @example 랜덤값으로 30자 이내
              */
-            idempotencyKey?: string
+            idempotencyKey?: string;
             /**
              * @description 결제 키. 토스페이먼츠 결제창에서 결제 성공 시 전달받은 고유 키입니다.
              * @example tgrn_abcdef1234567890
              */
-            paymentKey?: string
+            paymentKey?: string;
             /**
              * Format: int32
              * @description 결제 금액(원).
              * @example 10000
              */
-            amount?: number
+            amount?: number;
             /**
              * @description 주문 고유 ID. 결제 요청 시 생성한 주문의 식별자입니다.
              * @example 20240510-랜덤값5글자-00001
              */
-            orderId?: string
-        }
+            orderId?: string;
+        };
         /** @description 카드 등록 승인 후 자동 결제 키(빌링 키)를 발급, 자동 결제 로직을 실행하기 위한 DTO */
         BillingPaymentRequest: {
             /**
              * @description 고객 식별 키 (빌링 키 발급용)
              * @example 랜덤한 30글자 이내의 값, 멱등성 토큰과 동일하게 제작
              */
-            customerKey?: string
+            customerKey?: string;
             /**
              * @description 카드 인증 성공 시 발급된 승인 키
              * @example auth_9876543210
              */
-            authKey?: string
+            authKey?: string;
             /**
              * @description 결제 주문 ID. 빌링 키 발급 후 결제 요청에 사용
              * @example 250515-Ajks9-00001
              */
-            orderId?: string
+            orderId?: string;
             /**
              * @description 주문명. 빌링 키 발급 후 결제 요청에 사용
              * @example 프리미엄 정기 구독
              */
-            orderName?: string
+            orderName?: string;
             /**
              * Format: int32
              * @description 결제 금액. 빌링 키 발급 후 결제 요청에 사용
              * @example 10000
              */
-            amount?: number
-        }
+            amount?: number;
+        };
         RsDataBoolean: {
-            code: string
-            msg: string
-            data?: boolean
-        }
+            code: string;
+            msg: string;
+            data?: boolean;
+        };
         RsDataObject: {
-            code: string
-            msg: string
-            data?: Record<string, never>
-        }
+            code: string;
+            msg: string;
+            data?: Record<string, never>;
+        };
         ExpressionBookRequest: {
-            name?: string
-        }
+            name?: string;
+        };
         ExpressionSaveRequest: {
-            videoId?: string
+            videoId?: string;
             /** Format: int64 */
-            subtitleId?: number
-        }
+            subtitleId?: number;
+        };
         /** @description 인증된 회원의 상세 정보 */
         CustomUserDetails: {
             /**
@@ -1222,258 +1222,258 @@ export interface components {
              * @description 회원 고유 식별자
              * @example 12345
              */
-            memberId?: number
+            memberId?: number;
             /**
              * @description 회원 권한
              * @example ROLE_STANDARD
              */
-            roleName?: string
-            password?: string
-            authorities?: components['schemas']['GrantedAuthority'][]
-            username?: string
-            enabled?: boolean
-            accountNonExpired?: boolean
-            accountNonLocked?: boolean
-            credentialsNonExpired?: boolean
-        }
+            roleName?: string;
+            password?: string;
+            authorities?: components["schemas"]["GrantedAuthority"][];
+            username?: string;
+            enabled?: boolean;
+            accountNonExpired?: boolean;
+            accountNonLocked?: boolean;
+            credentialsNonExpired?: boolean;
+        };
         GrantedAuthority: {
-            authority?: string
-        }
+            authority?: string;
+        };
         ExpressionQuizResultSaveRequest: {
             /** Format: int64 */
-            quizId?: number
+            quizId?: number;
             /** Format: int64 */
-            expressionBookId?: number
+            expressionBookId?: number;
             /** Format: int64 */
-            expressionId?: number
-            correct?: boolean
-        }
+            expressionId?: number;
+            correct?: boolean;
+        };
         DeleteExpressionsRequest: {
             /** Format: int64 */
-            expressionBookId?: number
-            expressionIds?: number[]
-        }
+            expressionBookId?: number;
+            expressionIds?: number[];
+        };
         LevelCheckResponse: {
-            wordLevel?: string
-            expressionLevel?: string
-        }
+            wordLevel?: string;
+            expressionLevel?: string;
+        };
         RsDataLevelCheckResponse: {
-            code: string
-            msg: string
-            data?: components['schemas']['LevelCheckResponse']
-        }
+            code: string;
+            msg: string;
+            data?: components["schemas"]["LevelCheckResponse"];
+        };
         WordbookRenameRequest: {
-            name?: string
-        }
+            name?: string;
+        };
         WordMoveItem: {
             /** Format: int64 */
-            fromWordbookId: number
-            word?: string
-        }
+            fromWordbookId: number;
+            word?: string;
+        };
         WordMoveRequest: {
             /** Format: int64 */
-            destinationWordbookId: number
-            words?: components['schemas']['WordMoveItem'][]
-        }
+            destinationWordbookId: number;
+            words?: components["schemas"]["WordMoveItem"][];
+        };
         /** @description 회원 정보 수정 요청 DTO */
         ChangeInfoRequest: {
             /**
              * @description 회원 닉네임
              * @example test_user
              */
-            nickname?: string
+            nickname?: string;
             /**
              * @description 회원 이메일
              * @example user@example.com
              */
-            email?: string
-        }
+            email?: string;
+        };
         /** @description 회원 정보 수정 응답 DTO */
         ChangeInfoResponse: {
             /**
              * @description 회원 닉네임
              * @example test_user
              */
-            nickname?: string
+            nickname?: string;
             /**
              * @description 회원 이메일
              * @example user@example.com
              */
-            email?: string
-        }
+            email?: string;
+        };
         UpdateExpressionBookNameRequest: {
-            newName?: string
-        }
+            newName?: string;
+        };
         MoveExpressionsRequest: {
             /** Format: int64 */
-            sourceExpressionBookId?: number
+            sourceExpressionBookId?: number;
             /** Format: int64 */
-            targetExpressionBookId?: number
-            expressionIds?: number[]
-        }
+            targetExpressionBookId?: number;
+            expressionIds?: number[];
+        };
         UpdateGoalRequest: {
             /** Format: int32 */
-            videoGoal?: number
+            videoGoal?: number;
             /** Format: int32 */
-            wordGoal?: number
-        }
+            wordGoal?: number;
+        };
         WordSearchRequest: {
-            word?: string
-        }
+            word?: string;
+        };
         RsDataWordSearchResponse: {
-            code: string
-            msg: string
-            data?: components['schemas']['WordSearchResponse']
-        }
+            code: string;
+            msg: string;
+            data?: components["schemas"]["WordSearchResponse"];
+        };
         WordMeaning: {
-            partOfSpeech?: string
-            meaning?: string
+            partOfSpeech?: string;
+            meaning?: string;
             /** Format: int32 */
-            difficulty?: number
-        }
+            difficulty?: number;
+        };
         WordSearchResponse: {
-            meanings?: components['schemas']['WordMeaning'][]
-        }
+            meanings?: components["schemas"]["WordMeaning"][];
+        };
         RsDataListWordbookResponse: {
-            code: string
-            msg: string
-            data?: components['schemas']['WordbookResponse'][]
-        }
+            code: string;
+            msg: string;
+            data?: components["schemas"]["WordbookResponse"][];
+        };
         WordbookResponse: {
             /** Format: int64 */
-            wordbookId?: number
-            name?: string
+            wordbookId?: number;
+            name?: string;
             /** @enum {string} */
-            language?: 'ENGLISH' | 'JAPANESE' | 'NONE' | 'ALL'
+            language?: "ENGLISH" | "JAPANESE" | "NONE" | "ALL";
             /** Format: int32 */
-            wordCount?: number
+            wordCount?: number;
             /** Format: int32 */
-            learnedWordCount?: number
-        }
+            learnedWordCount?: number;
+        };
         RsDataListWordResponse: {
-            code: string
-            msg: string
-            data?: components['schemas']['WordResponse'][]
-        }
+            code: string;
+            msg: string;
+            data?: components["schemas"]["WordResponse"][];
+        };
         WordResponse: {
-            word?: string
-            pos?: string
-            meaning?: string
-            difficulty?: string
-            exampleSentence?: string
-            translatedSentence?: string
-            videoId?: string
-            videoTitle?: string
-            imageUrl?: string
+            word?: string;
+            pos?: string;
+            meaning?: string;
+            difficulty?: string;
+            exampleSentence?: string;
+            translatedSentence?: string;
+            videoId?: string;
+            videoTitle?: string;
+            imageUrl?: string;
             /** Format: int64 */
-            subtitleId?: number
+            subtitleId?: number;
             /** Format: date-time */
-            createdAt?: string
+            createdAt?: string;
             /** Format: int64 */
-            wordBookId?: number
-        }
+            wordBookId?: number;
+        };
         RsDataWordbookQuizResponse: {
-            code: string
-            msg: string
-            data?: components['schemas']['WordbookQuizResponse']
-        }
+            code: string;
+            msg: string;
+            data?: components["schemas"]["WordbookQuizResponse"];
+        };
         WordQuizItem: {
             /** Format: int64 */
-            wordbookItemId?: number
-            word?: string
-            question?: string
-            original?: string
-            meaning?: string
-        }
+            wordbookItemId?: number;
+            word?: string;
+            question?: string;
+            original?: string;
+            meaning?: string;
+        };
         WordbookQuizResponse: {
             /** Format: int64 */
-            quizId?: number
-            wordbookName?: string
-            quizItems?: components['schemas']['WordQuizItem'][]
-        }
+            quizId?: number;
+            wordbookName?: string;
+            quizItems?: components["schemas"]["WordQuizItem"][];
+        };
         RsDataWordQuizResponse: {
-            code: string
-            msg: string
-            data?: components['schemas']['WordQuizResponse']
-        }
+            code: string;
+            msg: string;
+            data?: components["schemas"]["WordQuizResponse"];
+        };
         WordQuizResponse: {
             /** Format: int64 */
-            quizId?: number
-            quizItems?: components['schemas']['WordQuizItem'][]
-        }
+            quizId?: number;
+            quizItems?: components["schemas"]["WordQuizItem"][];
+        };
         SseEmitter: {
             /** Format: int64 */
-            timeout?: number
-        }
+            timeout?: number;
+        };
         RsDataVideoLearningWordQuizListResponse: {
-            code: string
-            msg: string
-            data?: components['schemas']['VideoLearningWordQuizListResponse']
-        }
+            code: string;
+            msg: string;
+            data?: components["schemas"]["VideoLearningWordQuizListResponse"];
+        };
         VideoLearningWordQuizItem: {
             /** Format: int64 */
-            subtitleId?: number
-            startTime?: string
-            endTime?: string
-            speaker?: string
-            word?: string
-            meaning?: string
-            sentence?: string
-            sentenceMeaning?: string
-        }
+            subtitleId?: number;
+            startTime?: string;
+            endTime?: string;
+            speaker?: string;
+            word?: string;
+            meaning?: string;
+            sentence?: string;
+            sentenceMeaning?: string;
+        };
         VideoLearningWordQuizListResponse: {
-            quiz?: components['schemas']['VideoLearningWordQuizItem'][]
-        }
+            quiz?: components["schemas"]["VideoLearningWordQuizItem"][];
+        };
         RsDataVideoLearningExpressionQuizListResponse: {
-            code: string
-            msg: string
-            data?: components['schemas']['VideoLearningExpressionQuizListResponse']
-        }
+            code: string;
+            msg: string;
+            data?: components["schemas"]["VideoLearningExpressionQuizListResponse"];
+        };
         VideoLearningExpressionQuizItem: {
-            question?: string
-            original?: string
-            choices?: string[]
-            meaning?: string
-        }
+            question?: string;
+            original?: string;
+            choices?: string[];
+            meaning?: string;
+        };
         VideoLearningExpressionQuizListResponse: {
-            quiz?: components['schemas']['VideoLearningExpressionQuizItem'][]
-        }
+            quiz?: components["schemas"]["VideoLearningExpressionQuizItem"][];
+        };
         VideoListRequest: {
             /** @description 검색어 (1~100자) */
-            q?: string
+            q?: string;
             /** @description 유튜브 카테고리 ID */
-            category?: string
+            category?: string;
             /**
              * Format: int64
              * @description 최대 조회 개수 (1~100)
              * @default 100
              */
-            maxResults: number
-        }
+            maxResults: number;
+        };
         RsDataListVideoResponse: {
-            code: string
-            msg: string
-            data?: components['schemas']['VideoResponse'][]
-        }
+            code: string;
+            msg: string;
+            data?: components["schemas"]["VideoResponse"][];
+        };
         VideoResponse: {
-            videoId?: string
-            title?: string
-            description?: string
-            thumbnailUrl?: string
-            bookmarked?: boolean
-        }
+            videoId?: string;
+            title?: string;
+            description?: string;
+            thumbnailUrl?: string;
+            bookmarked?: boolean;
+        };
         RsDataListVideoHistoryResponse: {
-            code: string
-            msg: string
-            data?: components['schemas']['VideoHistoryResponse'][]
-        }
+            code: string;
+            msg: string;
+            data?: components["schemas"]["VideoHistoryResponse"][];
+        };
         VideoHistoryResponse: {
-            videoId?: string
-            title?: string
-            thumbnailUrl?: string
+            videoId?: string;
+            title?: string;
+            thumbnailUrl?: string;
             /** Format: date-time */
-            lastViewedAt?: string
-        }
+            lastViewedAt?: string;
+        };
         /** @description 구독 정보 DTO */
         SubscriptionResponse: {
             /**
@@ -1481,1569 +1481,1569 @@ export interface components {
              * @example PREMIUM
              * @enum {string}
              */
-            planName?: 'STANDARD' | 'PREMIUM'
+            planName?: "STANDARD" | "PREMIUM";
             /**
              * Format: int32
              * @description 결제 금액(원)
              * @example 8500
              */
-            amount?: number
+            amount?: number;
             /**
              * Format: date-time
              * @description 구독 시작 날짜
              * @example yyyy년 MM월 dd일
              */
-            startedAt?: string
+            startedAt?: string;
             /**
              * Format: date-time
              * @description 구독 만료 날짜
              * @example yyyy년 MM월 dd일
              */
-            expiredAt?: string
+            expiredAt?: string;
             /**
              * @description 취소 가능 여부, 이게 true 이면 구독 갱신 중지가 가능합니다.
              * @example true
              * @enum {boolean}
              */
-            isPossibleToCancel?: 'true' | 'false'
-        }
+            isPossibleToCancel?: "true" | "false";
+        };
         /** @description 회원 전체 정보 조회 응답 DTO */
         UserProfileResponse: {
             /**
              * @description 회원 이메일
              * @example user@example.com
              */
-            email?: string
+            email?: string;
             /**
              * @description 회원 닉네임
              * @example test_user
              */
-            nickname?: string
+            nickname?: string;
             /**
              * @description 프로필 이미지 URL
              * @example https://s3_버킷_이름/profile.jpg
              */
-            profileImage?: string
+            profileImage?: string;
             /**
              * @description 구독 정보
              * @enum {string}
              */
-            subscriptionType?: 'NONE' | 'BASIC' | 'STANDARD' | 'PREMIUM' | 'ADMIN'
+            subscriptionType?: "NONE" | "BASIC" | "STANDARD" | "PREMIUM" | "ADMIN";
             /**
              * @description 언어 설정 정보
              * @example ENGLISH
              * @enum {string}
              */
-            language?: 'ENGLISH' | 'JAPANESE' | 'NONE' | 'ALL'
+            language?: "ENGLISH" | "JAPANESE" | "NONE" | "ALL";
             /** @description 구독 내역 */
-            subscriptions?: components['schemas']['SubscriptionResponse'][]
-        }
+            subscriptions?: components["schemas"]["SubscriptionResponse"][];
+        };
         ExpressionBookResponse: {
             /** Format: int64 */
-            expressionBookId?: number
-            name?: string
+            expressionBookId?: number;
+            name?: string;
             /** @enum {string} */
-            language?: 'ENGLISH' | 'JAPANESE' | 'NONE' | 'ALL'
+            language?: "ENGLISH" | "JAPANESE" | "NONE" | "ALL";
             /** Format: int32 */
-            expressionCount?: number
+            expressionCount?: number;
             /** Format: int32 */
-            learnedExpressionCount?: number
-        }
+            learnedExpressionCount?: number;
+        };
         RsDataListExpressionBookResponse: {
-            code: string
-            msg: string
-            data?: components['schemas']['ExpressionBookResponse'][]
-        }
+            code: string;
+            msg: string;
+            data?: components["schemas"]["ExpressionBookResponse"][];
+        };
         ExpressionQuizItem: {
             /** Format: int64 */
-            expressionId?: number
+            expressionId?: number;
             /** Format: int64 */
-            expressionBookId?: number
-            question?: string
-            original?: string
-            choices?: string[]
-            meaning?: string
-        }
+            expressionBookId?: number;
+            question?: string;
+            original?: string;
+            choices?: string[];
+            meaning?: string;
+        };
         ExpressionQuizResponse: {
             /** Format: int64 */
-            quizId?: number
-            expressionBookName?: string
-            quizItems?: components['schemas']['ExpressionQuizItem'][]
-        }
+            quizId?: number;
+            expressionBookName?: string;
+            quizItems?: components["schemas"]["ExpressionQuizItem"][];
+        };
         RsDataExpressionQuizResponse: {
-            code: string
-            msg: string
-            data?: components['schemas']['ExpressionQuizResponse']
-        }
+            code: string;
+            msg: string;
+            data?: components["schemas"]["ExpressionQuizResponse"];
+        };
         ExpressionResponse: {
             /** Format: int64 */
-            expressionId?: number
-            sentence?: string
-            description?: string
-            sentenceAnalysis?: string
-            thumbnailImageUrl?: string
-            videoId?: string
-            videoTitle?: string
+            expressionId?: number;
+            sentence?: string;
+            description?: string;
+            sentenceAnalysis?: string;
+            thumbnailImageUrl?: string;
+            videoId?: string;
+            videoTitle?: string;
             /** @example 14:30:00 */
-            subtitleAt?: string
+            subtitleAt?: string;
             /** Format: date-time */
-            createdAt?: string
+            createdAt?: string;
             /** Format: int64 */
-            expressionBookId?: number
-        }
+            expressionBookId?: number;
+        };
         RsDataListExpressionResponse: {
-            code: string
-            msg: string
-            data?: components['schemas']['ExpressionResponse'][]
-        }
+            code: string;
+            msg: string;
+            data?: components["schemas"]["ExpressionResponse"][];
+        };
         AchievementDetail: {
             /** Format: int32 */
-            completedVideos?: number
+            completedVideos?: number;
             /** Format: int32 */
-            completedWords?: number
-        }
+            completedWords?: number;
+        };
         DailyGoal: {
             /** Format: int32 */
-            videoGoal?: number
+            videoGoal?: number;
             /** Format: int32 */
-            wordGoal?: number
+            wordGoal?: number;
             /** Format: double */
-            achievementRate?: number
-            achievementDetail?: components['schemas']['AchievementDetail']
-        }
+            achievementRate?: number;
+            achievementDetail?: components["schemas"]["AchievementDetail"];
+        };
         LevelStatus: {
-            word?: string
-            expression?: string
+            word?: string;
+            expression?: string;
             /** Format: date-time */
-            lastUpdated?: string
-            remeasurable?: boolean
-        }
+            lastUpdated?: string;
+            remeasurable?: boolean;
+        };
         RsDataStatisticResponse: {
-            code: string
-            msg: string
-            data?: components['schemas']['StatisticResponse']
-        }
+            code: string;
+            msg: string;
+            data?: components["schemas"]["StatisticResponse"];
+        };
         StatisticResponse: {
-            userName?: string
+            userName?: string;
             /** Format: int32 */
-            watchedVideoCount?: number
-            dailyGoal?: components['schemas']['DailyGoal']
-            levelStatus?: components['schemas']['LevelStatus']
-        }
+            watchedVideoCount?: number;
+            dailyGoal?: components["schemas"]["DailyGoal"];
+            levelStatus?: components["schemas"]["LevelStatus"];
+        };
         LearningHistory: {
-            learningTime?: string
+            learningTime?: string;
             /** Format: int32 */
-            quizCount?: number
+            quizCount?: number;
             /** Format: int32 */
-            videoCount?: number
+            videoCount?: number;
             /** Format: int32 */
-            addedWordCount?: number
-        }
+            addedWordCount?: number;
+        };
         LearningHistoryResponse: {
-            today?: components['schemas']['LearningHistory']
-            yesterday?: components['schemas']['LearningHistory']
-            week?: components['schemas']['LearningHistory']
-        }
+            today?: components["schemas"]["LearningHistory"];
+            yesterday?: components["schemas"]["LearningHistory"];
+            week?: components["schemas"]["LearningHistory"];
+        };
         RsDataLearningHistoryResponse: {
-            code: string
-            msg: string
-            data?: components['schemas']['LearningHistoryResponse']
-        }
-    }
-    responses: never
-    parameters: never
-    requestBodies: never
-    headers: never
-    pathItems: never
+            code: string;
+            msg: string;
+            data?: components["schemas"]["LearningHistoryResponse"];
+        };
+    };
+    responses: never;
+    parameters: never;
+    requestBodies: never;
+    headers: never;
+    pathItems: never;
 }
-export type $defs = Record<string, never>
+export type $defs = Record<string, never>;
 export interface operations {
     sendSlackMessage: {
         parameters: {
             query: {
-                message: string
-            }
-            header?: never
-            path?: never
-            cookie?: never
-        }
-        requestBody?: never
+                message: string;
+            };
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        requestBody?: never;
         responses: {
             /** @description OK */
             200: {
                 headers: {
-                    [name: string]: unknown
-                }
+                    [name: string]: unknown;
+                };
                 content: {
-                    'application/json': string
-                }
-            }
+                    "application/json": string;
+                };
+            };
             /** @description Forbidden */
             403: {
                 headers: {
-                    [name: string]: unknown
-                }
+                    [name: string]: unknown;
+                };
                 content: {
-                    'application/json': components['schemas']['ErrorResponse']
-                }
-            }
+                    "application/json": components["schemas"]["ErrorResponse"];
+                };
+            };
             /** @description Internal Server Error */
             500: {
                 headers: {
-                    [name: string]: unknown
-                }
+                    [name: string]: unknown;
+                };
                 content: {
-                    'application/json': components['schemas']['ErrorResponse']
-                }
-            }
-        }
-    }
+                    "application/json": components["schemas"]["ErrorResponse"];
+                };
+            };
+        };
+    };
     getWordbooks: {
         parameters: {
-            query?: never
-            header?: never
-            path?: never
-            cookie?: never
-        }
-        requestBody?: never
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        requestBody?: never;
         responses: {
             /** @description 단어장 목록 조회에 성공했습니다. */
             200: {
                 headers: {
-                    [name: string]: unknown
-                }
+                    [name: string]: unknown;
+                };
                 content: {
-                    'application/json': components['schemas']['RsDataListWordbookResponse']
-                }
-            }
+                    "application/json": components["schemas"]["RsDataListWordbookResponse"];
+                };
+            };
             /** @description Forbidden */
             403: {
                 headers: {
-                    [name: string]: unknown
-                }
+                    [name: string]: unknown;
+                };
                 content: {
-                    'application/json': components['schemas']['ErrorResponse']
-                }
-            }
+                    "application/json": components["schemas"]["ErrorResponse"];
+                };
+            };
             /** @description Not Found */
             404: {
                 headers: {
-                    [name: string]: unknown
-                }
+                    [name: string]: unknown;
+                };
                 content: {
-                    'application/json': unknown
-                }
-            }
+                    "application/json": unknown;
+                };
+            };
             /** @description Internal Server Error */
             500: {
                 headers: {
-                    [name: string]: unknown
-                }
+                    [name: string]: unknown;
+                };
                 content: {
-                    'application/json': components['schemas']['ErrorResponse']
-                }
-            }
-        }
-    }
+                    "application/json": components["schemas"]["ErrorResponse"];
+                };
+            };
+        };
+    };
     createWordbook: {
         parameters: {
-            query?: never
-            header?: never
-            path?: never
-            cookie?: never
-        }
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
         requestBody: {
             content: {
-                'application/json': components['schemas']['WordbookCreateRequest']
-            }
-        }
+                "application/json": components["schemas"]["WordbookCreateRequest"];
+            };
+        };
         responses: {
             /** @description 추가 단어장이 생성되었습니다. */
             200: {
                 headers: {
-                    [name: string]: unknown
-                }
+                    [name: string]: unknown;
+                };
                 content: {
-                    'application/json': components['schemas']['RsDataLong']
-                }
-            }
+                    "application/json": components["schemas"]["RsDataLong"];
+                };
+            };
             /** @description Bad Request */
             400: {
                 headers: {
-                    [name: string]: unknown
-                }
+                    [name: string]: unknown;
+                };
                 content: {
-                    'application/json': unknown
-                }
-            }
+                    "application/json": unknown;
+                };
+            };
             /** @description Forbidden */
             403: {
                 headers: {
-                    [name: string]: unknown
-                }
+                    [name: string]: unknown;
+                };
                 content: {
-                    'application/json': unknown
-                }
-            }
+                    "application/json": unknown;
+                };
+            };
             /** @description Not Found */
             404: {
                 headers: {
-                    [name: string]: unknown
-                }
+                    [name: string]: unknown;
+                };
                 content: {
-                    'application/json': unknown
-                }
-            }
+                    "application/json": unknown;
+                };
+            };
             /** @description Internal Server Error */
             500: {
                 headers: {
-                    [name: string]: unknown
-                }
+                    [name: string]: unknown;
+                };
                 content: {
-                    'application/json': components['schemas']['ErrorResponse']
-                }
-            }
-        }
-    }
+                    "application/json": components["schemas"]["ErrorResponse"];
+                };
+            };
+        };
+    };
     getWords: {
         parameters: {
-            query?: never
-            header?: never
+            query?: never;
+            header?: never;
             path: {
-                wordbookId: number
-            }
-            cookie?: never
-        }
-        requestBody?: never
+                wordbookId: number;
+            };
+            cookie?: never;
+        };
+        requestBody?: never;
         responses: {
             /** @description 단어 목록이 조회되었습니다. */
             200: {
                 headers: {
-                    [name: string]: unknown
-                }
+                    [name: string]: unknown;
+                };
                 content: {
-                    'application/json': components['schemas']['RsDataListWordResponse']
-                }
-            }
+                    "application/json": components["schemas"]["RsDataListWordResponse"];
+                };
+            };
             /** @description Forbidden */
             403: {
                 headers: {
-                    [name: string]: unknown
-                }
+                    [name: string]: unknown;
+                };
                 content: {
-                    'application/json': unknown
-                }
-            }
+                    "application/json": unknown;
+                };
+            };
             /** @description Internal Server Error */
             500: {
                 headers: {
-                    [name: string]: unknown
-                }
+                    [name: string]: unknown;
+                };
                 content: {
-                    'application/json': components['schemas']['ErrorResponse']
-                }
-            }
-        }
-    }
+                    "application/json": components["schemas"]["ErrorResponse"];
+                };
+            };
+        };
+    };
     addWords: {
         parameters: {
-            query?: never
-            header?: never
+            query?: never;
+            header?: never;
             path: {
-                wordbookId: number
-            }
-            cookie?: never
-        }
+                wordbookId: number;
+            };
+            cookie?: never;
+        };
         requestBody: {
             content: {
-                'application/json': components['schemas']['AddWordToWordbookListRequest']
-            }
-        }
+                "application/json": components["schemas"]["AddWordToWordbookListRequest"];
+            };
+        };
         responses: {
             /** @description 단어장에 단어가 추가되었습니다. */
             200: {
                 headers: {
-                    [name: string]: unknown
-                }
+                    [name: string]: unknown;
+                };
                 content: {
-                    'application/json': components['schemas']['RsDataVoid']
-                }
-            }
+                    "application/json": components["schemas"]["RsDataVoid"];
+                };
+            };
             /** @description Forbidden */
             403: {
                 headers: {
-                    [name: string]: unknown
-                }
+                    [name: string]: unknown;
+                };
                 content: {
-                    'application/json': unknown
-                }
-            }
+                    "application/json": unknown;
+                };
+            };
             /** @description Internal Server Error */
             500: {
                 headers: {
-                    [name: string]: unknown
-                }
+                    [name: string]: unknown;
+                };
                 content: {
-                    'application/json': components['schemas']['ErrorResponse']
-                }
-            }
-        }
-    }
+                    "application/json": components["schemas"]["ErrorResponse"];
+                };
+            };
+        };
+    };
     addWordCustom: {
         parameters: {
-            query?: never
-            header?: never
+            query?: never;
+            header?: never;
             path: {
-                wordbookId: number
-            }
-            cookie?: never
-        }
+                wordbookId: number;
+            };
+            cookie?: never;
+        };
         requestBody: {
             content: {
-                'application/json': components['schemas']['AddWordRequest']
-            }
-        }
+                "application/json": components["schemas"]["AddWordRequest"];
+            };
+        };
         responses: {
             /** @description 단어장에 단어가 추가되었습니다. */
             200: {
                 headers: {
-                    [name: string]: unknown
-                }
+                    [name: string]: unknown;
+                };
                 content: {
-                    'application/json': components['schemas']['RsDataVoid']
-                }
-            }
+                    "application/json": components["schemas"]["RsDataVoid"];
+                };
+            };
             /** @description Forbidden */
             403: {
                 headers: {
-                    [name: string]: unknown
-                }
+                    [name: string]: unknown;
+                };
                 content: {
-                    'application/json': unknown
-                }
-            }
+                    "application/json": unknown;
+                };
+            };
             /** @description Internal Server Error */
             500: {
                 headers: {
-                    [name: string]: unknown
-                }
+                    [name: string]: unknown;
+                };
                 content: {
-                    'application/json': components['schemas']['ErrorResponse']
-                }
-            }
-        }
-    }
+                    "application/json": components["schemas"]["ErrorResponse"];
+                };
+            };
+        };
+    };
     deleteWords: {
         parameters: {
-            query?: never
-            header?: never
-            path?: never
-            cookie?: never
-        }
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
         requestBody: {
             content: {
-                'application/json': components['schemas']['WordDeleteRequest']
-            }
-        }
+                "application/json": components["schemas"]["WordDeleteRequest"];
+            };
+        };
         responses: {
             /** @description 단어들이 삭제되었습니다. */
             200: {
                 headers: {
-                    [name: string]: unknown
-                }
+                    [name: string]: unknown;
+                };
                 content: {
-                    'application/json': components['schemas']['RsDataVoid']
-                }
-            }
+                    "application/json": components["schemas"]["RsDataVoid"];
+                };
+            };
             /** @description Forbidden */
             403: {
                 headers: {
-                    [name: string]: unknown
-                }
+                    [name: string]: unknown;
+                };
                 content: {
-                    'application/json': unknown
-                }
-            }
+                    "application/json": unknown;
+                };
+            };
             /** @description Not Found */
             404: {
                 headers: {
-                    [name: string]: unknown
-                }
+                    [name: string]: unknown;
+                };
                 content: {
-                    'application/json': unknown
-                }
-            }
+                    "application/json": unknown;
+                };
+            };
             /** @description Internal Server Error */
             500: {
                 headers: {
-                    [name: string]: unknown
-                }
+                    [name: string]: unknown;
+                };
                 content: {
-                    'application/json': components['schemas']['ErrorResponse']
-                }
-            }
-        }
-    }
+                    "application/json": components["schemas"]["ErrorResponse"];
+                };
+            };
+        };
+    };
     saveWordbookTotalQuizResult: {
         parameters: {
-            query?: never
-            header?: never
-            path?: never
-            cookie?: never
-        }
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
         requestBody: {
             content: {
-                'application/json': components['schemas']['WordQuizResultSaveRequest']
-            }
-        }
+                "application/json": components["schemas"]["WordQuizResultSaveRequest"];
+            };
+        };
         responses: {
             /** @description 통합 퀴즈 결과 저장 완료 */
             200: {
                 headers: {
-                    [name: string]: unknown
-                }
+                    [name: string]: unknown;
+                };
                 content: {
-                    'application/json': components['schemas']['RsDataVoid']
-                }
-            }
+                    "application/json": components["schemas"]["RsDataVoid"];
+                };
+            };
             /** @description Forbidden */
             403: {
                 headers: {
-                    [name: string]: unknown
-                }
+                    [name: string]: unknown;
+                };
                 content: {
-                    'application/json': components['schemas']['ErrorResponse']
-                }
-            }
+                    "application/json": components["schemas"]["ErrorResponse"];
+                };
+            };
             /** @description Not Found */
             404: {
                 headers: {
-                    [name: string]: unknown
-                }
+                    [name: string]: unknown;
+                };
                 content: {
-                    'application/json': unknown
-                }
-            }
+                    "application/json": unknown;
+                };
+            };
             /** @description Internal Server Error */
             500: {
                 headers: {
-                    [name: string]: unknown
-                }
+                    [name: string]: unknown;
+                };
                 content: {
-                    'application/json': components['schemas']['ErrorResponse']
-                }
-            }
-        }
-    }
+                    "application/json": components["schemas"]["ErrorResponse"];
+                };
+            };
+        };
+    };
     saveWordbookQuizResult: {
         parameters: {
-            query?: never
-            header?: never
-            path?: never
-            cookie?: never
-        }
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
         requestBody: {
             content: {
-                'application/json': components['schemas']['WordQuizResultSaveRequest']
-            }
-        }
+                "application/json": components["schemas"]["WordQuizResultSaveRequest"];
+            };
+        };
         responses: {
             /** @description 단어장 퀴즈 결과 저장 완료 */
             200: {
                 headers: {
-                    [name: string]: unknown
-                }
+                    [name: string]: unknown;
+                };
                 content: {
-                    'application/json': components['schemas']['RsDataVoid']
-                }
-            }
+                    "application/json": components["schemas"]["RsDataVoid"];
+                };
+            };
             /** @description Forbidden */
             403: {
                 headers: {
-                    [name: string]: unknown
-                }
+                    [name: string]: unknown;
+                };
                 content: {
-                    'application/json': components['schemas']['ErrorResponse']
-                }
-            }
+                    "application/json": components["schemas"]["ErrorResponse"];
+                };
+            };
             /** @description Not Found */
             404: {
                 headers: {
-                    [name: string]: unknown
-                }
+                    [name: string]: unknown;
+                };
                 content: {
-                    'application/json': unknown
-                }
-            }
+                    "application/json": unknown;
+                };
+            };
             /** @description Internal Server Error */
             500: {
                 headers: {
-                    [name: string]: unknown
-                }
+                    [name: string]: unknown;
+                };
                 content: {
-                    'application/json': components['schemas']['ErrorResponse']
-                }
-            }
-        }
-    }
+                    "application/json": components["schemas"]["ErrorResponse"];
+                };
+            };
+        };
+    };
     createPaymentRequest: {
         parameters: {
-            query?: never
-            header?: never
-            path?: never
-            cookie?: never
-        }
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
         requestBody: {
             content: {
-                'application/json': components['schemas']['PaymentSimpleRequest']
-            }
-        }
+                "application/json": components["schemas"]["PaymentSimpleRequest"];
+            };
+        };
         responses: {
             /** @description Forbidden */
             403: {
                 headers: {
-                    [name: string]: unknown
-                }
+                    [name: string]: unknown;
+                };
                 content: {
-                    'application/json': components['schemas']['ErrorResponse']
-                }
-            }
+                    "application/json": components["schemas"]["ErrorResponse"];
+                };
+            };
             /** @description Not Found */
             404: {
                 headers: {
-                    [name: string]: unknown
-                }
+                    [name: string]: unknown;
+                };
                 content: {
-                    'application/json': unknown
-                }
-            }
+                    "application/json": unknown;
+                };
+            };
             /** @description Internal Server Error */
             500: {
                 headers: {
-                    [name: string]: unknown
-                }
+                    [name: string]: unknown;
+                };
                 content: {
-                    'application/json': components['schemas']['ErrorResponse']
-                }
-            }
+                    "application/json": components["schemas"]["ErrorResponse"];
+                };
+            };
             /** @description default response */
             default: {
                 headers: {
-                    [name: string]: unknown
-                }
+                    [name: string]: unknown;
+                };
                 content: {
-                    'application/json': components['schemas']['PaymentRequestDocs']
-                }
-            }
-        }
-    }
+                    "application/json": components["schemas"]["PaymentRequestDocs"];
+                };
+            };
+        };
+    };
     failedPayment: {
         parameters: {
-            query?: never
-            header?: never
-            path?: never
-            cookie?: never
-        }
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
         requestBody: {
             content: {
-                'application/json': components['schemas']['PaymentFailureRequest']
-            }
-        }
+                "application/json": components["schemas"]["PaymentFailureRequest"];
+            };
+        };
         responses: {
             /** @description OK */
             200: {
                 headers: {
-                    [name: string]: unknown
-                }
+                    [name: string]: unknown;
+                };
                 content: {
-                    'application/json': components['schemas']['RsDataString']
-                }
-            }
+                    "application/json": components["schemas"]["RsDataString"];
+                };
+            };
             /** @description Forbidden */
             403: {
                 headers: {
-                    [name: string]: unknown
-                }
+                    [name: string]: unknown;
+                };
                 content: {
-                    'application/json': components['schemas']['ErrorResponse']
-                }
-            }
+                    "application/json": components["schemas"]["ErrorResponse"];
+                };
+            };
             /** @description Internal Server Error */
             500: {
                 headers: {
-                    [name: string]: unknown
-                }
+                    [name: string]: unknown;
+                };
                 content: {
-                    'application/json': components['schemas']['ErrorResponse']
-                }
-            }
-        }
-    }
+                    "application/json": components["schemas"]["ErrorResponse"];
+                };
+            };
+        };
+    };
     failedBillingPayment: {
         parameters: {
-            query?: never
-            header?: never
-            path?: never
-            cookie?: never
-        }
-        requestBody?: never
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        requestBody?: never;
         responses: {
             /** @description OK */
             200: {
                 headers: {
-                    [name: string]: unknown
-                }
+                    [name: string]: unknown;
+                };
                 content: {
-                    'application/json': components['schemas']['RsDataString']
-                }
-            }
+                    "application/json": components["schemas"]["RsDataString"];
+                };
+            };
             /** @description Forbidden */
             403: {
                 headers: {
-                    [name: string]: unknown
-                }
+                    [name: string]: unknown;
+                };
                 content: {
-                    'application/json': components['schemas']['ErrorResponse']
-                }
-            }
+                    "application/json": components["schemas"]["ErrorResponse"];
+                };
+            };
             /** @description Internal Server Error */
             500: {
                 headers: {
-                    [name: string]: unknown
-                }
+                    [name: string]: unknown;
+                };
                 content: {
-                    'application/json': components['schemas']['ErrorResponse']
-                }
-            }
-        }
-    }
+                    "application/json": components["schemas"]["ErrorResponse"];
+                };
+            };
+        };
+    };
     succeedPayment: {
         parameters: {
-            query?: never
-            header?: never
-            path?: never
-            cookie?: never
-        }
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
         requestBody: {
             content: {
-                'application/json': components['schemas']['PaymentApproveRequest']
-            }
-        }
+                "application/json": components["schemas"]["PaymentApproveRequest"];
+            };
+        };
         responses: {
             /** @description OK */
             200: {
                 headers: {
-                    [name: string]: unknown
-                }
+                    [name: string]: unknown;
+                };
                 content: {
-                    'application/json': components['schemas']['RsDataString']
-                }
-            }
+                    "application/json": components["schemas"]["RsDataString"];
+                };
+            };
             /** @description Forbidden */
             403: {
                 headers: {
-                    [name: string]: unknown
-                }
+                    [name: string]: unknown;
+                };
                 content: {
-                    'application/json': components['schemas']['ErrorResponse']
-                }
-            }
+                    "application/json": components["schemas"]["ErrorResponse"];
+                };
+            };
             /** @description Not Found */
             404: {
                 headers: {
-                    [name: string]: unknown
-                }
+                    [name: string]: unknown;
+                };
                 content: {
-                    'application/json': unknown
-                }
-            }
+                    "application/json": unknown;
+                };
+            };
             /** @description Conflict */
             409: {
                 headers: {
-                    [name: string]: unknown
-                }
+                    [name: string]: unknown;
+                };
                 content: {
-                    'application/json': unknown
-                }
-            }
+                    "application/json": unknown;
+                };
+            };
             /** @description Internal Server Error */
             500: {
                 headers: {
-                    [name: string]: unknown
-                }
+                    [name: string]: unknown;
+                };
                 content: {
-                    'application/json': unknown
-                }
-            }
-        }
-    }
+                    "application/json": unknown;
+                };
+            };
+        };
+    };
     succeedBillingPayment: {
         parameters: {
-            query?: never
-            header?: never
-            path?: never
-            cookie?: never
-        }
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
         requestBody: {
             content: {
-                'application/json': components['schemas']['BillingPaymentRequest']
-            }
-        }
+                "application/json": components["schemas"]["BillingPaymentRequest"];
+            };
+        };
         responses: {
             /** @description OK */
             200: {
                 headers: {
-                    [name: string]: unknown
-                }
+                    [name: string]: unknown;
+                };
                 content: {
-                    'application/json': components['schemas']['RsDataString']
-                }
-            }
+                    "application/json": components["schemas"]["RsDataString"];
+                };
+            };
             /** @description Forbidden */
             403: {
                 headers: {
-                    [name: string]: unknown
-                }
+                    [name: string]: unknown;
+                };
                 content: {
-                    'application/json': components['schemas']['ErrorResponse']
-                }
-            }
+                    "application/json": components["schemas"]["ErrorResponse"];
+                };
+            };
             /** @description Not Found */
             404: {
                 headers: {
-                    [name: string]: unknown
-                }
+                    [name: string]: unknown;
+                };
                 content: {
-                    'application/json': unknown
-                }
-            }
+                    "application/json": unknown;
+                };
+            };
             /** @description Internal Server Error */
             500: {
                 headers: {
-                    [name: string]: unknown
-                }
+                    [name: string]: unknown;
+                };
                 content: {
-                    'application/json': unknown
-                }
-            }
-        }
-    }
+                    "application/json": unknown;
+                };
+            };
+        };
+    };
     checkNickname: {
         parameters: {
             query: {
-                nickname: string
-            }
-            header?: never
-            path?: never
-            cookie?: never
-        }
-        requestBody?: never
+                nickname: string;
+            };
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        requestBody?: never;
         responses: {
             /** @description 닉네임 사용 가능 여부 반환 */
             200: {
                 headers: {
-                    [name: string]: unknown
-                }
+                    [name: string]: unknown;
+                };
                 content: {
-                    'application/json': components['schemas']['RsDataBoolean']
-                }
-            }
+                    "application/json": components["schemas"]["RsDataBoolean"];
+                };
+            };
             /** @description 파라미터 검증 오류 메시지 */
             400: {
                 headers: {
-                    [name: string]: unknown
-                }
+                    [name: string]: unknown;
+                };
                 content: {
-                    'application/json': components['schemas']['RsDataBoolean']
-                }
-            }
+                    "application/json": components["schemas"]["RsDataBoolean"];
+                };
+            };
             /** @description Forbidden */
             403: {
                 headers: {
-                    [name: string]: unknown
-                }
+                    [name: string]: unknown;
+                };
                 content: {
-                    'application/json': components['schemas']['ErrorResponse']
-                }
-            }
+                    "application/json": components["schemas"]["ErrorResponse"];
+                };
+            };
             /** @description Internal Server Error */
             500: {
                 headers: {
-                    [name: string]: unknown
-                }
+                    [name: string]: unknown;
+                };
                 content: {
-                    'application/json': components['schemas']['ErrorResponse']
-                }
-            }
-        }
-    }
+                    "application/json": components["schemas"]["ErrorResponse"];
+                };
+            };
+        };
+    };
     checkEmail: {
         parameters: {
             query: {
-                email: string
-            }
-            header?: never
-            path?: never
-            cookie?: never
-        }
-        requestBody?: never
+                email: string;
+            };
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        requestBody?: never;
         responses: {
             /** @description 사용 가능한 이메일입니다. */
             200: {
                 headers: {
-                    [name: string]: unknown
-                }
+                    [name: string]: unknown;
+                };
                 content: {
-                    'application/json': components['schemas']['RsDataObject']
-                }
-            }
+                    "application/json": components["schemas"]["RsDataObject"];
+                };
+            };
             /** @description 파라미터 검증 오류 메시지 */
             400: {
                 headers: {
-                    [name: string]: unknown
-                }
+                    [name: string]: unknown;
+                };
                 content: {
-                    'application/json': components['schemas']['RsDataObject']
-                }
-            }
+                    "application/json": components["schemas"]["RsDataObject"];
+                };
+            };
             /** @description Forbidden */
             403: {
                 headers: {
-                    [name: string]: unknown
-                }
+                    [name: string]: unknown;
+                };
                 content: {
-                    'application/json': components['schemas']['ErrorResponse']
-                }
-            }
+                    "application/json": components["schemas"]["ErrorResponse"];
+                };
+            };
             /** @description Not Found */
             404: {
                 headers: {
-                    [name: string]: unknown
-                }
+                    [name: string]: unknown;
+                };
                 content: {
-                    'application/json': unknown
-                }
-            }
+                    "application/json": unknown;
+                };
+            };
             /** @description Conflict */
             409: {
                 headers: {
-                    [name: string]: unknown
-                }
+                    [name: string]: unknown;
+                };
                 content: {
-                    'application/json': unknown
-                }
-            }
+                    "application/json": unknown;
+                };
+            };
             /** @description Internal Server Error */
             500: {
                 headers: {
-                    [name: string]: unknown
-                }
+                    [name: string]: unknown;
+                };
                 content: {
-                    'application/json': components['schemas']['ErrorResponse']
-                }
-            }
-        }
-    }
+                    "application/json": components["schemas"]["ErrorResponse"];
+                };
+            };
+        };
+    };
     getAllByMember: {
         parameters: {
-            query?: never
-            header?: never
-            path?: never
-            cookie?: never
-        }
-        requestBody?: never
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        requestBody?: never;
         responses: {
             /** @description 표현함 목록 조회에 성공했습니다. */
             200: {
                 headers: {
-                    [name: string]: unknown
-                }
+                    [name: string]: unknown;
+                };
                 content: {
-                    'application/json': components['schemas']['RsDataListExpressionBookResponse']
-                }
-            }
+                    "application/json": components["schemas"]["RsDataListExpressionBookResponse"];
+                };
+            };
             /** @description Forbidden */
             403: {
                 headers: {
-                    [name: string]: unknown
-                }
+                    [name: string]: unknown;
+                };
                 content: {
-                    'application/json': components['schemas']['ErrorResponse']
-                }
-            }
+                    "application/json": components["schemas"]["ErrorResponse"];
+                };
+            };
             /** @description Not Found */
             404: {
                 headers: {
-                    [name: string]: unknown
-                }
+                    [name: string]: unknown;
+                };
                 content: {
-                    'application/json': unknown
-                }
-            }
+                    "application/json": unknown;
+                };
+            };
             /** @description Internal Server Error */
             500: {
                 headers: {
-                    [name: string]: unknown
-                }
+                    [name: string]: unknown;
+                };
                 content: {
-                    'application/json': components['schemas']['ErrorResponse']
-                }
-            }
-        }
-    }
+                    "application/json": components["schemas"]["ErrorResponse"];
+                };
+            };
+        };
+    };
     create: {
         parameters: {
-            query?: never
-            header?: never
-            path?: never
-            cookie?: never
-        }
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
         requestBody: {
             content: {
-                'application/json': components['schemas']['ExpressionBookRequest']
-            }
-        }
+                "application/json": components["schemas"]["ExpressionBookRequest"];
+            };
+        };
         responses: {
             /** @description 추가 표현함이 생성되었습니다. */
             200: {
                 headers: {
-                    [name: string]: unknown
-                }
+                    [name: string]: unknown;
+                };
                 content: {
-                    'application/json': components['schemas']['RsDataLong']
-                }
-            }
+                    "application/json": components["schemas"]["RsDataLong"];
+                };
+            };
             /** @description Bad Request */
             400: {
                 headers: {
-                    [name: string]: unknown
-                }
+                    [name: string]: unknown;
+                };
                 content: {
-                    'application/json': unknown
-                }
-            }
+                    "application/json": unknown;
+                };
+            };
             /** @description Forbidden */
             403: {
                 headers: {
-                    [name: string]: unknown
-                }
+                    [name: string]: unknown;
+                };
                 content: {
-                    'application/json': unknown
-                }
-            }
+                    "application/json": unknown;
+                };
+            };
             /** @description Not Found */
             404: {
                 headers: {
-                    [name: string]: unknown
-                }
+                    [name: string]: unknown;
+                };
                 content: {
-                    'application/json': unknown
-                }
-            }
+                    "application/json": unknown;
+                };
+            };
             /** @description Internal Server Error */
             500: {
                 headers: {
-                    [name: string]: unknown
-                }
+                    [name: string]: unknown;
+                };
                 content: {
-                    'application/json': components['schemas']['ErrorResponse']
-                }
-            }
-        }
-    }
+                    "application/json": components["schemas"]["ErrorResponse"];
+                };
+            };
+        };
+    };
     saveExpression: {
         parameters: {
             query: {
-                userDetails: components['schemas']['CustomUserDetails']
-            }
-            header?: never
+                userDetails: components["schemas"]["CustomUserDetails"];
+            };
+            header?: never;
             path: {
-                expressionBookId: number
-            }
-            cookie?: never
-        }
+                expressionBookId: number;
+            };
+            cookie?: never;
+        };
         requestBody: {
             content: {
-                'application/json': components['schemas']['ExpressionSaveRequest']
-            }
-        }
+                "application/json": components["schemas"]["ExpressionSaveRequest"];
+            };
+        };
         responses: {
             /** @description 표현이 저장되었습니다. */
             200: {
                 headers: {
-                    [name: string]: unknown
-                }
+                    [name: string]: unknown;
+                };
                 content: {
-                    'application/json': components['schemas']['RsDataObject']
-                }
-            }
+                    "application/json": components["schemas"]["RsDataObject"];
+                };
+            };
             /** @description Forbidden */
             403: {
                 headers: {
-                    [name: string]: unknown
-                }
+                    [name: string]: unknown;
+                };
                 content: {
-                    'application/json': components['schemas']['ErrorResponse']
-                }
-            }
+                    "application/json": components["schemas"]["ErrorResponse"];
+                };
+            };
             /** @description Not Found */
             404: {
                 headers: {
-                    [name: string]: unknown
-                }
+                    [name: string]: unknown;
+                };
                 content: {
-                    'application/json': unknown
-                }
-            }
+                    "application/json": unknown;
+                };
+            };
             /** @description Internal Server Error */
             500: {
                 headers: {
-                    [name: string]: unknown
-                }
+                    [name: string]: unknown;
+                };
                 content: {
-                    'application/json': unknown
-                }
-            }
-        }
-    }
+                    "application/json": unknown;
+                };
+            };
+        };
+    };
     saveExpressionQuizResult: {
         parameters: {
-            query?: never
-            header?: never
-            path?: never
-            cookie?: never
-        }
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
         requestBody: {
             content: {
-                'application/json': components['schemas']['ExpressionQuizResultSaveRequest']
-            }
-        }
+                "application/json": components["schemas"]["ExpressionQuizResultSaveRequest"];
+            };
+        };
         responses: {
             /** @description 표현함 퀴즈 결과 저장 완료 */
             200: {
                 headers: {
-                    [name: string]: unknown
-                }
+                    [name: string]: unknown;
+                };
                 content: {
-                    'application/json': components['schemas']['RsDataVoid']
-                }
-            }
+                    "application/json": components["schemas"]["RsDataVoid"];
+                };
+            };
             /** @description Forbidden */
             403: {
                 headers: {
-                    [name: string]: unknown
-                }
+                    [name: string]: unknown;
+                };
                 content: {
-                    'application/json': components['schemas']['ErrorResponse']
-                }
-            }
+                    "application/json": components["schemas"]["ErrorResponse"];
+                };
+            };
             /** @description Not Found */
             404: {
                 headers: {
-                    [name: string]: unknown
-                }
+                    [name: string]: unknown;
+                };
                 content: {
-                    'application/json': unknown
-                }
-            }
+                    "application/json": unknown;
+                };
+            };
             /** @description Internal Server Error */
             500: {
                 headers: {
-                    [name: string]: unknown
-                }
+                    [name: string]: unknown;
+                };
                 content: {
-                    'application/json': components['schemas']['ErrorResponse']
-                }
-            }
-        }
-    }
+                    "application/json": components["schemas"]["ErrorResponse"];
+                };
+            };
+        };
+    };
     deleteExpressionsFromBook: {
         parameters: {
-            query?: never
-            header?: never
-            path?: never
-            cookie?: never
-        }
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
         requestBody: {
             content: {
-                'application/json': components['schemas']['DeleteExpressionsRequest']
-            }
-        }
+                "application/json": components["schemas"]["DeleteExpressionsRequest"];
+            };
+        };
         responses: {
             /** @description 표현이 표현함에서 삭제되었습니다. */
             200: {
                 headers: {
-                    [name: string]: unknown
-                }
+                    [name: string]: unknown;
+                };
                 content: {
-                    'application/json': components['schemas']['RsDataVoid']
-                }
-            }
+                    "application/json": components["schemas"]["RsDataVoid"];
+                };
+            };
             /** @description Forbidden */
             403: {
                 headers: {
-                    [name: string]: unknown
-                }
+                    [name: string]: unknown;
+                };
                 content: {
-                    'application/json': unknown
-                }
-            }
+                    "application/json": unknown;
+                };
+            };
             /** @description Not Found */
             404: {
                 headers: {
-                    [name: string]: unknown
-                }
+                    [name: string]: unknown;
+                };
                 content: {
-                    'application/json': unknown
-                }
-            }
+                    "application/json": unknown;
+                };
+            };
             /** @description Internal Server Error */
             500: {
                 headers: {
-                    [name: string]: unknown
-                }
+                    [name: string]: unknown;
+                };
                 content: {
-                    'application/json': components['schemas']['ErrorResponse']
-                }
-            }
-        }
-    }
+                    "application/json": components["schemas"]["ErrorResponse"];
+                };
+            };
+        };
+    };
     levelCheck: {
         parameters: {
-            query?: never
-            header?: never
-            path?: never
-            cookie?: never
-        }
-        requestBody?: never
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        requestBody?: never;
         responses: {
             /** @description 학습 레벨이 측정되었습니다. */
             200: {
                 headers: {
-                    [name: string]: unknown
-                }
+                    [name: string]: unknown;
+                };
                 content: {
-                    'application/json': components['schemas']['RsDataLevelCheckResponse']
-                }
-            }
+                    "application/json": components["schemas"]["RsDataLevelCheckResponse"];
+                };
+            };
             /** @description Bad Request */
             400: {
                 headers: {
-                    [name: string]: unknown
-                }
+                    [name: string]: unknown;
+                };
                 content: {
-                    'application/json': unknown
-                }
-            }
+                    "application/json": unknown;
+                };
+            };
             /** @description Forbidden */
             403: {
                 headers: {
-                    [name: string]: unknown
-                }
+                    [name: string]: unknown;
+                };
                 content: {
-                    'application/json': components['schemas']['ErrorResponse']
-                }
-            }
+                    "application/json": components["schemas"]["ErrorResponse"];
+                };
+            };
             /** @description Not Found */
             404: {
                 headers: {
-                    [name: string]: unknown
-                }
+                    [name: string]: unknown;
+                };
                 content: {
-                    'application/json': unknown
-                }
-            }
+                    "application/json": unknown;
+                };
+            };
             /** @description Internal Server Error */
             500: {
                 headers: {
-                    [name: string]: unknown
-                }
+                    [name: string]: unknown;
+                };
                 content: {
-                    'application/json': unknown
-                }
-            }
-        }
-    }
+                    "application/json": unknown;
+                };
+            };
+        };
+    };
     add: {
         parameters: {
-            query?: never
-            header?: never
+            query?: never;
+            header?: never;
             path: {
-                videoId: string
-            }
-            cookie?: never
-        }
-        requestBody?: never
+                videoId: string;
+            };
+            cookie?: never;
+        };
+        requestBody?: never;
         responses: {
             /** @description 북마크 추가 완료 */
             201: {
                 headers: {
-                    [name: string]: unknown
-                }
+                    [name: string]: unknown;
+                };
                 content: {
-                    'application/json': components['schemas']['RsDataString']
-                }
-            }
+                    "application/json": components["schemas"]["RsDataString"];
+                };
+            };
             /** @description Forbidden */
             403: {
                 headers: {
-                    [name: string]: unknown
-                }
+                    [name: string]: unknown;
+                };
                 content: {
-                    'application/json': components['schemas']['ErrorResponse']
-                }
-            }
+                    "application/json": components["schemas"]["ErrorResponse"];
+                };
+            };
             /** @description Not Found */
             404: {
                 headers: {
-                    [name: string]: unknown
-                }
+                    [name: string]: unknown;
+                };
                 content: {
-                    'application/json': unknown
-                }
-            }
+                    "application/json": unknown;
+                };
+            };
             /** @description Conflict */
             409: {
                 headers: {
-                    [name: string]: unknown
-                }
+                    [name: string]: unknown;
+                };
                 content: {
-                    'application/json': unknown
-                }
-            }
+                    "application/json": unknown;
+                };
+            };
             /** @description Internal Server Error */
             500: {
                 headers: {
-                    [name: string]: unknown
-                }
+                    [name: string]: unknown;
+                };
                 content: {
-                    'application/json': components['schemas']['ErrorResponse']
-                }
-            }
-        }
-    }
+                    "application/json": components["schemas"]["ErrorResponse"];
+                };
+            };
+        };
+    };
     remove: {
         parameters: {
-            query?: never
-            header?: never
+            query?: never;
+            header?: never;
             path: {
-                videoId: string
-            }
-            cookie?: never
-        }
-        requestBody?: never
+                videoId: string;
+            };
+            cookie?: never;
+        };
+        requestBody?: never;
         responses: {
             /** @description 북마크 제거 완료 */
             200: {
                 headers: {
-                    [name: string]: unknown
-                }
+                    [name: string]: unknown;
+                };
                 content: {
-                    'application/json': components['schemas']['RsDataString']
-                }
-            }
+                    "application/json": components["schemas"]["RsDataString"];
+                };
+            };
             /** @description Forbidden */
             403: {
                 headers: {
-                    [name: string]: unknown
-                }
+                    [name: string]: unknown;
+                };
                 content: {
-                    'application/json': components['schemas']['ErrorResponse']
-                }
-            }
+                    "application/json": components["schemas"]["ErrorResponse"];
+                };
+            };
             /** @description Not Found */
             404: {
                 headers: {
-                    [name: string]: unknown
-                }
+                    [name: string]: unknown;
+                };
                 content: {
-                    'application/json': unknown
-                }
-            }
+                    "application/json": unknown;
+                };
+            };
             /** @description Internal Server Error */
             500: {
                 headers: {
-                    [name: string]: unknown
-                }
+                    [name: string]: unknown;
+                };
                 content: {
-                    'application/json': components['schemas']['ErrorResponse']
-                }
-            }
-        }
-    }
+                    "application/json": components["schemas"]["ErrorResponse"];
+                };
+            };
+        };
+    };
     deleteWordbook: {
         parameters: {
-            query?: never
-            header?: never
+            query?: never;
+            header?: never;
             path: {
-                wordbookId: number
-            }
-            cookie?: never
-        }
-        requestBody?: never
+                wordbookId: number;
+            };
+            cookie?: never;
+        };
+        requestBody?: never;
         responses: {
             /** @description 단어장이 삭제되었습니다. */
             200: {
                 headers: {
-                    [name: string]: unknown
-                }
+                    [name: string]: unknown;
+                };
                 content: {
-                    'application/json': components['schemas']['RsDataVoid']
-                }
-            }
+                    "application/json": components["schemas"]["RsDataVoid"];
+                };
+            };
             /** @description Forbidden */
             403: {
                 headers: {
-                    [name: string]: unknown
-                }
+                    [name: string]: unknown;
+                };
                 content: {
-                    'application/json': unknown
-                }
-            }
+                    "application/json": unknown;
+                };
+            };
             /** @description Internal Server Error */
             500: {
                 headers: {
-                    [name: string]: unknown
-                }
+                    [name: string]: unknown;
+                };
                 content: {
-                    'application/json': components['schemas']['ErrorResponse']
-                }
-            }
-        }
-    }
+                    "application/json": components["schemas"]["ErrorResponse"];
+                };
+            };
+        };
+    };
     renameWordbook: {
         parameters: {
-            query?: never
-            header?: never
+            query?: never;
+            header?: never;
             path: {
-                wordbookId: number
-            }
-            cookie?: never
-        }
+                wordbookId: number;
+            };
+            cookie?: never;
+        };
         requestBody: {
             content: {
-                'application/json': components['schemas']['WordbookRenameRequest']
-            }
-        }
+                "application/json": components["schemas"]["WordbookRenameRequest"];
+            };
+        };
         responses: {
             /** @description 단어장의 이름이 변경되었습니다. */
             200: {
                 headers: {
-                    [name: string]: unknown
-                }
+                    [name: string]: unknown;
+                };
                 content: {
-                    'application/json': components['schemas']['RsDataVoid']
-                }
-            }
+                    "application/json": components["schemas"]["RsDataVoid"];
+                };
+            };
             /** @description Forbidden */
             403: {
                 headers: {
-                    [name: string]: unknown
-                }
+                    [name: string]: unknown;
+                };
                 content: {
-                    'application/json': unknown
-                }
-            }
+                    "application/json": unknown;
+                };
+            };
             /** @description Internal Server Error */
             500: {
                 headers: {
-                    [name: string]: unknown
-                }
+                    [name: string]: unknown;
+                };
                 content: {
-                    'application/json': components['schemas']['ErrorResponse']
-                }
-            }
-        }
-    }
+                    "application/json": components["schemas"]["ErrorResponse"];
+                };
+            };
+        };
+    };
     moveWords: {
         parameters: {
-            query?: never
-            header?: never
-            path?: never
-            cookie?: never
-        }
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
         requestBody: {
             content: {
-                'application/json': components['schemas']['WordMoveRequest']
-            }
-        }
+                "application/json": components["schemas"]["WordMoveRequest"];
+            };
+        };
         responses: {
             /** @description 단어들이 이동되었습니다. */
             200: {
                 headers: {
-                    [name: string]: unknown
-                }
+                    [name: string]: unknown;
+                };
                 content: {
-                    'application/json': components['schemas']['RsDataVoid']
-                }
-            }
+                    "application/json": components["schemas"]["RsDataVoid"];
+                };
+            };
             /** @description Forbidden */
             403: {
                 headers: {
-                    [name: string]: unknown
-                }
+                    [name: string]: unknown;
+                };
                 content: {
-                    'application/json': unknown
-                }
-            }
+                    "application/json": unknown;
+                };
+            };
             /** @description Not Found */
             404: {
                 headers: {
-                    [name: string]: unknown
-                }
+                    [name: string]: unknown;
+                };
                 content: {
-                    'application/json': unknown
-                }
-            }
+                    "application/json": unknown;
+                };
+            };
             /** @description Internal Server Error */
             500: {
                 headers: {
-                    [name: string]: unknown
-                }
+                    [name: string]: unknown;
+                };
                 content: {
-                    'application/json': components['schemas']['ErrorResponse']
-                }
-            }
-        }
-    }
+                    "application/json": components["schemas"]["ErrorResponse"];
+                };
+            };
+        };
+    };
     cancelSubscription: {
         parameters: {
-            query?: never
-            header?: never
-            path?: never
-            cookie?: never
-        }
-        requestBody?: never
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        requestBody?: never;
         responses: {
             /** @description OK */
             200: {
                 headers: {
-                    [name: string]: unknown
-                }
+                    [name: string]: unknown;
+                };
                 content: {
-                    'application/json': components['schemas']['RsDataString']
-                }
-            }
+                    "application/json": components["schemas"]["RsDataString"];
+                };
+            };
             /** @description Forbidden */
             403: {
                 headers: {
-                    [name: string]: unknown
-                }
+                    [name: string]: unknown;
+                };
                 content: {
-                    'application/json': components['schemas']['ErrorResponse']
-                }
-            }
+                    "application/json": components["schemas"]["ErrorResponse"];
+                };
+            };
             /** @description Internal Server Error */
             500: {
                 headers: {
-                    [name: string]: unknown
-                }
+                    [name: string]: unknown;
+                };
                 content: {
-                    'application/json': components['schemas']['ErrorResponse']
-                }
-            }
-        }
-    }
+                    "application/json": components["schemas"]["ErrorResponse"];
+                };
+            };
+        };
+    };
     updateUserLanguage: {
         parameters: {
             query: {
@@ -3051,1452 +3051,1452 @@ export interface operations {
                  * @description 변경할 언어
                  * @example ENGLISH
                  */
-                language: 'ENGLISH' | 'JAPANESE' | 'NONE' | 'ALL'
-            }
-            header?: never
-            path?: never
-            cookie?: never
-        }
-        requestBody?: never
+                language: "ENGLISH" | "JAPANESE" | "NONE" | "ALL";
+            };
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        requestBody?: never;
         responses: {
             /** @description 언어 설정이 완료되었습니다. */
             200: {
                 headers: {
-                    [name: string]: unknown
-                }
+                    [name: string]: unknown;
+                };
                 content: {
-                    'application/json': components['schemas']['RsDataObject']
-                }
-            }
+                    "application/json": components["schemas"]["RsDataObject"];
+                };
+            };
             /** @description Forbidden */
             403: {
                 headers: {
-                    [name: string]: unknown
-                }
+                    [name: string]: unknown;
+                };
                 content: {
-                    'application/json': components['schemas']['ErrorResponse']
-                }
-            }
+                    "application/json": components["schemas"]["ErrorResponse"];
+                };
+            };
             /** @description Not Found */
             404: {
                 headers: {
-                    [name: string]: unknown
-                }
+                    [name: string]: unknown;
+                };
                 content: {
-                    'application/json': unknown
-                }
-            }
+                    "application/json": unknown;
+                };
+            };
             /** @description Conflict */
             409: {
                 headers: {
-                    [name: string]: unknown
-                }
+                    [name: string]: unknown;
+                };
                 content: {
-                    'application/json': unknown
-                }
-            }
+                    "application/json": unknown;
+                };
+            };
             /** @description Internal Server Error */
             500: {
                 headers: {
-                    [name: string]: unknown
-                }
+                    [name: string]: unknown;
+                };
                 content: {
-                    'application/json': components['schemas']['ErrorResponse']
-                }
-            }
-        }
-    }
+                    "application/json": components["schemas"]["ErrorResponse"];
+                };
+            };
+        };
+    };
     getMyProfile: {
         parameters: {
-            query?: never
-            header?: never
-            path?: never
-            cookie?: never
-        }
-        requestBody?: never
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        requestBody?: never;
         responses: {
             /** @description 내 정보 확인 성공 */
             200: {
                 headers: {
-                    [name: string]: unknown
-                }
+                    [name: string]: unknown;
+                };
                 content: {
-                    'application/json': components['schemas']['UserProfileResponse']
-                }
-            }
+                    "application/json": components["schemas"]["UserProfileResponse"];
+                };
+            };
             /** @description Forbidden */
             403: {
                 headers: {
-                    [name: string]: unknown
-                }
+                    [name: string]: unknown;
+                };
                 content: {
-                    'application/json': components['schemas']['ErrorResponse']
-                }
-            }
+                    "application/json": components["schemas"]["ErrorResponse"];
+                };
+            };
             /** @description Not Found */
             404: {
                 headers: {
-                    [name: string]: unknown
-                }
+                    [name: string]: unknown;
+                };
                 content: {
-                    'application/json': unknown
-                }
-            }
+                    "application/json": unknown;
+                };
+            };
             /** @description Internal Server Error */
             500: {
                 headers: {
-                    [name: string]: unknown
-                }
+                    [name: string]: unknown;
+                };
                 content: {
-                    'application/json': components['schemas']['ErrorResponse']
-                }
-            }
-        }
-    }
+                    "application/json": components["schemas"]["ErrorResponse"];
+                };
+            };
+        };
+    };
     delete: {
         parameters: {
-            query?: never
-            header?: never
-            path?: never
-            cookie?: never
-        }
-        requestBody?: never
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        requestBody?: never;
         responses: {
             /** @description 회원 탈퇴가 완료되었습니다. */
             200: {
                 headers: {
-                    [name: string]: unknown
-                }
+                    [name: string]: unknown;
+                };
                 content: {
-                    'application/json': components['schemas']['RsDataVoid']
-                }
-            }
+                    "application/json": components["schemas"]["RsDataVoid"];
+                };
+            };
             /** @description Forbidden */
             403: {
                 headers: {
-                    [name: string]: unknown
-                }
+                    [name: string]: unknown;
+                };
                 content: {
-                    'application/json': components['schemas']['ErrorResponse']
-                }
-            }
+                    "application/json": components["schemas"]["ErrorResponse"];
+                };
+            };
             /** @description Not Found */
             404: {
                 headers: {
-                    [name: string]: unknown
-                }
+                    [name: string]: unknown;
+                };
                 content: {
-                    'application/json': unknown
-                }
-            }
+                    "application/json": unknown;
+                };
+            };
             /** @description Gone */
             410: {
                 headers: {
-                    [name: string]: unknown
-                }
+                    [name: string]: unknown;
+                };
                 content: {
-                    'application/json': unknown
-                }
-            }
+                    "application/json": unknown;
+                };
+            };
             /** @description Internal Server Error */
             500: {
                 headers: {
-                    [name: string]: unknown
-                }
+                    [name: string]: unknown;
+                };
                 content: {
-                    'application/json': components['schemas']['ErrorResponse']
-                }
-            }
-        }
-    }
+                    "application/json": components["schemas"]["ErrorResponse"];
+                };
+            };
+        };
+    };
     changeMemberInformation: {
         parameters: {
-            query?: never
-            header?: never
-            path?: never
-            cookie?: never
-        }
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
         requestBody: {
             content: {
-                'application/json': components['schemas']['ChangeInfoRequest']
-            }
-        }
+                "application/json": components["schemas"]["ChangeInfoRequest"];
+            };
+        };
         responses: {
             /** @description 회원 정보가 성공적으로 수정되었습니다. */
             200: {
                 headers: {
-                    [name: string]: unknown
-                }
+                    [name: string]: unknown;
+                };
                 content: {
-                    'application/json': components['schemas']['ChangeInfoResponse']
-                }
-            }
+                    "application/json": components["schemas"]["ChangeInfoResponse"];
+                };
+            };
             /** @description Forbidden */
             403: {
                 headers: {
-                    [name: string]: unknown
-                }
+                    [name: string]: unknown;
+                };
                 content: {
-                    'application/json': components['schemas']['ErrorResponse']
-                }
-            }
+                    "application/json": components["schemas"]["ErrorResponse"];
+                };
+            };
             /** @description Not Found */
             404: {
                 headers: {
-                    [name: string]: unknown
-                }
+                    [name: string]: unknown;
+                };
                 content: {
-                    'application/json': unknown
-                }
-            }
+                    "application/json": unknown;
+                };
+            };
             /** @description Conflict */
             409: {
                 headers: {
-                    [name: string]: unknown
-                }
+                    [name: string]: unknown;
+                };
                 content: {
-                    'application/json': unknown
-                }
-            }
+                    "application/json": unknown;
+                };
+            };
             /** @description Internal Server Error */
             500: {
                 headers: {
-                    [name: string]: unknown
-                }
+                    [name: string]: unknown;
+                };
                 content: {
-                    'application/json': components['schemas']['ErrorResponse']
-                }
-            }
-        }
-    }
+                    "application/json": components["schemas"]["ErrorResponse"];
+                };
+            };
+        };
+    };
     changeProfileImage: {
         parameters: {
-            query?: never
-            header?: never
-            path?: never
-            cookie?: never
-        }
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
         requestBody: {
             content: {
-                'application/json': {
+                "application/json": {
                     /** Format: binary */
-                    file: string
-                }
-            }
-        }
+                    file: string;
+                };
+            };
+        };
         responses: {
             /** @description 프로필 이미지가 수정되었습니다. */
             200: {
                 headers: {
-                    [name: string]: unknown
-                }
+                    [name: string]: unknown;
+                };
                 content: {
-                    'application/json': string
-                }
-            }
+                    "application/json": string;
+                };
+            };
             /** @description Bad Request */
             400: {
                 headers: {
-                    [name: string]: unknown
-                }
+                    [name: string]: unknown;
+                };
                 content: {
-                    'application/json': unknown
-                }
-            }
+                    "application/json": unknown;
+                };
+            };
             /** @description Forbidden */
             403: {
                 headers: {
-                    [name: string]: unknown
-                }
+                    [name: string]: unknown;
+                };
                 content: {
-                    'application/json': components['schemas']['ErrorResponse']
-                }
-            }
+                    "application/json": components["schemas"]["ErrorResponse"];
+                };
+            };
             /** @description Not Found */
             404: {
                 headers: {
-                    [name: string]: unknown
-                }
+                    [name: string]: unknown;
+                };
                 content: {
-                    'application/json': unknown
-                }
-            }
+                    "application/json": unknown;
+                };
+            };
             /** @description Internal Server Error */
             500: {
                 headers: {
-                    [name: string]: unknown
-                }
+                    [name: string]: unknown;
+                };
                 content: {
-                    'application/json': components['schemas']['ErrorResponse']
-                }
-            }
-        }
-    }
+                    "application/json": components["schemas"]["ErrorResponse"];
+                };
+            };
+        };
+    };
     delete_1: {
         parameters: {
-            query?: never
-            header?: never
+            query?: never;
+            header?: never;
             path: {
-                expressionBookId: number
-            }
-            cookie?: never
-        }
-        requestBody?: never
+                expressionBookId: number;
+            };
+            cookie?: never;
+        };
+        requestBody?: never;
         responses: {
             /** @description 표현함이 삭제되었습니다. */
             200: {
                 headers: {
-                    [name: string]: unknown
-                }
+                    [name: string]: unknown;
+                };
                 content: {
-                    'application/json': components['schemas']['RsDataObject']
-                }
-            }
+                    "application/json": components["schemas"]["RsDataObject"];
+                };
+            };
             /** @description Forbidden */
             403: {
                 headers: {
-                    [name: string]: unknown
-                }
+                    [name: string]: unknown;
+                };
                 content: {
-                    'application/json': unknown
-                }
-            }
+                    "application/json": unknown;
+                };
+            };
             /** @description Not Found */
             404: {
                 headers: {
-                    [name: string]: unknown
-                }
+                    [name: string]: unknown;
+                };
                 content: {
-                    'application/json': unknown
-                }
-            }
+                    "application/json": unknown;
+                };
+            };
             /** @description Internal Server Error */
             500: {
                 headers: {
-                    [name: string]: unknown
-                }
+                    [name: string]: unknown;
+                };
                 content: {
-                    'application/json': components['schemas']['ErrorResponse']
-                }
-            }
-        }
-    }
+                    "application/json": components["schemas"]["ErrorResponse"];
+                };
+            };
+        };
+    };
     updateName: {
         parameters: {
-            query?: never
-            header?: never
+            query?: never;
+            header?: never;
             path: {
-                expressionBookId: number
-            }
-            cookie?: never
-        }
+                expressionBookId: number;
+            };
+            cookie?: never;
+        };
         requestBody: {
             content: {
-                'application/json': components['schemas']['UpdateExpressionBookNameRequest']
-            }
-        }
+                "application/json": components["schemas"]["UpdateExpressionBookNameRequest"];
+            };
+        };
         responses: {
             /** @description 표현함 이름이 수정되었습니다. */
             200: {
                 headers: {
-                    [name: string]: unknown
-                }
+                    [name: string]: unknown;
+                };
                 content: {
-                    'application/json': components['schemas']['RsDataObject']
-                }
-            }
+                    "application/json": components["schemas"]["RsDataObject"];
+                };
+            };
             /** @description Forbidden */
             403: {
                 headers: {
-                    [name: string]: unknown
-                }
+                    [name: string]: unknown;
+                };
                 content: {
-                    'application/json': unknown
-                }
-            }
+                    "application/json": unknown;
+                };
+            };
             /** @description Not Found */
             404: {
                 headers: {
-                    [name: string]: unknown
-                }
+                    [name: string]: unknown;
+                };
                 content: {
-                    'application/json': unknown
-                }
-            }
+                    "application/json": unknown;
+                };
+            };
             /** @description Internal Server Error */
             500: {
                 headers: {
-                    [name: string]: unknown
-                }
+                    [name: string]: unknown;
+                };
                 content: {
-                    'application/json': components['schemas']['ErrorResponse']
-                }
-            }
-        }
-    }
+                    "application/json": components["schemas"]["ErrorResponse"];
+                };
+            };
+        };
+    };
     moveExpressionsBetweenBooks: {
         parameters: {
-            query?: never
-            header?: never
-            path?: never
-            cookie?: never
-        }
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
         requestBody: {
             content: {
-                'application/json': components['schemas']['MoveExpressionsRequest']
-            }
-        }
+                "application/json": components["schemas"]["MoveExpressionsRequest"];
+            };
+        };
         responses: {
             /** @description 표현이 다른 표현함으로 이동되었습니다. */
             200: {
                 headers: {
-                    [name: string]: unknown
-                }
+                    [name: string]: unknown;
+                };
                 content: {
-                    'application/json': components['schemas']['RsDataVoid']
-                }
-            }
+                    "application/json": components["schemas"]["RsDataVoid"];
+                };
+            };
             /** @description Forbidden */
             403: {
                 headers: {
-                    [name: string]: unknown
-                }
+                    [name: string]: unknown;
+                };
                 content: {
-                    'application/json': unknown
-                }
-            }
+                    "application/json": unknown;
+                };
+            };
             /** @description Not Found */
             404: {
                 headers: {
-                    [name: string]: unknown
-                }
+                    [name: string]: unknown;
+                };
                 content: {
-                    'application/json': unknown
-                }
-            }
+                    "application/json": unknown;
+                };
+            };
             /** @description Internal Server Error */
             500: {
                 headers: {
-                    [name: string]: unknown
-                }
+                    [name: string]: unknown;
+                };
                 content: {
-                    'application/json': components['schemas']['ErrorResponse']
-                }
-            }
-        }
-    }
+                    "application/json": components["schemas"]["ErrorResponse"];
+                };
+            };
+        };
+    };
     updateGoal: {
         parameters: {
-            query?: never
-            header?: never
-            path?: never
-            cookie?: never
-        }
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
         requestBody: {
             content: {
-                'application/json': components['schemas']['UpdateGoalRequest']
-            }
-        }
+                "application/json": components["schemas"]["UpdateGoalRequest"];
+            };
+        };
         responses: {
             /** @description 학습 목표가 설정되었습니다. */
             200: {
                 headers: {
-                    [name: string]: unknown
-                }
+                    [name: string]: unknown;
+                };
                 content: {
-                    'application/json': components['schemas']['RsDataVoid']
-                }
-            }
+                    "application/json": components["schemas"]["RsDataVoid"];
+                };
+            };
             /** @description Forbidden */
             403: {
                 headers: {
-                    [name: string]: unknown
-                }
+                    [name: string]: unknown;
+                };
                 content: {
-                    'application/json': components['schemas']['ErrorResponse']
-                }
-            }
+                    "application/json": components["schemas"]["ErrorResponse"];
+                };
+            };
             /** @description Not Found */
             404: {
                 headers: {
-                    [name: string]: unknown
-                }
+                    [name: string]: unknown;
+                };
                 content: {
-                    'application/json': unknown
-                }
-            }
+                    "application/json": unknown;
+                };
+            };
             /** @description Internal Server Error */
             500: {
                 headers: {
-                    [name: string]: unknown
-                }
+                    [name: string]: unknown;
+                };
                 content: {
-                    'application/json': components['schemas']['ErrorResponse']
-                }
-            }
-        }
-    }
+                    "application/json": components["schemas"]["ErrorResponse"];
+                };
+            };
+        };
+    };
     testGptService: {
         parameters: {
-            query?: never
-            header?: never
-            path?: never
-            cookie?: never
-        }
-        requestBody?: never
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        requestBody?: never;
         responses: {
             /** @description OK */
             200: {
                 headers: {
-                    [name: string]: unknown
-                }
+                    [name: string]: unknown;
+                };
                 content: {
-                    'application/json': string
-                }
-            }
+                    "application/json": string;
+                };
+            };
             /** @description Forbidden */
             403: {
                 headers: {
-                    [name: string]: unknown
-                }
+                    [name: string]: unknown;
+                };
                 content: {
-                    'application/json': components['schemas']['ErrorResponse']
-                }
-            }
+                    "application/json": components["schemas"]["ErrorResponse"];
+                };
+            };
             /** @description Internal Server Error */
             500: {
                 headers: {
-                    [name: string]: unknown
-                }
+                    [name: string]: unknown;
+                };
                 content: {
-                    'application/json': components['schemas']['ErrorResponse']
-                }
-            }
-        }
-    }
+                    "application/json": components["schemas"]["ErrorResponse"];
+                };
+            };
+        };
+    };
     searchWord: {
         parameters: {
             query: {
-                wordSearchRequest: components['schemas']['WordSearchRequest']
-                userDetails: components['schemas']['CustomUserDetails']
-            }
-            header?: never
-            path?: never
-            cookie?: never
-        }
-        requestBody?: never
+                wordSearchRequest: components["schemas"]["WordSearchRequest"];
+                userDetails: components["schemas"]["CustomUserDetails"];
+            };
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        requestBody?: never;
         responses: {
             /** @description 단어 검색 결과를 반환합니다. */
             200: {
                 headers: {
-                    [name: string]: unknown
-                }
+                    [name: string]: unknown;
+                };
                 content: {
-                    'application/json': components['schemas']['RsDataWordSearchResponse']
-                }
-            }
+                    "application/json": components["schemas"]["RsDataWordSearchResponse"];
+                };
+            };
             /** @description Forbidden */
             403: {
                 headers: {
-                    [name: string]: unknown
-                }
+                    [name: string]: unknown;
+                };
                 content: {
-                    'application/json': components['schemas']['ErrorResponse']
-                }
-            }
+                    "application/json": components["schemas"]["ErrorResponse"];
+                };
+            };
             /** @description Not Found */
             404: {
                 headers: {
-                    [name: string]: unknown
-                }
+                    [name: string]: unknown;
+                };
                 content: {
-                    'application/json': unknown
-                }
-            }
+                    "application/json": unknown;
+                };
+            };
             /** @description Internal Server Error */
             500: {
                 headers: {
-                    [name: string]: unknown
-                }
+                    [name: string]: unknown;
+                };
                 content: {
-                    'application/json': components['schemas']['ErrorResponse']
-                }
-            }
-        }
-    }
+                    "application/json": components["schemas"]["ErrorResponse"];
+                };
+            };
+        };
+    };
     getWordbookQuiz: {
         parameters: {
-            query?: never
-            header?: never
+            query?: never;
+            header?: never;
             path: {
-                wordbookId: number
-            }
-            cookie?: never
-        }
-        requestBody?: never
+                wordbookId: number;
+            };
+            cookie?: never;
+        };
+        requestBody?: never;
         responses: {
             /** @description 단어장 퀴즈 문제를 조회했습니다. */
             200: {
                 headers: {
-                    [name: string]: unknown
-                }
+                    [name: string]: unknown;
+                };
                 content: {
-                    'application/json': components['schemas']['RsDataWordbookQuizResponse']
-                }
-            }
+                    "application/json": components["schemas"]["RsDataWordbookQuizResponse"];
+                };
+            };
             /** @description Bad Request */
             400: {
                 headers: {
-                    [name: string]: unknown
-                }
+                    [name: string]: unknown;
+                };
                 content: {
-                    'application/json': unknown
-                }
-            }
+                    "application/json": unknown;
+                };
+            };
             /** @description Forbidden */
             403: {
                 headers: {
-                    [name: string]: unknown
-                }
+                    [name: string]: unknown;
+                };
                 content: {
-                    'application/json': unknown
-                }
-            }
+                    "application/json": unknown;
+                };
+            };
             /** @description Internal Server Error */
             500: {
                 headers: {
-                    [name: string]: unknown
-                }
+                    [name: string]: unknown;
+                };
                 content: {
-                    'application/json': components['schemas']['ErrorResponse']
-                }
-            }
-        }
-    }
+                    "application/json": components["schemas"]["ErrorResponse"];
+                };
+            };
+        };
+    };
     getWordbookItems: {
         parameters: {
             query?: {
-                wordbookIds?: number[]
-            }
-            header?: never
-            path?: never
-            cookie?: never
-        }
-        requestBody?: never
+                wordbookIds?: number[];
+            };
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        requestBody?: never;
         responses: {
             /** @description 단어 목록이 조회되었습니다. */
             200: {
                 headers: {
-                    [name: string]: unknown
-                }
+                    [name: string]: unknown;
+                };
                 content: {
-                    'application/json': components['schemas']['RsDataListWordResponse']
-                }
-            }
+                    "application/json": components["schemas"]["RsDataListWordResponse"];
+                };
+            };
             /** @description Forbidden */
             403: {
                 headers: {
-                    [name: string]: unknown
-                }
+                    [name: string]: unknown;
+                };
                 content: {
-                    'application/json': unknown
-                }
-            }
+                    "application/json": unknown;
+                };
+            };
             /** @description Not Found */
             404: {
                 headers: {
-                    [name: string]: unknown
-                }
+                    [name: string]: unknown;
+                };
                 content: {
-                    'application/json': unknown
-                }
-            }
+                    "application/json": unknown;
+                };
+            };
             /** @description Internal Server Error */
             500: {
                 headers: {
-                    [name: string]: unknown
-                }
+                    [name: string]: unknown;
+                };
                 content: {
-                    'application/json': components['schemas']['ErrorResponse']
-                }
-            }
-        }
-    }
+                    "application/json": components["schemas"]["ErrorResponse"];
+                };
+            };
+        };
+    };
     getWordbookTotalQuiz: {
         parameters: {
-            query?: never
-            header?: never
-            path?: never
-            cookie?: never
-        }
-        requestBody?: never
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        requestBody?: never;
         responses: {
             /** @description 통합 퀴즈 문제를 조회했습니다. */
             200: {
                 headers: {
-                    [name: string]: unknown
-                }
+                    [name: string]: unknown;
+                };
                 content: {
-                    'application/json': components['schemas']['RsDataWordQuizResponse']
-                }
-            }
+                    "application/json": components["schemas"]["RsDataWordQuizResponse"];
+                };
+            };
             /** @description Bad Request */
             400: {
                 headers: {
-                    [name: string]: unknown
-                }
+                    [name: string]: unknown;
+                };
                 content: {
-                    'application/json': unknown
-                }
-            }
+                    "application/json": unknown;
+                };
+            };
             /** @description Forbidden */
             403: {
                 headers: {
-                    [name: string]: unknown
-                }
+                    [name: string]: unknown;
+                };
                 content: {
-                    'application/json': components['schemas']['ErrorResponse']
-                }
-            }
+                    "application/json": components["schemas"]["ErrorResponse"];
+                };
+            };
             /** @description Internal Server Error */
             500: {
                 headers: {
-                    [name: string]: unknown
-                }
+                    [name: string]: unknown;
+                };
                 content: {
-                    'application/json': components['schemas']['ErrorResponse']
-                }
-            }
-        }
-    }
+                    "application/json": components["schemas"]["ErrorResponse"];
+                };
+            };
+        };
+    };
     videoAnalysis: {
         parameters: {
-            query?: never
-            header?: never
+            query?: never;
+            header?: never;
             path: {
-                youtubeVideoId: string
-            }
-            cookie?: never
-        }
-        requestBody?: never
+                youtubeVideoId: string;
+            };
+            cookie?: never;
+        };
+        requestBody?: never;
         responses: {
             /** @description 영상 분석이 완료되었습니다. */
             200: {
                 headers: {
-                    [name: string]: unknown
-                }
+                    [name: string]: unknown;
+                };
                 content: {
-                    'text/event-stream': components['schemas']['SseEmitter']
-                }
-            }
+                    "text/event-stream": components["schemas"]["SseEmitter"];
+                };
+            };
             /** @description Forbidden */
             403: {
                 headers: {
-                    [name: string]: unknown
-                }
+                    [name: string]: unknown;
+                };
                 content: {
-                    'application/json': components['schemas']['ErrorResponse']
-                }
-            }
+                    "application/json": components["schemas"]["ErrorResponse"];
+                };
+            };
             /** @description Internal Server Error */
             500: {
                 headers: {
-                    [name: string]: unknown
-                }
+                    [name: string]: unknown;
+                };
                 content: {
-                    'application/json': unknown
-                }
-            }
-        }
-    }
+                    "application/json": unknown;
+                };
+            };
+        };
+    };
     getWordsQuiz: {
         parameters: {
-            query?: never
-            header?: never
+            query?: never;
+            header?: never;
             path: {
-                videoId: string
-            }
-            cookie?: never
-        }
-        requestBody?: never
+                videoId: string;
+            };
+            cookie?: never;
+        };
+        requestBody?: never;
         responses: {
             /** @description 영상 단어 퀴즈 조회 성공 */
             200: {
                 headers: {
-                    [name: string]: unknown
-                }
+                    [name: string]: unknown;
+                };
                 content: {
-                    'application/json': components['schemas']['RsDataVideoLearningWordQuizListResponse']
-                }
-            }
+                    "application/json": components["schemas"]["RsDataVideoLearningWordQuizListResponse"];
+                };
+            };
             /** @description Forbidden */
             403: {
                 headers: {
-                    [name: string]: unknown
-                }
+                    [name: string]: unknown;
+                };
                 content: {
-                    'application/json': components['schemas']['ErrorResponse']
-                }
-            }
+                    "application/json": components["schemas"]["ErrorResponse"];
+                };
+            };
             /** @description Not Found */
             404: {
                 headers: {
-                    [name: string]: unknown
-                }
+                    [name: string]: unknown;
+                };
                 content: {
-                    'application/json': unknown
-                }
-            }
+                    "application/json": unknown;
+                };
+            };
             /** @description Internal Server Error */
             500: {
                 headers: {
-                    [name: string]: unknown
-                }
+                    [name: string]: unknown;
+                };
                 content: {
-                    'application/json': components['schemas']['ErrorResponse']
-                }
-            }
-        }
-    }
+                    "application/json": components["schemas"]["ErrorResponse"];
+                };
+            };
+        };
+    };
     getExpressionQuiz: {
         parameters: {
-            query?: never
-            header?: never
+            query?: never;
+            header?: never;
             path: {
-                videoId: string
-            }
-            cookie?: never
-        }
-        requestBody?: never
+                videoId: string;
+            };
+            cookie?: never;
+        };
+        requestBody?: never;
         responses: {
             /** @description 영상 표현 퀴즈 조회 성공 */
             200: {
                 headers: {
-                    [name: string]: unknown
-                }
+                    [name: string]: unknown;
+                };
                 content: {
-                    'application/json': components['schemas']['RsDataVideoLearningExpressionQuizListResponse']
-                }
-            }
+                    "application/json": components["schemas"]["RsDataVideoLearningExpressionQuizListResponse"];
+                };
+            };
             /** @description Forbidden */
             403: {
                 headers: {
-                    [name: string]: unknown
-                }
+                    [name: string]: unknown;
+                };
                 content: {
-                    'application/json': components['schemas']['ErrorResponse']
-                }
-            }
+                    "application/json": components["schemas"]["ErrorResponse"];
+                };
+            };
             /** @description Not Found */
             404: {
                 headers: {
-                    [name: string]: unknown
-                }
+                    [name: string]: unknown;
+                };
                 content: {
-                    'application/json': unknown
-                }
-            }
+                    "application/json": unknown;
+                };
+            };
             /** @description Internal Server Error */
             500: {
                 headers: {
-                    [name: string]: unknown
-                }
+                    [name: string]: unknown;
+                };
                 content: {
-                    'application/json': components['schemas']['ErrorResponse']
-                }
-            }
-        }
-    }
+                    "application/json": components["schemas"]["ErrorResponse"];
+                };
+            };
+        };
+    };
     getVideoList: {
         parameters: {
             query: {
-                req: components['schemas']['VideoListRequest']
-            }
-            header?: never
-            path?: never
-            cookie?: never
-        }
-        requestBody?: never
+                req: components["schemas"]["VideoListRequest"];
+            };
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        requestBody?: never;
         responses: {
             /** @description 영상 목록 조회 완료 */
             200: {
                 headers: {
-                    [name: string]: unknown
-                }
+                    [name: string]: unknown;
+                };
                 content: {
-                    'application/json': components['schemas']['RsDataListVideoResponse']
-                }
-            }
+                    "application/json": components["schemas"]["RsDataListVideoResponse"];
+                };
+            };
             /** @description Bad Request */
             400: {
                 headers: {
-                    [name: string]: unknown
-                }
+                    [name: string]: unknown;
+                };
                 content: {
-                    'application/json': unknown
-                }
-            }
+                    "application/json": unknown;
+                };
+            };
             /** @description Forbidden */
             403: {
                 headers: {
-                    [name: string]: unknown
-                }
+                    [name: string]: unknown;
+                };
                 content: {
-                    'application/json': components['schemas']['ErrorResponse']
-                }
-            }
+                    "application/json": components["schemas"]["ErrorResponse"];
+                };
+            };
             /** @description Not Found */
             404: {
                 headers: {
-                    [name: string]: unknown
-                }
+                    [name: string]: unknown;
+                };
                 content: {
-                    'application/json': unknown
-                }
-            }
+                    "application/json": unknown;
+                };
+            };
             /** @description Internal Server Error */
             500: {
                 headers: {
-                    [name: string]: unknown
-                }
+                    [name: string]: unknown;
+                };
                 content: {
-                    'application/json': unknown
-                }
-            }
-        }
-    }
+                    "application/json": unknown;
+                };
+            };
+        };
+    };
     getRecentVideos: {
         parameters: {
-            query?: never
-            header?: never
-            path?: never
-            cookie?: never
-        }
-        requestBody?: never
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        requestBody?: never;
         responses: {
             /** @description 최근 시청 기록 조회 완료 */
             200: {
                 headers: {
-                    [name: string]: unknown
-                }
+                    [name: string]: unknown;
+                };
                 content: {
-                    'application/json': components['schemas']['RsDataListVideoHistoryResponse']
-                }
-            }
+                    "application/json": components["schemas"]["RsDataListVideoHistoryResponse"];
+                };
+            };
             /** @description Forbidden */
             403: {
                 headers: {
-                    [name: string]: unknown
-                }
+                    [name: string]: unknown;
+                };
                 content: {
-                    'application/json': components['schemas']['ErrorResponse']
-                }
-            }
+                    "application/json": components["schemas"]["ErrorResponse"];
+                };
+            };
             /** @description Not Found */
             404: {
                 headers: {
-                    [name: string]: unknown
-                }
+                    [name: string]: unknown;
+                };
                 content: {
-                    'application/json': unknown
-                }
-            }
+                    "application/json": unknown;
+                };
+            };
             /** @description Internal Server Error */
             500: {
                 headers: {
-                    [name: string]: unknown
-                }
+                    [name: string]: unknown;
+                };
                 content: {
-                    'application/json': unknown
-                }
-            }
-        }
-    }
+                    "application/json": unknown;
+                };
+            };
+        };
+    };
     getFullHistory: {
         parameters: {
-            query?: never
-            header?: never
-            path?: never
-            cookie?: never
-        }
-        requestBody?: never
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        requestBody?: never;
         responses: {
             /** @description 전체 시청 영상 조회 완료 */
             200: {
                 headers: {
-                    [name: string]: unknown
-                }
+                    [name: string]: unknown;
+                };
                 content: {
-                    'application/json': components['schemas']['RsDataListVideoHistoryResponse']
-                }
-            }
+                    "application/json": components["schemas"]["RsDataListVideoHistoryResponse"];
+                };
+            };
             /** @description Forbidden */
             403: {
                 headers: {
-                    [name: string]: unknown
-                }
+                    [name: string]: unknown;
+                };
                 content: {
-                    'application/json': components['schemas']['ErrorResponse']
-                }
-            }
+                    "application/json": components["schemas"]["ErrorResponse"];
+                };
+            };
             /** @description Not Found */
             404: {
                 headers: {
-                    [name: string]: unknown
-                }
+                    [name: string]: unknown;
+                };
                 content: {
-                    'application/json': unknown
-                }
-            }
+                    "application/json": unknown;
+                };
+            };
             /** @description Internal Server Error */
             500: {
                 headers: {
-                    [name: string]: unknown
-                }
+                    [name: string]: unknown;
+                };
                 content: {
-                    'application/json': unknown
-                }
-            }
-        }
-    }
+                    "application/json": unknown;
+                };
+            };
+        };
+    };
     logout: {
         parameters: {
-            query?: never
-            header?: never
-            path?: never
-            cookie?: never
-        }
-        requestBody?: never
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        requestBody?: never;
         responses: {
             /** @description 로그아웃 성공 */
             200: {
                 headers: {
-                    [name: string]: unknown
-                }
+                    [name: string]: unknown;
+                };
                 content: {
-                    'application/json': components['schemas']['RsDataObject']
-                }
-            }
+                    "application/json": components["schemas"]["RsDataObject"];
+                };
+            };
             /** @description Unauthorized */
             401: {
                 headers: {
-                    [name: string]: unknown
-                }
+                    [name: string]: unknown;
+                };
                 content: {
-                    'application/json': unknown
-                }
-            }
+                    "application/json": unknown;
+                };
+            };
             /** @description Forbidden */
             403: {
                 headers: {
-                    [name: string]: unknown
-                }
+                    [name: string]: unknown;
+                };
                 content: {
-                    'application/json': components['schemas']['ErrorResponse']
-                }
-            }
+                    "application/json": components["schemas"]["ErrorResponse"];
+                };
+            };
             /** @description Internal Server Error */
             500: {
                 headers: {
-                    [name: string]: unknown
-                }
+                    [name: string]: unknown;
+                };
                 content: {
-                    'application/json': components['schemas']['ErrorResponse']
-                }
-            }
-        }
-    }
+                    "application/json": components["schemas"]["ErrorResponse"];
+                };
+            };
+        };
+    };
     getExpressionBookQuiz: {
         parameters: {
-            query?: never
-            header?: never
+            query?: never;
+            header?: never;
             path: {
-                expressionBookId: number
-            }
-            cookie?: never
-        }
-        requestBody?: never
+                expressionBookId: number;
+            };
+            cookie?: never;
+        };
+        requestBody?: never;
         responses: {
             /** @description 표현함 퀴즈 문제를 조회했습니다. */
             200: {
                 headers: {
-                    [name: string]: unknown
-                }
+                    [name: string]: unknown;
+                };
                 content: {
-                    'application/json': components['schemas']['RsDataExpressionQuizResponse']
-                }
-            }
+                    "application/json": components["schemas"]["RsDataExpressionQuizResponse"];
+                };
+            };
             /** @description Bad Request */
             400: {
                 headers: {
-                    [name: string]: unknown
-                }
+                    [name: string]: unknown;
+                };
                 content: {
-                    'application/json': unknown
-                }
-            }
+                    "application/json": unknown;
+                };
+            };
             /** @description Forbidden */
             403: {
                 headers: {
-                    [name: string]: unknown
-                }
+                    [name: string]: unknown;
+                };
                 content: {
-                    'application/json': unknown
-                }
-            }
+                    "application/json": unknown;
+                };
+            };
             /** @description Internal Server Error */
             500: {
                 headers: {
-                    [name: string]: unknown
-                }
+                    [name: string]: unknown;
+                };
                 content: {
-                    'application/json': components['schemas']['ErrorResponse']
-                }
-            }
-        }
-    }
+                    "application/json": components["schemas"]["ErrorResponse"];
+                };
+            };
+        };
+    };
     getExpressionsByBook: {
         parameters: {
-            query?: never
-            header?: never
-            path?: never
-            cookie?: never
-        }
-        requestBody?: never
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        requestBody?: never;
         responses: {
             /** @description 표현함의 표현 목록 조회에 성공했습니다. */
             200: {
                 headers: {
-                    [name: string]: unknown
-                }
+                    [name: string]: unknown;
+                };
                 content: {
-                    'application/json': components['schemas']['RsDataListExpressionResponse']
-                }
-            }
+                    "application/json": components["schemas"]["RsDataListExpressionResponse"];
+                };
+            };
             /** @description Forbidden */
             403: {
                 headers: {
-                    [name: string]: unknown
-                }
+                    [name: string]: unknown;
+                };
                 content: {
-                    'application/json': components['schemas']['ErrorResponse']
-                }
-            }
+                    "application/json": components["schemas"]["ErrorResponse"];
+                };
+            };
             /** @description Not Found */
             404: {
                 headers: {
-                    [name: string]: unknown
-                }
+                    [name: string]: unknown;
+                };
                 content: {
-                    'application/json': unknown
-                }
-            }
+                    "application/json": unknown;
+                };
+            };
             /** @description Internal Server Error */
             500: {
                 headers: {
-                    [name: string]: unknown
-                }
+                    [name: string]: unknown;
+                };
                 content: {
-                    'application/json': components['schemas']['ErrorResponse']
-                }
-            }
-        }
-    }
+                    "application/json": components["schemas"]["ErrorResponse"];
+                };
+            };
+        };
+    };
     searchExpressions: {
         parameters: {
             query: {
-                keyword: string
-            }
-            header?: never
-            path?: never
-            cookie?: never
-        }
-        requestBody?: never
+                keyword: string;
+            };
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        requestBody?: never;
         responses: {
             /** @description 표현 검색 결과입니다. */
             200: {
                 headers: {
-                    [name: string]: unknown
-                }
+                    [name: string]: unknown;
+                };
                 content: {
-                    'application/json': components['schemas']['RsDataListExpressionResponse']
-                }
-            }
+                    "application/json": components["schemas"]["RsDataListExpressionResponse"];
+                };
+            };
             /** @description Forbidden */
             403: {
                 headers: {
-                    [name: string]: unknown
-                }
+                    [name: string]: unknown;
+                };
                 content: {
-                    'application/json': components['schemas']['ErrorResponse']
-                }
-            }
+                    "application/json": components["schemas"]["ErrorResponse"];
+                };
+            };
             /** @description Internal Server Error */
             500: {
                 headers: {
-                    [name: string]: unknown
-                }
+                    [name: string]: unknown;
+                };
                 content: {
-                    'application/json': components['schemas']['ErrorResponse']
-                }
-            }
-        }
-    }
+                    "application/json": components["schemas"]["ErrorResponse"];
+                };
+            };
+        };
+    };
     statistics: {
         parameters: {
-            query?: never
-            header?: never
-            path?: never
-            cookie?: never
-        }
-        requestBody?: never
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        requestBody?: never;
         responses: {
             /** @description 대시보드 조회에 성공했습니다. */
             200: {
                 headers: {
-                    [name: string]: unknown
-                }
+                    [name: string]: unknown;
+                };
                 content: {
-                    'application/json': components['schemas']['RsDataStatisticResponse']
-                }
-            }
+                    "application/json": components["schemas"]["RsDataStatisticResponse"];
+                };
+            };
             /** @description Forbidden */
             403: {
                 headers: {
-                    [name: string]: unknown
-                }
+                    [name: string]: unknown;
+                };
                 content: {
-                    'application/json': components['schemas']['ErrorResponse']
-                }
-            }
+                    "application/json": components["schemas"]["ErrorResponse"];
+                };
+            };
             /** @description Not Found */
             404: {
                 headers: {
-                    [name: string]: unknown
-                }
+                    [name: string]: unknown;
+                };
                 content: {
-                    'application/json': unknown
-                }
-            }
+                    "application/json": unknown;
+                };
+            };
             /** @description Internal Server Error */
             500: {
                 headers: {
-                    [name: string]: unknown
-                }
+                    [name: string]: unknown;
+                };
                 content: {
-                    'application/json': components['schemas']['ErrorResponse']
-                }
-            }
-        }
-    }
+                    "application/json": components["schemas"]["ErrorResponse"];
+                };
+            };
+        };
+    };
     getCalendarsData: {
         parameters: {
-            query?: never
-            header?: never
-            path?: never
-            cookie?: never
-        }
-        requestBody?: never
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        requestBody?: never;
         responses: {
             /** @description 학습 통계 정보가 조회되었습니다. */
             200: {
                 headers: {
-                    [name: string]: unknown
-                }
+                    [name: string]: unknown;
+                };
                 content: {
-                    'application/json': components['schemas']['RsDataLearningHistoryResponse']
-                }
-            }
+                    "application/json": components["schemas"]["RsDataLearningHistoryResponse"];
+                };
+            };
             /** @description Forbidden */
             403: {
                 headers: {
-                    [name: string]: unknown
-                }
+                    [name: string]: unknown;
+                };
                 content: {
-                    'application/json': components['schemas']['ErrorResponse']
-                }
-            }
+                    "application/json": components["schemas"]["ErrorResponse"];
+                };
+            };
             /** @description Not Found */
             404: {
                 headers: {
-                    [name: string]: unknown
-                }
+                    [name: string]: unknown;
+                };
                 content: {
-                    'application/json': unknown
-                }
-            }
+                    "application/json": unknown;
+                };
+            };
             /** @description Internal Server Error */
             500: {
                 headers: {
-                    [name: string]: unknown
-                }
+                    [name: string]: unknown;
+                };
                 content: {
-                    'application/json': components['schemas']['ErrorResponse']
-                }
-            }
-        }
-    }
+                    "application/json": components["schemas"]["ErrorResponse"];
+                };
+            };
+        };
+    };
     getAll: {
         parameters: {
-            query?: never
-            header?: never
-            path?: never
-            cookie?: never
-        }
-        requestBody?: never
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        requestBody?: never;
         responses: {
             /** @description 북마크 목록 조회 성공 */
             200: {
                 headers: {
-                    [name: string]: unknown
-                }
+                    [name: string]: unknown;
+                };
                 content: {
-                    'application/json': components['schemas']['RsDataListVideoResponse']
-                }
-            }
+                    "application/json": components["schemas"]["RsDataListVideoResponse"];
+                };
+            };
             /** @description Forbidden */
             403: {
                 headers: {
-                    [name: string]: unknown
-                }
+                    [name: string]: unknown;
+                };
                 content: {
-                    'application/json': components['schemas']['ErrorResponse']
-                }
-            }
+                    "application/json": components["schemas"]["ErrorResponse"];
+                };
+            };
             /** @description Not Found */
             404: {
                 headers: {
-                    [name: string]: unknown
-                }
+                    [name: string]: unknown;
+                };
                 content: {
-                    'application/json': unknown
-                }
-            }
+                    "application/json": unknown;
+                };
+            };
             /** @description Internal Server Error */
             500: {
                 headers: {
-                    [name: string]: unknown
-                }
+                    [name: string]: unknown;
+                };
                 content: {
-                    'application/json': components['schemas']['ErrorResponse']
-                }
-            }
-        }
-    }
+                    "application/json": components["schemas"]["ErrorResponse"];
+                };
+            };
+        };
+    };
     test: {
         parameters: {
             query: {
-                userDetails: components['schemas']['CustomUserDetails']
-            }
-            header?: never
-            path?: never
-            cookie?: never
-        }
-        requestBody?: never
+                userDetails: components["schemas"]["CustomUserDetails"];
+            };
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        requestBody?: never;
         responses: {
             /** @description OK */
             200: {
                 headers: {
-                    [name: string]: unknown
-                }
+                    [name: string]: unknown;
+                };
                 content: {
-                    'application/json': string
-                }
-            }
+                    "application/json": string;
+                };
+            };
             /** @description Forbidden */
             403: {
                 headers: {
-                    [name: string]: unknown
-                }
+                    [name: string]: unknown;
+                };
                 content: {
-                    'application/json': components['schemas']['ErrorResponse']
-                }
-            }
+                    "application/json": components["schemas"]["ErrorResponse"];
+                };
+            };
             /** @description Internal Server Error */
             500: {
                 headers: {
-                    [name: string]: unknown
-                }
+                    [name: string]: unknown;
+                };
                 content: {
-                    'application/json': components['schemas']['ErrorResponse']
-                }
-            }
-        }
-    }
+                    "application/json": components["schemas"]["ErrorResponse"];
+                };
+            };
+        };
+    };
     test_1: {
         parameters: {
-            query?: never
-            header?: never
-            path?: never
-            cookie?: never
-        }
-        requestBody?: never
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        requestBody?: never;
         responses: {
             /** @description OK */
             200: {
                 headers: {
-                    [name: string]: unknown
-                }
+                    [name: string]: unknown;
+                };
                 content: {
-                    'application/json': string
-                }
-            }
+                    "application/json": string;
+                };
+            };
             /** @description Forbidden */
             403: {
                 headers: {
-                    [name: string]: unknown
-                }
+                    [name: string]: unknown;
+                };
                 content: {
-                    'application/json': components['schemas']['ErrorResponse']
-                }
-            }
+                    "application/json": components["schemas"]["ErrorResponse"];
+                };
+            };
             /** @description Internal Server Error */
             500: {
                 headers: {
-                    [name: string]: unknown
-                }
+                    [name: string]: unknown;
+                };
                 content: {
-                    'application/json': components['schemas']['ErrorResponse']
-                }
-            }
-        }
-    }
+                    "application/json": components["schemas"]["ErrorResponse"];
+                };
+            };
+        };
+    };
     triggerInternalServerError: {
         parameters: {
-            query?: never
-            header?: never
-            path?: never
-            cookie?: never
-        }
-        requestBody?: never
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        requestBody?: never;
         responses: {
             /** @description OK */
             200: {
                 headers: {
-                    [name: string]: unknown
-                }
+                    [name: string]: unknown;
+                };
                 content: {
-                    'application/json': string
-                }
-            }
+                    "application/json": string;
+                };
+            };
             /** @description Forbidden */
             403: {
                 headers: {
-                    [name: string]: unknown
-                }
+                    [name: string]: unknown;
+                };
                 content: {
-                    'application/json': components['schemas']['ErrorResponse']
-                }
-            }
+                    "application/json": components["schemas"]["ErrorResponse"];
+                };
+            };
             /** @description Internal Server Error */
             500: {
                 headers: {
-                    [name: string]: unknown
-                }
+                    [name: string]: unknown;
+                };
                 content: {
-                    'application/json': components['schemas']['ErrorResponse']
-                }
-            }
-        }
-    }
+                    "application/json": components["schemas"]["ErrorResponse"];
+                };
+            };
+        };
+    };
 }
