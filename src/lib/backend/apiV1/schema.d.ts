@@ -804,6 +804,26 @@ export interface paths {
         patch?: never
         trace?: never
     }
+    '/api/v1/plans': {
+        parameters: {
+            query?: never
+            header?: never
+            path?: never
+            cookie?: never
+        }
+        /**
+         * 구독 플랜 목록 조회
+         * @description 사용 가능한 모든 구독 플랜 정보를 반환합니다.
+         */
+        get: operations['getAllPlans']
+        put?: never
+        post?: never
+        delete?: never
+        options?: never
+        head?: never
+        patch?: never
+        trace?: never
+    }
     '/api/v1/members/logout': {
         parameters: {
             query?: never
@@ -1193,7 +1213,7 @@ export interface components {
         ExpressionSaveRequest: {
             videoId?: string
             /** Format: int64 */
-            subtitleId?: number
+            subtitleId: number
         }
         /** @description 인증된 회원의 상세 정보 */
         CustomUserDetails: {
@@ -1209,12 +1229,12 @@ export interface components {
              */
             roleName?: string
             password?: string
-            authorities?: components['schemas']['GrantedAuthority'][]
             username?: string
+            authorities?: components['schemas']['GrantedAuthority'][]
             enabled?: boolean
+            credentialsNonExpired?: boolean
             accountNonExpired?: boolean
             accountNonLocked?: boolean
-            credentialsNonExpired?: boolean
         }
         GrantedAuthority: {
             authority?: string
@@ -1230,8 +1250,8 @@ export interface components {
         }
         DeleteExpressionsRequest: {
             /** Format: int64 */
-            expressionBookId?: number
-            expressionIds?: number[]
+            expressionBookId: number
+            expressionIds: number[]
         }
         LevelCheckResponse: {
             wordLevel?: string
@@ -1286,10 +1306,10 @@ export interface components {
         }
         MoveExpressionsRequest: {
             /** Format: int64 */
-            sourceExpressionBookId?: number
+            sourceExpressionBookId: number
             /** Format: int64 */
-            targetExpressionBookId?: number
-            expressionIds?: number[]
+            targetExpressionBookId: number
+            expressionIds: number[]
         }
         UpdateGoalRequest: {
             /** Format: int32 */
@@ -1453,6 +1473,59 @@ export interface components {
             thumbnailUrl?: string
             /** Format: date-time */
             lastViewedAt?: string
+        }
+        /** @description 구독 플랜 응답 정보 */
+        PlanResponse: {
+            /**
+             * @description 구독 타입
+             * @example STANDARD
+             * @enum {string}
+             */
+            type?: 'NONE' | 'BASIC' | 'STANDARD' | 'PREMIUM' | 'ADMIN'
+            /**
+             * @description 플랜 기간
+             * @example MONTHLY
+             * @enum {string}
+             */
+            period?: 'MONTHLY' | 'SIX_MONTHS' | 'YEAR'
+            /**
+             * Format: int32
+             * @description 가격(원)
+             * @example 4500
+             */
+            amount?: number
+            /**
+             * @description 플랜 설명
+             * @example 스탠다드 정기 구독
+             */
+            description?: string
+            /** @description 플랜 제목 */
+            title?: string
+            /** @description 제공 기능 목록 */
+            features?: string[]
+            /** @description 유의사항 */
+            notice?: string
+            /** @description 가격 상세 정보 */
+            priceInfo?: components['schemas']['PriceInfo']
+        }
+        /** @description 가격 상세 정보 */
+        PriceInfo: {
+            /**
+             * Format: int32
+             * @description 정가(원)
+             */
+            originalPrice?: number
+            /**
+             * Format: int32
+             * @description 할인가(원)
+             */
+            discountPrice?: number
+            /**
+             * Format: int32
+             * @description 할인율(%)
+             * @example 0.2
+             */
+            discountRate?: number
         }
         /** @description 구독 정보 DTO */
         SubscriptionResponse: {
@@ -3997,6 +4070,44 @@ export interface operations {
                 }
                 content: {
                     'application/json': unknown
+                }
+            }
+        }
+    }
+    getAllPlans: {
+        parameters: {
+            query?: never
+            header?: never
+            path?: never
+            cookie?: never
+        }
+        requestBody?: never
+        responses: {
+            /** @description OK */
+            200: {
+                headers: {
+                    [name: string]: unknown
+                }
+                content: {
+                    'application/json': components['schemas']['PlanResponse'][]
+                }
+            }
+            /** @description Forbidden */
+            403: {
+                headers: {
+                    [name: string]: unknown
+                }
+                content: {
+                    'application/json': components['schemas']['ErrorResponse']
+                }
+            }
+            /** @description Internal Server Error */
+            500: {
+                headers: {
+                    [name: string]: unknown
+                }
+                content: {
+                    'application/json': components['schemas']['ErrorResponse']
                 }
             }
         }

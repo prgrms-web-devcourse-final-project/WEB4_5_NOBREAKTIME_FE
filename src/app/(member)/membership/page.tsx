@@ -2,80 +2,107 @@
 
 import BillingWidget from '@/components/payment/BillingWidget'
 import PaymentsWidget from '@/components/payment/PaymentsWidget'
+import { components } from '@/lib/backend/apiV1/schema'
+import client from '@/lib/backend/client'
 import Image from 'next/image'
 import Link from 'next/link'
-import { useState } from 'react'
+import { useEffect, useState } from 'react'
+
+type PlanResponse = components['schemas']['PlanResponse']
+type PeriodType = components['schemas']['PaymentSimpleRequest']['period']
+type SubscriptionType = Extract<components['schemas']['PaymentSimpleRequest']['type'], 'BASIC' | 'STANDARD' | 'PREMIUM'>
+
+interface SelectedPlan {
+    name: string
+    price: string
+    period: string
+    type: SubscriptionType
+    periodType: PeriodType
+}
 
 export default function Membership() {
     const [activeTab, setActiveTab] = useState<'month' | 'quarter' | 'year'>('month')
     const [modalOpen, setModalOpen] = useState(false)
     const [selectedFeatures, setSelectedFeatures] = useState<string[]>([])
     const [checkoutModalOpen, setCheckoutModalOpen] = useState(false)
-    const [selectedPlan, setSelectedPlan] = useState<{
-        name: string
-        price: string
-        period: string
-        type: 'BASIC' | 'STANDARD' | 'PREMIUM'
-        periodType: 'MONTHLY' | 'SIX_MONTHS' | 'YEAR'
-    } | null>(null)
+    const [selectedPlan, setSelectedPlan] = useState<SelectedPlan | null>(null)
+    const [membershipPlans, setMembershipPlans] = useState<PlanResponse[]>([])
+    const [isLoading, setIsLoading] = useState(true)
+    const [error, setError] = useState<string | null>(null)
+
+    useEffect(() => {
+        const fetchPlans = async () => {
+            try {
+                const { data, error } = await client.GET('/api/v1/plans')
+                if (error) {
+                    throw new Error('플랜 정보를 가져오는데 실패했습니다.')
+                }
+                if (!data) {
+                    throw new Error('플랜 정보가 없습니다.')
+                }
+                setMembershipPlans(data)
+            } catch (err) {
+                setError(err instanceof Error ? err.message : '알 수 없는 오류가 발생했습니다.')
+            } finally {
+                setIsLoading(false)
+            }
+        }
+
+        fetchPlans()
+    }, [])
 
     const handleMoreClick = (features: string[]) => {
         setSelectedFeatures(features)
         setModalOpen(true)
     }
 
-    const handleStartClick = (plan: (typeof membershipPlans)[0]) => {
+    const handleStartClick = (plan: PlanResponse) => {
+        const periodType = activeTab === 'month' ? 'MONTHLY' : activeTab === 'quarter' ? 'SIX_MONTHS' : 'YEAR'
+        const selectedPlanData = membershipPlans.find((p) => p.type === plan.type && p.period === periodType)
+
+        if (!selectedPlanData?.priceInfo?.discountPrice) return
+
         setSelectedPlan({
-            name: plan.name,
-            price: plan.price,
-            period: plan.period,
-            type: plan.name.toUpperCase() as 'BASIC' | 'STANDARD' | 'PREMIUM',
-            periodType: activeTab === 'month' ? 'MONTHLY' : activeTab === 'quarter' ? 'SIX_MONTHS' : 'YEAR',
+            name: plan.title || plan.type || '',
+            price: selectedPlanData.priceInfo.discountPrice.toString(),
+            period: activeTab === 'month' ? '월' : activeTab === 'quarter' ? '6개월' : '년',
+            type: plan.type as SubscriptionType,
+            periodType: periodType as PeriodType,
         })
         setCheckoutModalOpen(true)
     }
 
-    const membershipPlans = [
-        {
-            id: 1,
-            name: 'Basic',
-            price: activeTab === 'month' ? '9,900' : activeTab === 'quarter' ? '26,730' : '95,040',
-            period: activeTab === 'month' ? '월' : activeTab === 'quarter' ? '6개월' : '년',
-            features: ['기본 학습 콘텐츠 이용', '일일 학습 통계 확인', '기본 문법 학습', '기본 단어장 이용'],
-        },
-        {
-            id: 2,
-            name: 'Standard',
-            price: activeTab === 'month' ? '4,500' : activeTab === 'quarter' ? '24,300' : '43,200',
-            period: activeTab === 'month' ? '월' : activeTab === 'quarter' ? '6개월' : '년',
-            features: [
-                'Basic 모든 기능',
-                '상세 학습 통계 및 분석',
-                'AI 기반 맞춤 학습',
-                '무제한 단어장 이용',
-                '프리미엄 문법 강의',
-                '학습 습관 트래킹',
-                '모바일 앱 연동',
-            ],
-            popular: true,
-        },
-        {
-            id: 3,
-            name: 'Premium',
-            price: activeTab === 'month' ? '8,500' : activeTab === 'quarter' ? '45,900' : '81,600',
-            period: activeTab === 'month' ? '월' : activeTab === 'quarter' ? '6개월' : '년',
-            features: [
-                'Standard 모든 기능',
-                '1:1 학습 상담',
-                '전문가 피드백',
-                '프리미엄 학습 자료',
-                '우선 고객 지원',
-                '무제한 학습 기록',
-                'AI 추천 커리큘럼',
-                '추가 문법 문제 제공',
-            ],
-        },
-    ]
+    if (isLoading) {
+        return (
+            <div className="flex min-h-screen items-center justify-center">
+                <div className="text-center">
+                    <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-[var(--color-point)] mx-auto"></div>
+                    <p className="mt-4 text-[var(--color-main)]">플랜 정보를 불러오는 중...</p>
+                </div>
+            </div>
+        )
+    }
+
+    if (error) {
+        return (
+            <div className="flex min-h-screen items-center justify-center">
+                <div className="text-center">
+                    <p className="text-red-500">{error}</p>
+                    <button
+                        onClick={() => window.location.reload()}
+                        className="mt-4 px-4 py-2 bg-[var(--color-point)] text-white rounded-lg hover:bg-opacity-90"
+                    >
+                        다시 시도
+                    </button>
+                </div>
+            </div>
+        )
+    }
+
+    const filteredPlans = membershipPlans.filter((plan) => {
+        const periodType = activeTab === 'month' ? 'MONTHLY' : activeTab === 'quarter' ? 'SIX_MONTHS' : 'YEAR'
+        return plan.period === periodType
+    })
 
     return (
         <div className="flex min-h-screen">
@@ -114,54 +141,50 @@ export default function Membership() {
 
                     {/* 플랜 카드 */}
                     <div className="grid grid-cols-3 gap-8 max-w-7xl mx-auto w-full">
-                        {membershipPlans.map((plan) => (
+                        {filteredPlans.map((plan) => (
                             <div
-                                key={plan.id}
+                                key={plan.type}
                                 className={`bg-white rounded-2xl p-8 shadow-md border-2 flex flex-col ${
-                                    plan.popular
+                                    plan.type === 'STANDARD'
                                         ? 'border-[var(--color-point)] relative'
                                         : 'border-[var(--color-sub-2)]'
                                 }`}
                             >
-                                {plan.popular && (
+                                {plan.type === 'STANDARD' && (
                                     <div className="absolute -top-4 left-1/2 transform -translate-x-1/2 bg-[var(--color-point)] text-white px-4 py-1 rounded-full text-sm font-bold">
                                         인기
                                     </div>
                                 )}
                                 <div className="text-center mb-6">
-                                    <h3 className="text-2xl font-bold mb-2">{plan.name}</h3>
+                                    <h3 className="text-2xl font-bold mb-2">{plan.title || plan.type || ''}</h3>
                                     <div className="flex items-end justify-center gap-1">
                                         <div className="flex items-end justify-center gap-2">
                                             {/* 원래 가격 (할인일 경우만) */}
-                                            {activeTab !== 'month' && (
-                                                <span className="text-base text-gray-400 line-through">
-                                                    ₩
-                                                    {plan.name === 'Basic'
-                                                        ? activeTab === 'quarter'
-                                                            ? '29,700'
-                                                            : '118,800'
-                                                        : plan.name === 'Standard'
-                                                        ? activeTab === 'quarter'
-                                                            ? '59,700'
-                                                            : '238,800'
-                                                        : plan.name === 'Premium'
-                                                        ? activeTab === 'quarter'
-                                                            ? '89,700'
-                                                            : '358,800'
-                                                        : ''}
-                                                </span>
-                                            )}
+                                            {plan.priceInfo?.discountRate &&
+                                                plan.priceInfo.discountRate > 0 &&
+                                                plan.priceInfo.originalPrice && (
+                                                    <span className="text-base text-gray-400 line-through">
+                                                        ₩{plan.priceInfo.originalPrice.toLocaleString()}
+                                                    </span>
+                                                )}
 
                                             {/* 실제 가격 강조 */}
                                             <span className="text-4xl font-bold text-[var(--color-black)]">
-                                                ₩{plan.price}
+                                                ₩{(plan.priceInfo?.discountPrice || 0).toLocaleString()}
                                             </span>
-                                            <span className="text-lg text-[var(--color-main)]">/{plan.period}</span>
+                                            <span className="text-lg text-[var(--color-main)]">
+                                                /
+                                                {activeTab === 'month'
+                                                    ? '월'
+                                                    : activeTab === 'quarter'
+                                                    ? '6개월'
+                                                    : '년'}
+                                            </span>
                                         </div>
                                     </div>
                                 </div>
                                 <ul className="space-y-4 mb-4 flex-1">
-                                    {plan.features.slice(0, 6).map((feature, index) => (
+                                    {plan.features?.slice(0, 6).map((feature: string, index: number) => (
                                         <li key={index} className="flex items-center gap-2">
                                             <svg
                                                 width="20"
@@ -180,35 +203,21 @@ export default function Membership() {
                                         </li>
                                     ))}
                                 </ul>
-                                {plan.features.length > 6 && (
+                                {plan.features && plan.features.length > 6 && (
                                     <button
                                         className="text-sm text-[var(--color-point)] underline mb-4"
-                                        onClick={() => handleMoreClick(plan.features)}
+                                        onClick={() => handleMoreClick(plan.features || [])}
                                     >
                                         혜택 더보기
                                     </button>
                                 )}
                                 <button
                                     className={`w-full py-3 rounded-lg font-bold transition-all mt-auto ${
-                                        plan.popular
+                                        plan.type === 'STANDARD'
                                             ? 'bg-[var(--color-point)] text-white hover:bg-opacity-90'
                                             : 'bg-[var(--color-sub-2)] text-[var(--color-main)] hover:bg-opacity-80'
                                     }`}
-                                    onClick={() => {
-                                        setSelectedPlan({
-                                            name: plan.name,
-                                            price: plan.price,
-                                            period: plan.period,
-                                            type: plan.name.toUpperCase() as 'BASIC' | 'STANDARD' | 'PREMIUM',
-                                            periodType:
-                                                activeTab === 'month'
-                                                    ? 'MONTHLY'
-                                                    : activeTab === 'quarter'
-                                                    ? 'SIX_MONTHS'
-                                                    : 'YEAR',
-                                        })
-                                        setCheckoutModalOpen(true)
-                                    }}
+                                    onClick={() => handleStartClick(plan)}
                                 >
                                     시작하기
                                 </button>
@@ -251,9 +260,9 @@ export default function Membership() {
                                             <h3 className="font-bold text-[var(--color-main)] text-sm">주요 혜택</h3>
                                             <ul className="space-y-1.5">
                                                 {membershipPlans
-                                                    .find((p) => p.name === selectedPlan.name)
-                                                    ?.features.slice(0, 4)
-                                                    .map((feature, index) => (
+                                                    .find((p) => p.type === selectedPlan.type)
+                                                    ?.features?.slice(0, 4)
+                                                    .map((feature: string, index: number) => (
                                                         <li
                                                             key={index}
                                                             className="flex items-center gap-2 text-[var(--color-main)]"
@@ -331,9 +340,9 @@ export default function Membership() {
                                                 </h3>
                                                 <ul className="space-y-1.5">
                                                     {membershipPlans
-                                                        .find((p) => p.name === selectedPlan.name)
-                                                        ?.features.slice(0, 4)
-                                                        .map((feature, index) => (
+                                                        .find((p) => p.type === selectedPlan.type)
+                                                        ?.features?.slice(0, 4)
+                                                        .map((feature: string, index: number) => (
                                                             <li
                                                                 key={index}
                                                                 className="flex items-center gap-2 text-[var(--color-main)]"
@@ -392,7 +401,7 @@ export default function Membership() {
                                 </button>
                                 <h2 className="text-xl font-bold mb-4 text-[var(--color-main)]">모든 혜택</h2>
                                 <ul className="space-y-3 h-[90%] overflow-y-auto">
-                                    {selectedFeatures.map((feature, index) => (
+                                    {selectedFeatures.map((feature: string, index: number) => (
                                         <li key={index} className="flex items-center gap-2 text-[var(--color-main)]">
                                             <svg
                                                 width="18"
