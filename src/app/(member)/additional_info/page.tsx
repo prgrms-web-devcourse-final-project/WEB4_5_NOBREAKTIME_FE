@@ -6,7 +6,7 @@ import { useGlobalLoginMember } from '@/stores/auth/loginMember'
 import Image from 'next/image'
 import Link from 'next/link'
 import { useRouter } from 'next/navigation'
-import { useState } from 'react'
+import { useEffect, useState } from 'react'
 
 type Language = 'ENGLISH' | 'JAPANESE' | 'NONE'
 
@@ -17,7 +17,7 @@ const LANGUAGES = [
 
 export default function LanguagePage() {
     const router = useRouter()
-    const { loginMember, setLoginMember } = useGlobalLoginMember()
+    const { isLogin, loginMember, setLoginMember } = useGlobalLoginMember()
     const [selectedLang, setSelectedLang] = useState<Language | null>(null)
 
     const handleStart = async () => {
@@ -46,6 +46,11 @@ export default function LanguagePage() {
             alert('언어 설정 중 오류가 발생했습니다. 다시 시도해주세요.')
         }
     }
+    useEffect(() => {
+        if (isLogin && loginMember.language !== 'NONE') {
+            router.push('/dashboard')
+        }
+    }, [isLogin])
 
     return (
         <div className="flex flex-col h-screen">
