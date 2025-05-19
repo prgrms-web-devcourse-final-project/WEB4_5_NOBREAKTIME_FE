@@ -7,6 +7,13 @@ type UserProfileResponse = {
     profileImage?: string
     subscriptionType?: 'NONE' | 'BASIC' | 'STANDARD' | 'PREMIUM' | 'ADMIN'
     language?: 'ENGLISH' | 'JAPANESE' | 'NONE' | 'ALL'
+    subscriptions?: {
+        planName: 'STANDARD' | 'PREMIUM'
+        amount: number
+        startedAt: string
+        expiredAt: string
+        isPossibleToCancel: 'true' | 'false'
+    }[]
 }
 
 export const LoginMemberContext = createContext<{
