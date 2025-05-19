@@ -3,6 +3,7 @@
 import Search from '@/components/common/search'
 import BookmarkIcon from '@/components/icon/bookmarkIcon'
 import VideoIcon from '@/components/icon/videoIcon'
+import Loading from '@/components/common/loading'
 import { components } from '@/lib/backend/apiV1/schema'
 import client from '@/lib/backend/client'
 import { useRouter } from 'next/navigation'
@@ -45,7 +46,7 @@ export default function VideoLearningPage() {
     useEffect(() => {
         const observer = new IntersectionObserver(
             (entries) => {
-                if (entries[0].isIntersecting && !isLoading) {
+                if (entries[0].isIntersecting && !isLoading && hasMore) {
                     // 캐시된 비디오가 있고, 현재 표시된 수가 캐시된 비디오 수보다 작으면
                     if (cachedVideos.length > displayCount) {
                         setDisplayCount((prev) => Math.min(prev + displayPerPage, cachedVideos.length))
@@ -68,38 +69,58 @@ export default function VideoLearningPage() {
 
     // 비디오 데이터 로드 함수
     const loadVideos = async (pageNum: number, isNewSearch: boolean = false) => {
-        try {
-            setIsLoading(true)
+        const maxRetries = 3
+        let retryCount = 0
 
-            const { data: response } = await client.GET('/api/v1/videos/list', {
-                params: {
-                    query: {
-                        req: {
-                            q: searchKeyword || undefined,
-                            category: selectedCategory.id === 0 ? undefined : String(selectedCategory.id),
-                            maxResults: itemsPerPage,
+        while (retryCount < maxRetries) {
+            try {
+                setIsLoading(true)
+                setError(null)
+
+                const { data: response } = await client.GET('/api/v1/videos/list', {
+                    params: {
+                        query: {
+                            req: {
+                                q: searchKeyword || undefined,
+                                category: selectedCategory.id === 0 ? undefined : String(selectedCategory.id),
+                                maxResults: itemsPerPage,
+                            },
                         },
                     },
-                },
-            })
+                })
 
-            const videos = response?.data || []
+                const videos = response?.data || []
 
-            if (isNewSearch) {
-                setCachedVideos(videos)
-                setDisplayCount(displayPerPage)
-                setVideoList(videos.slice(0, displayPerPage))
-            } else {
-                setCachedVideos((prev) => [...prev, ...videos])
-                setVideoList((prev) => [...prev, ...videos.slice(0, displayPerPage)])
+                if (isNewSearch) {
+                    setCachedVideos(videos)
+                    setDisplayCount(displayPerPage)
+                    setVideoList(videos.slice(0, displayPerPage))
+                } else {
+                    setCachedVideos((prev) => [...prev, ...videos])
+                    setVideoList((prev) => [...prev, ...videos.slice(0, displayPerPage)])
+                }
+
+                // 더 불러올 데이터가 있는지 확인
+                setHasMore(videos.length === itemsPerPage)
+                break
+            } catch (err) {
+                retryCount++
+                console.error(`비디오 로드 시도 ${retryCount}/${maxRetries} 실패:`, err)
+
+                if (retryCount === maxRetries) {
+                    if (isNewSearch) {
+                        setCachedVideos([])
+                        setVideoList([])
+                    }
+                    setHasMore(false) // 에러 발생 시 더 이상 로드하지 않도록 설정
+                } else {
+                    await new Promise((resolve) => setTimeout(resolve, 1000 * retryCount))
+                }
+            } finally {
+                if (retryCount === maxRetries) {
+                    setIsLoading(false)
+                }
             }
-
-            setHasMore(videos.length === itemsPerPage)
-        } catch (err) {
-            setError('비디오 리스트를 불러오는데 실패했습니다.')
-            console.error(err)
-        } finally {
-            setIsLoading(false)
         }
     }
 
@@ -111,12 +132,14 @@ export default function VideoLearningPage() {
     // 검색어나 카테고리 변경 시
     useEffect(() => {
         setPage(1)
+        setHasMore(true) // 검색 조건 변경 시 hasMore 초기화
         loadVideos(1, true)
     }, [selectedCategory, searchKeyword])
 
     // 페이지 변경 시
     useEffect(() => {
-        if (page > 1) {
+        if (page > 1 && hasMore) {
+            // hasMore 체크 추가
             loadVideos(page)
         }
     }, [page])
@@ -263,8 +286,8 @@ export default function VideoLearningPage() {
 
                     {/* 로딩 상태 표시 */}
                     {isLoading && (
-                        <div className="text-center py-4">
-                            <div className="inline-block h-8 w-8 animate-spin rounded-full border-4 border-solid border-current border-r-transparent align-[-0.125em] motion-reduce:animate-[spin_1.5s_linear_infinite]" />
+                        <div className="flex justify-center items-center py-8">
+                            <Loading />
                         </div>
                     )}
 
