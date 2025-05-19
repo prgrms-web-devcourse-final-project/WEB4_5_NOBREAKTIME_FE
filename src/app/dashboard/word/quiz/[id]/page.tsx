@@ -7,7 +7,6 @@ import { useEffect, useState } from 'react'
 import client from '@/lib/backend/client'
 import QuizComplete from '@/components/learning/Quiz/QuizComplete'
 import { components } from '@/lib/backend/apiV1/schema'
-import { mockQuizData } from './mockdata'
 
 type WordQuizItem = components['schemas']['WordQuizItem']
 
@@ -43,45 +42,36 @@ export default function WordQuiz() {
         const fetchQuizWords = async () => {
             try {
                 setIsLoading(true)
+                const response = await client.GET('/api/v1/wordbooks/{wordbookId}/quiz', {
+                    params: {
+                        path: {
+                            wordbookId: Number(selectedId),
+                        },
+                    },
+                })
 
-                // API 호출 주석 처리
-                // const response = await client.GET('/api/v1/wordbooks/{wordbookId}/quiz', {
-                //     params: {
-                //         path: {
-                //             wordbookId: Number(selectedId),
-                //         },
-                //     },
-                // })
+                if (response.data?.code === '200' && response.data?.data) {
+                    const quizData = response.data.data
+                    const wordsWithIds = (quizData.quizItems || []).map((item: any) => ({
+                        word: item.word || '',
+                        meaning: item.meaning || '',
+                        question: item.question || '',
+                        original: item.original || '',
+                        quizId: quizData.quizId,
+                        wordbookItemId: item.wordbookItemId || 0,
+                    })) as WordQuizItemWithIds[]
 
-                // if (response.data?.code === '200' && response.data?.data) {
-                //     const quizData = response.data.data
-
-                // 목데이터 사용
-                const quizData = mockQuizData
-                console.log('단어 퀴즈 데이터:', quizData)
-                console.log('퀴즈 아이템:', quizData.quizItems)
-
-                const wordsWithIds = (quizData.quizItems || []).map((item) => ({
-                    word: item.word || '',
-                    meaning: item.meaning || '',
-                    question: item.question || '',
-                    original: item.original || '',
-                    quizId: quizData.quizId,
-                    wordbookItemId: item.wordbookItemId || 0,
-                })) as WordQuizItemWithIds[]
-
-                console.log('가공된 퀴즈 데이터:', wordsWithIds)
-
-                setOriginalWords(wordsWithIds)
-                setWords(wordsWithIds)
-                setUserInputs(new Array(wordsWithIds.length).fill(''))
-                // 각 문제마다 단어 개수만큼의 입력 필드 초기화
-                setMultiInputs(wordsWithIds.map((item) => item.word.split(' ').map(() => '')))
-                setQuizResults(new Array(wordsWithIds.length).fill(null))
-                setHintCounts(new Array(wordsWithIds.length).fill(0))
-                setShowButtons(new Array(wordsWithIds.length).fill(false))
-                // }
-
+                    setOriginalWords(wordsWithIds)
+                    setWords(wordsWithIds)
+                    setUserInputs(new Array(wordsWithIds.length).fill(''))
+                    setMultiInputs(wordsWithIds.map((item) => item.word.split(' ').map(() => '')))
+                    setQuizResults(new Array(wordsWithIds.length).fill(null))
+                    setHintCounts(new Array(wordsWithIds.length).fill(0))
+                    setShowButtons(new Array(wordsWithIds.length).fill(false))
+                } else {
+                    setOriginalWords([])
+                    setWords([])
+                }
                 setIsLoading(false)
             } catch (error) {
                 console.error('퀴즈 데이터를 가져오는데 실패했습니다:', error)
