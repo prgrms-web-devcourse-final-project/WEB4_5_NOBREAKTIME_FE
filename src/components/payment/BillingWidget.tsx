@@ -79,6 +79,7 @@ export default function BillingWidget({ amount, subscriptionType }: BillingWidge
                 amount: amount.value.toString(),
                 subscriptionType,
                 periodType: 'MONTHLY',
+                isBillingKey: 'true',
             }
 
             Object.entries(commonParams).forEach(([key, value]) => {

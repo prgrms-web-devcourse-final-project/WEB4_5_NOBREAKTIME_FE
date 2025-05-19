@@ -25,6 +25,10 @@ export default function PaymentsWidget({ amount, subscriptionType, periodType }:
     useEffect(() => {
         let isMounted = true
 
+        console.log('amount', amount)
+        console.log('subscriptionType', subscriptionType)
+        console.log('periodType', periodType)
+
         async function initializeAndRenderPayment() {
             try {
                 const tossPayments = await loadTossPayments(paymentsWidgetKey)
@@ -80,12 +84,13 @@ export default function PaymentsWidget({ amount, subscriptionType, periodType }:
                 amount: responseAmount,
             } = (requestData as { data?: { orderId?: string; orderName?: string; amount?: number } }).data || {}
 
+            console.log('responseAmount', responseAmount)
+
             const successUrl = new URL('/membership/success', window.location.origin)
             const failUrl = new URL('/membership/fail', window.location.origin)
 
+            // orderId, amount는 paymentsWidget에서 받아오는 값이므로 여기서는 사용하지 않음
             const commonParams = {
-                orderId: orderId ?? '',
-                amount: (responseAmount ?? '').toString(),
                 subscriptionType,
                 periodType,
             }

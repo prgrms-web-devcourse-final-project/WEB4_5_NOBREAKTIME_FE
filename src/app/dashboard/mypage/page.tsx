@@ -8,7 +8,22 @@ import { useGlobalLoginMember } from '@/stores/auth/loginMember'
 import { Pencil } from 'lucide-react'
 import Image from 'next/image'
 import { useState } from 'react'
+import type { components } from '@/lib/backend/apiV1/schema'
 
+type UserProfileResponse = {
+    email?: string
+    nickname?: string
+    profileImage?: string
+    subscriptionType?: 'NONE' | 'BASIC' | 'STANDARD' | 'PREMIUM' | 'ADMIN'
+    language?: 'ENGLISH' | 'JAPANESE' | 'NONE' | 'ALL'
+    subscriptions?: {
+        planName?: 'STANDARD' | 'PREMIUM'
+        amount?: number
+        startedAt?: string
+        expiredAt?: string
+        isPossibleToCancel?: 'true' | 'false'
+    }[]
+}
 type Language = 'ENGLISH' | 'JAPANESE' | 'NONE' | 'ALL'
 
 const LANGUAGES = [
@@ -30,6 +45,8 @@ export default function MyPage() {
     const [isWithdrawModalOpen, setIsWithdrawModalOpen] = useState(false)
     const [withdrawEmail, setWithdrawEmail] = useState('')
     const [isWithdrawLoading, setIsWithdrawLoading] = useState(false)
+    const [isSubscriptionModalOpen, setIsSubscriptionModalOpen] = useState(false)
+    const [isCancelling, setIsCancelling] = useState(false)
 
     const getSocialIcon = (email: string) => {
         if (email.includes('@kakao.com')) return '/logo/kakao.png'
@@ -174,7 +191,7 @@ export default function MyPage() {
     }
 
     const handleWithdraw = async () => {
-        if (withdrawEmail !== loginMember.email) {
+        if (withdrawEmail !== loginMember?.email) {
             alert('이메일이 일치하지 않습니다.')
             return
         }
@@ -192,6 +209,30 @@ export default function MyPage() {
             alert('회원 탈퇴 중 오류가 발생했습니다.')
         } finally {
             setIsWithdrawLoading(false)
+        }
+    }
+
+    const handleCancelSubscription = async () => {
+        if (!confirm('정말로 구독을 취소하시겠습니까?')) return
+
+        setIsCancelling(true)
+        try {
+            const { error } = await client.PATCH('/api/v1/payment/cancel')
+            if (error) {
+                throw new Error((error as { data?: { message?: string } })?.data?.message || '구독 취소에 실패했습니다')
+            }
+
+            // 구독 취소 후 사용자 정보 새로고침
+            const { data } = await client.GET('/api/v1/members/me')
+            if (data && 'data' in data) {
+                setLoginMember(data.data as any)
+            }
+
+            alert('구독이 취소되었습니다.')
+        } catch (error) {
+            alert(error instanceof Error ? error.message : '구독 취소 중 오류가 발생했습니다')
+        } finally {
+            setIsCancelling(false)
         }
     }
 
@@ -317,7 +358,7 @@ export default function MyPage() {
                         <Button
                             variant="default"
                             className="bg-[var(--color-main)] hover:bg-[var(--color-main)]/90"
-                            onClick={() => {}}
+                            onClick={() => setIsSubscriptionModalOpen(true)}
                         >
                             구독 내역 확인
                         </Button>
@@ -436,6 +477,61 @@ export default function MyPage() {
                         >
                             {isWithdrawLoading ? '탈퇴 중...' : '탈퇴하기'}
                         </Button>
+                    </DialogFooter>
+                </DialogContent>
+            </Dialog>
+
+            {/* 구독 내역 모달 */}
+            <Dialog open={isSubscriptionModalOpen} onOpenChange={setIsSubscriptionModalOpen}>
+                <DialogContent>
+                    <DialogHeader>
+                        <DialogTitle>구독 내역</DialogTitle>
+                    </DialogHeader>
+                    <div className="py-4">
+                        {loginMember?.subscriptions && loginMember.subscriptions.length > 0 ? (
+                            <div className="space-y-4">
+                                {loginMember.subscriptions.map((subscription, index) => (
+                                    <div key={index} className="border rounded-lg p-4">
+                                        <div className="flex justify-between items-center">
+                                            <div>
+                                                <h3 className="font-semibold">
+                                                    {subscription.planName === 'STANDARD' ? '스탠다드' : '프리미엄'}{' '}
+                                                    플랜
+                                                </h3>
+                                                <p className="text-sm text-gray-500">
+                                                    {subscription.startedAt} ~ {subscription.expiredAt}
+                                                </p>
+                                            </div>
+                                            <div className="text-right">
+                                                <p className="font-semibold">
+                                                    {subscription.isPossibleToCancel ? (
+                                                        `${subscription.amount?.toLocaleString()}원`
+                                                    ) : (
+                                                        <span className="text-red-500">다음달 만료</span>
+                                                    )}
+                                                </p>
+                                                {subscription.isPossibleToCancel && (
+                                                    <Button
+                                                        variant="destructive"
+                                                        size="sm"
+                                                        className="mt-2"
+                                                        onClick={handleCancelSubscription}
+                                                        disabled={isCancelling}
+                                                    >
+                                                        {isCancelling ? '취소 중...' : '구독 취소'}
+                                                    </Button>
+                                                )}
+                                            </div>
+                                        </div>
+                                    </div>
+                                ))}
+                            </div>
+                        ) : (
+                            <p className="text-center text-gray-500">구독 내역이 없습니다.</p>
+                        )}
+                    </div>
+                    <DialogFooter>
+                        <Button onClick={() => setIsSubscriptionModalOpen(false)}>닫기</Button>
                     </DialogFooter>
                 </DialogContent>
             </Dialog>
