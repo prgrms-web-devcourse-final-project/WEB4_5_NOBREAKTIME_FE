@@ -229,7 +229,7 @@ export default function VideoLearningPage() {
                 </div>
 
                 {/* 동영상 리스트 */}
-                <div className="flex-1 flex flex-col gap-6 overflow-y-auto min-h-0">
+                <div className="flex-1 flex flex-col gap-6 overflow-y-auto min-h-0 relative">
                     {videoList.map((video) => (
                         <div
                             key={video.videoId}
@@ -281,7 +281,7 @@ export default function VideoLearningPage() {
 
                     {/* 로딩 상태 표시 */}
                     {isLoading && (
-                        <div className="flex justify-center items-center absolute top-1/2 left-1/2 transform -translate-x-1/2 -translate-y-1/2">
+                        <div className="flex justify-center items-center absolute inset-0 bg-white/50">
                             <Loading />
                         </div>
                     )}
