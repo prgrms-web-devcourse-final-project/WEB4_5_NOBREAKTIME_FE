@@ -40,7 +40,7 @@ export default function BookmarkPage() {
                 <h3 className="text-2xl font-bold text-[var(--color-black)]">Bookmark</h3>
             </div>
 
-            <div className="flex flex-col gap-6 bg-[var(--color-sub-2)] p-6 rounded-lg h-[calc(100vh-200px)]">
+            <div className="flex flex-col gap-6 bg-[var(--color-sub-2)] p-6 rounded-lg h-[calc(100vh-120px)]">
                 <div className="flex flex-col gap-6 overflow-y-auto pr-2">
                     {videoList.map((video) => (
                         <div
