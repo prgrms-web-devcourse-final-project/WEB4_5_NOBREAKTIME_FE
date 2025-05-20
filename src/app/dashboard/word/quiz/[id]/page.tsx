@@ -33,14 +33,15 @@ export default function WordQuiz() {
     const [quizResults, setQuizResults] = useState<(boolean | null)[]>([])
     const [hintCounts, setHintCounts] = useState<number[]>([])
     const [showButtons, setShowButtons] = useState<boolean[]>([])
+    const [multiInputs, setMultiInputs] = useState<string[][]>([])
     const maxHint = 3
+    const [showFinalButton, setShowFinalButton] = useState(false)
 
     // 퀴즈 데이터 불러오기
     useEffect(() => {
         const fetchQuizWords = async () => {
             try {
                 setIsLoading(true)
-
                 const response = await client.GET('/api/v1/wordbooks/{wordbookId}/quiz', {
                     params: {
                         path: {
@@ -51,10 +52,7 @@ export default function WordQuiz() {
 
                 if (response.data?.code === '200' && response.data?.data) {
                     const quizData = response.data.data
-                    console.log('단어 퀴즈 데이터:', quizData)
-                    console.log('퀴즈 아이템:', quizData.quizItems)
-
-                    const wordsWithIds = (quizData.quizItems || []).map((item) => ({
+                    const wordsWithIds = (quizData.quizItems || []).map((item: any) => ({
                         word: item.word || '',
                         meaning: item.meaning || '',
                         question: item.question || '',
@@ -63,16 +61,17 @@ export default function WordQuiz() {
                         wordbookItemId: item.wordbookItemId || 0,
                     })) as WordQuizItemWithIds[]
 
-                    console.log('가공된 퀴즈 데이터:', wordsWithIds)
-
                     setOriginalWords(wordsWithIds)
                     setWords(wordsWithIds)
                     setUserInputs(new Array(wordsWithIds.length).fill(''))
+                    setMultiInputs(wordsWithIds.map((item) => item.word.split(' ').map(() => '')))
                     setQuizResults(new Array(wordsWithIds.length).fill(null))
                     setHintCounts(new Array(wordsWithIds.length).fill(0))
                     setShowButtons(new Array(wordsWithIds.length).fill(false))
+                } else {
+                    setOriginalWords([])
+                    setWords([])
                 }
-
                 setIsLoading(false)
             } catch (error) {
                 console.error('퀴즈 데이터를 가져오는데 실패했습니다:', error)
@@ -110,17 +109,25 @@ export default function WordQuiz() {
         }
     }
 
-    const getHintPlaceholder = (index: number) => {
+    const getHintPlaceholder = (index: number, inputIndex?: number) => {
         if (hintCounts[index] === 0) return ''
 
         const word = words[index].word
         if (!word) return ''
 
-        const oneThird = Math.ceil(word.length / 3)
-        const hintLength = Math.min(oneThird * hintCounts[index], word.length)
-
-        // 단어의 1/3씩만 보여줌
-        return word.slice(0, hintLength)
+        if (inputIndex !== undefined) {
+            // 숙어의 경우 각 단어별로 힌트 제공
+            const wordParts = word.split(' ')
+            const currentWord = wordParts[inputIndex]
+            const oneThird = Math.ceil(currentWord.length / 3)
+            const hintLength = Math.min(oneThird * hintCounts[index], currentWord.length)
+            return currentWord.slice(0, hintLength)
+        } else {
+            // 단일 단어의 경우 기존 로직 사용
+            const oneThird = Math.ceil(word.length / 3)
+            const hintLength = Math.min(oneThird * hintCounts[index], word.length)
+            return word.slice(0, hintLength)
+        }
     }
 
     const handleHint = async () => {
@@ -166,25 +173,61 @@ export default function WordQuiz() {
         setUserInputs(newUserInputs)
     }
 
-    const handleKeyDown = async (e: React.KeyboardEvent<HTMLInputElement>) => {
+    const handleMultiInputChange = (wordIndex: number, inputIndex: number, value: string) => {
+        if (quizResults[wordIndex] === true || showButtons[wordIndex]) return
+
+        const newMultiInputs = [...multiInputs]
+        newMultiInputs[wordIndex][inputIndex] = value
+        setMultiInputs(newMultiInputs)
+
+        // 전체 입력값도 업데이트
+        const newUserInputs = [...userInputs]
+        newUserInputs[wordIndex] = newMultiInputs[wordIndex].join(' ')
+        setUserInputs(newUserInputs)
+    }
+
+    const handleKeyDown = async (e: React.KeyboardEvent<HTMLInputElement>, inputIndex?: number) => {
         if (e.key === 'Enter') {
-            const isAnswerCorrect = userInputs[index].toLowerCase() === (words[index].word || '').toLowerCase()
+            const currentWord = words[index].word
+            const isMultiWord = currentWord.includes(' ')
+            let isAnswerCorrect = false
+            let currentInput = ''
+
+            if (isMultiWord) {
+                currentInput = multiInputs[index].join(' ').trim()
+                isAnswerCorrect = currentInput.toLowerCase() === currentWord.toLowerCase()
+            } else {
+                currentInput = userInputs[index].trim()
+                isAnswerCorrect = currentInput.toLowerCase() === currentWord.toLowerCase()
+            }
+
+            // 입력값이 비어있으면 처리하지 않음
+            if (!currentInput) return
 
             if (hintCounts[index] === 0) {
-                // 힌트를 사용하지 않은 경우
                 if (isAnswerCorrect) {
-                    // 정답 처리
                     saveQuizResult(index, true)
                     const newShowButtons = [...showButtons]
                     newShowButtons[index] = true
                     setShowButtons(newShowButtons)
+
+                    // 마지막 문제이고 정답인 경우
+                    if (index === words.length - 1) {
+                        setShowFinalButton(true)
+                    }
                 } else {
-                    // 오답 처리
                     const newQuizResults = [...quizResults]
                     newQuizResults[index] = false
                     setQuizResults(newQuizResults)
 
-                    // 서버에 오답 결과 저장
+                    // 마지막 문제이고 오답인 경우에도 바로 결과로 넘어가지 않고 버튼만 표시
+                    if (index === words.length - 1) {
+                        const newShowButtons = [...showButtons]
+                        newShowButtons[index] = true
+                        setShowButtons(newShowButtons)
+                        setShowFinalButton(true)
+                    }
+
                     try {
                         await client.POST('/api/v1/wordbooks/quiz/result', {
                             body: {
@@ -198,11 +241,20 @@ export default function WordQuiz() {
                     }
                 }
             } else if (isAnswerCorrect) {
-                // 힌트를 사용한 상태에서 정답을 맞춘 경우
-                // 이동 버튼 표시
                 const newShowButtons = [...showButtons]
                 newShowButtons[index] = true
                 setShowButtons(newShowButtons)
+
+                // 마지막 문제이고 힌트를 사용한 경우
+                if (index === words.length - 1) {
+                    setShowFinalButton(true)
+                }
+            }
+
+            // Tab 키로 다음 입력 필드로 이동 (숙어의 경우)
+            if (isMultiWord && inputIndex !== undefined && inputIndex < multiInputs[index].length - 1) {
+                const nextInput = document.querySelector(`input[data-index="${inputIndex + 1}"]`) as HTMLInputElement
+                if (nextInput) nextInput.focus()
             }
         }
     }
@@ -255,6 +307,16 @@ export default function WordQuiz() {
         setQuizResults(new Array(originalWords.length).fill(null))
         setUserInputs(new Array(originalWords.length).fill(''))
         setShowButtons(new Array(originalWords.length).fill(false))
+    }
+
+    const handleShowResult = () => {
+        const newQuizResults = [...quizResults]
+        for (let i = 0; i < newQuizResults.length; i++) {
+            if (newQuizResults[i] === null) {
+                newQuizResults[i] = false
+            }
+        }
+        setQuizResults(newQuizResults)
     }
 
     if (isLoading) {
@@ -319,21 +381,8 @@ export default function WordQuiz() {
     const renderQuestion = () => {
         if (!current) return null
 
-        // question이 비어있거나 {}가 없는 경우 전체 문장을 표시
-        if (!current.question || !current.question.includes('{}')) {
-            return (
-                <div className="flex flex-col items-center w-full">
-                    <div className="bg-gray-50 w-full py-6 rounded-lg mb-8">
-                        <p className="text-xl text-gray-600 text-center px-4">{current.meaning}</p>
-                    </div>
-                    <div className="flex flex-wrap items-center justify-center gap-3 text-3xl font-bold text-center bg-white py-8 px-4 rounded-lg w-full">
-                        <p>{current.question || current.original || '문제 데이터가 없습니다.'}</p>
-                    </div>
-                </div>
-            )
-        }
-
         const parts = current.question.split('{}')
+        const isMultiWord = current.word.includes(' ')
 
         return (
             <div className="flex flex-col items-center w-full">
@@ -342,21 +391,45 @@ export default function WordQuiz() {
                 </div>
                 <div className="flex flex-wrap items-center justify-center gap-3 text-3xl font-bold text-center bg-white py-8 px-4 rounded-lg w-full">
                     <span className="break-keep">{parts[0]}</span>
-                    <input
-                        type="text"
-                        value={userInputs[index]}
-                        onChange={handleInputChange}
-                        onKeyDown={handleKeyDown}
-                        placeholder={getHintPlaceholder(index)}
-                        className={`w-44 min-w-[140px] h-[50px] text-2xl text-center rounded-md bg-[#ECEAFC] border-2 border-[#D1CFFA] focus:outline-none focus:border-[var(--color-main)] ${
-                            quizResults[index] === true
-                                ? 'text-green-500 border-green-500 bg-green-100'
-                                : quizResults[index] === false
-                                ? 'text-[var(--color-black)] border-red-500 bg-red-100'
-                                : 'text-[var(--color-black)]'
-                        } placeholder-gray-400`}
-                        readOnly={quizResults[index] === true || showButtons[index]}
-                    />
+                    {isMultiWord ? (
+                        <div className="flex gap-2">
+                            {current.word.split(' ').map((_, inputIndex) => (
+                                <input
+                                    key={inputIndex}
+                                    type="text"
+                                    value={multiInputs[index]?.[inputIndex] || ''}
+                                    onChange={(e) => handleMultiInputChange(index, inputIndex, e.target.value)}
+                                    onKeyDown={(e) => handleKeyDown(e, inputIndex)}
+                                    placeholder={getHintPlaceholder(index, inputIndex)}
+                                    data-index={inputIndex}
+                                    className={`w-24 min-w-[96px] h-[50px] text-2xl text-center rounded-md bg-[#ECEAFC] border-2 border-[#D1CFFA] focus:outline-none focus:border-[var(--color-main)] ${
+                                        quizResults[index] === true
+                                            ? 'text-green-500 border-green-500 bg-green-100'
+                                            : quizResults[index] === false
+                                            ? 'text-[var(--color-black)] border-red-500 bg-red-100'
+                                            : 'text-[var(--color-black)]'
+                                    } placeholder-gray-400`}
+                                    readOnly={quizResults[index] === true || showButtons[index]}
+                                />
+                            ))}
+                        </div>
+                    ) : (
+                        <input
+                            type="text"
+                            value={userInputs[index]}
+                            onChange={handleInputChange}
+                            onKeyDown={handleKeyDown}
+                            placeholder={getHintPlaceholder(index)}
+                            className={`w-44 min-w-[140px] h-[50px] text-2xl text-center rounded-md bg-[#ECEAFC] border-2 border-[#D1CFFA] focus:outline-none focus:border-[var(--color-main)] ${
+                                quizResults[index] === true
+                                    ? 'text-green-500 border-green-500 bg-green-100'
+                                    : quizResults[index] === false
+                                    ? 'text-[var(--color-black)] border-red-500 bg-red-100'
+                                    : 'text-[var(--color-black)]'
+                            } placeholder-gray-400`}
+                            readOnly={quizResults[index] === true || showButtons[index]}
+                        />
+                    )}
                     <span className="break-keep">{parts[1]}</span>
                 </div>
             </div>
@@ -406,7 +479,6 @@ export default function WordQuiz() {
                     </div>
 
                     <div className="flex gap-2 w-full">
-                        {/* 정답을 맞췄거나, 오답 상태에서 정답을 입력했을 때 이동 버튼 표시 */}
                         {(quizResults[index] === true || showButtons[index]) && (
                             <>
                                 <button
@@ -417,20 +489,14 @@ export default function WordQuiz() {
                                     <Image src="/assets/left.svg" alt="left" width={40} height={40} />
                                 </button>
                                 {index === words.length - 1 ? (
-                                    <button
-                                        onClick={() => {
-                                            const newQuizResults = [...quizResults]
-                                            for (let i = 0; i < newQuizResults.length; i++) {
-                                                if (newQuizResults[i] === null) {
-                                                    newQuizResults[i] = false
-                                                }
-                                            }
-                                            setQuizResults(newQuizResults)
-                                        }}
-                                        className="flex-1 flex items-center justify-center bg-[var(--color-main)] text-white font-bold py-2 rounded-sm"
-                                    >
-                                        결과 제출
-                                    </button>
+                                    showFinalButton && (
+                                        <button
+                                            onClick={handleShowResult}
+                                            className="flex-1 flex items-center justify-center bg-[var(--color-main)] text-white font-bold py-2 rounded-sm"
+                                        >
+                                            최종 결과 확인
+                                        </button>
+                                    )
                                 ) : (
                                     <button
                                         onClick={handleNext}

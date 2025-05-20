@@ -29,7 +29,7 @@ export default function FailPage() {
 
             try {
                 // 빌링키 발급과 일반 결제 구분하여 처리
-                const endpoint = isBillingKey ? '/api/v1/payment/fail/issue-billing-key' : '/api/v1/payment/fail'
+                const endpoint = isBillingKey ? '/api/v1/payment/issue-billing-key' : '/api/v1/payment/fail'
 
                 const { error } = await client.POST(endpoint, {
                     body: {

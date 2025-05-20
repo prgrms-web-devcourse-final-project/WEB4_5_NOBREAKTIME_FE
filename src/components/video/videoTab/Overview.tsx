@@ -1,8 +1,8 @@
 'use client'
 
-import React, { useState, useEffect } from 'react'
-import KeywordCard, { Keyword } from './KeywordCard'
 import client from '@/lib/backend/client'
+import React, { useEffect, useState } from 'react'
+import KeywordCard, { Keyword } from './KeywordCard'
 
 interface OverviewProps {
     fontSize: number
@@ -106,7 +106,7 @@ const Overview: React.FC<OverviewProps> = ({
 
     // 표현 추가 처리
     const handleAddExpression = async () => {
-        if (!selectedSubtitle || !videoId) {
+        if (!selectedSubtitle || !videoId || selectedSubtitle.subtitleId === undefined) {
             alert('선택된 자막이 없거나 비디오 정보가 없습니다.')
             return
         }

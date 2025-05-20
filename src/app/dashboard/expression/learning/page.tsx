@@ -1,14 +1,14 @@
 'use client'
 
-import { useEffect, useState, useRef } from 'react'
 import DropdownCheckBox from '@/components/common/dropdownCheckBox'
 import Search from '@/components/common/search'
 import ExpressionIcon from '@/components/icon/expressionIcon'
 import ExpressionCard from '@/components/learning/expressionCard'
+import ExpressionMoveDeleteModal from '@/components/learning/ExpressionMoveDeleteModal'
 import LearningCard from '@/components/learning/learningCard'
 import type { components } from '@/lib/backend/apiV1/schema'
 import client from '@/lib/backend/client'
-import ExpressionMoveDeleteModal from '@/components/learning/ExpressionMoveDeleteModal'
+import { useEffect, useRef, useState } from 'react'
 
 type ExpressionBookResponse = components['schemas']['ExpressionBookResponse']
 type ExpressionResponse = components['schemas']['ExpressionResponse']
@@ -111,15 +111,6 @@ export default function ExpressionPage() {
         }
     }
 
-    const openAddModal = () => {
-        if (selectedExpressionBookIds.length === 0) {
-            alert('표현을 추가할 표현함을 먼저 선택해주세요.')
-            return
-        }
-        // TODO: 표현 추가 모달 구현
-        alert('표현 추가 기능 구현 예정입니다.')
-    }
-
     const toggleEditMode = () => {
         if (isEditMode) {
             setSelectedExpressions([])
@@ -179,7 +170,7 @@ export default function ExpressionPage() {
                 <h3 className="text-2xl font-bold text-[var(--color-black)]">Expression Learning</h3>
             </div>
 
-            <div className="flex flex-col gap-6 bg-[var(--color-sub-2)] p-6 rounded-lg h-[calc(100vh-200px)]">
+            <div className="flex flex-col gap-6 bg-[var(--color-sub-2)] p-6 rounded-lg h-[calc(100vh-120px)]">
                 <div className="w-[80%] m-auto">
                     <Search onSearch={handleSearch} placeholder="문장, 제목으로 검색..." />
                 </div>
@@ -215,22 +206,7 @@ export default function ExpressionPage() {
                                 }))}
                                 onWordbookSelect={handleWordbookSelect}
                             />
-                            <button
-                                onClick={openAddModal}
-                                className="flex items-center gap-1 bg-[var(--color-main)] text-white px-3 py-2 rounded-md text-sm font-medium hover:bg-opacity-90 transition-colors"
-                            >
-                                <svg
-                                    xmlns="http://www.w3.org/2000/svg"
-                                    fill="none"
-                                    viewBox="0 0 24 24"
-                                    strokeWidth={1.5}
-                                    stroke="currentColor"
-                                    className="w-5 h-5"
-                                >
-                                    <path strokeLinecap="round" strokeLinejoin="round" d="M12 4.5v15m7.5-7.5h-15" />
-                                </svg>
-                                표현 추가
-                            </button>
+
                             <button
                                 onClick={isEditMode ? handleSelectComplete : toggleEditMode}
                                 className={`flex items-center gap-1 ${

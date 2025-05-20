@@ -74,7 +74,7 @@ export default function LevelBox({ statistics, onStatisticsUpdate }: LevelBoxPro
     ]
 
     return (
-        <div className="flex flex-col gap-8 mb-8 ">
+        <div className="flex flex-col gap-4 mb-4 ">
             <div className="flex justify-between text-sm">
                 {categories.map(({ label, key }) => {
                     const level = levelData[key as keyof LevelCheckResponse] || 'NONE'

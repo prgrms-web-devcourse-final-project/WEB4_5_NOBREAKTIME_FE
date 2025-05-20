@@ -18,7 +18,7 @@ function Nav() {
     const { loginMember } = useGlobalLoginMember()
 
     return (
-        <nav className="group flex flex-col h-screen bg-[var(--color-sub-2)] text-[var(--color-main)] w-[83px] hover:w-[280px] transition-all duration-300 overflow-hidden p-4 flex flex-col gap-6">
+        <nav className="group flex flex-col h-screen bg-[var(--color-sub-2)] text-[var(--color-main)] w-[83px] lg:hover:w-[280px] transition-all duration-300 overflow-hidden p-4 flex flex-col gap-6">
             {/* 로고 */}
             <Link href="/dashboard">
                 <Image src="/logo/icon-logo.svg" alt="logo" width={48} height={48} className="mx-auto" />
@@ -101,7 +101,7 @@ function NavItem({
             `}
         >
             <div className="min-w-[24px]">{React.cloneElement(icon, { className: iconClass })}</div>
-            <span className="text-sm text-left whitespace-nowrap opacity-0 group-hover:opacity-100 transition-opacity duration-300">
+            <span className="text-sm text-left whitespace-nowrap opacity-0 lg:group-hover:opacity-100 transition-opacity duration-300">
                 {label}
             </span>
         </Link>

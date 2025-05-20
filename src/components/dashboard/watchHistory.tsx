@@ -11,14 +11,14 @@ interface WatchHistoryProps {
 
 export default function WatchHistory({ data }: WatchHistoryProps) {
     return (
-        <div className="flex gap-4 mt-4 overflow-x-auto pb-4">
+        <div className="flex gap-4 overflow-x-auto h-full">
             {data.map((video) => (
                 <Link
                     key={`${video.videoId}-${video.lastViewedAt}`}
                     href={`/dashboard/video/learning/${video.videoId}`}
-                    className="flex-shrink-0 w-64 hover:bg-gray-50 rounded-lg cursor-pointer"
+                    className="flex-shrink-0 w-48 hover:bg-gray-50 rounded-lg cursor-pointer"
                 >
-                    <div className="relative w-full aspect-video mb-2">
+                    <div className="relative w-full aspect-video mb-1">
                         <Image
                             src={video.thumbnailUrl || '/assets/thumb.jpg'}
                             alt={video.title || ''}
@@ -26,9 +26,9 @@ export default function WatchHistory({ data }: WatchHistoryProps) {
                             className="object-cover rounded-lg"
                         />
                     </div>
-                    <div className="p-2">
-                        <h4 className="font-semibold text-sm line-clamp-2">{video.title}</h4>
-                        <p className="text-xs text-gray-500 mt-1">
+                    <div className="p-1">
+                        <h4 className="font-semibold text-xs line-clamp-2">{video.title}</h4>
+                        <p className="text-[10px] text-gray-500 mt-0.5">
                             {new Date(video.lastViewedAt || '').toLocaleDateString()}
                         </p>
                     </div>

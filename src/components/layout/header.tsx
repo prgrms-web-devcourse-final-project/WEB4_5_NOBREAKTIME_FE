@@ -24,7 +24,7 @@ export default function Header() {
     }, [])
 
     return (
-        <header className="flex items-center justify-end h-16 px-6 relative">
+        <header className="flex items-center justify-end h-12 pt-4 px-12 relative">
             <div className="flex items-center gap-2">
                 {/* 프로필 아이콘 */}
                 <div className="w-6 h-6 rounded-full border-2 border-[var(--color-main)] flex items-center justify-center overflow-hidden">
@@ -48,7 +48,7 @@ export default function Header() {
 
                     {/* 드롭다운 메뉴 */}
                     {isDropdownOpen && (
-                        <div className="absolute top-16 right-6 w-48 bg-white rounded-lg shadow-lg py-2 z-50">
+                        <div className="absolute top-full right-12 mt-1 w-48 bg-white rounded-lg shadow-lg py-2 z-50">
                             <Link
                                 href="/dashboard/mypage"
                                 className="block px-4 py-2 text-sm text-[var(--color-black)] hover:bg-gray-100"

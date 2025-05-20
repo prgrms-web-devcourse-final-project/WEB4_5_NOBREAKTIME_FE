@@ -1,6 +1,7 @@
 'use client'
 
 import client from '@/lib/backend/client'
+import { useGlobalLoginMember } from '@/stores/auth/loginMember'
 import { useRouter, useSearchParams } from 'next/navigation'
 import { useEffect, useState } from 'react'
 
@@ -9,11 +10,38 @@ interface PaymentError {
     message?: string
 }
 
+type UserProfileResponse = {
+    email?: string
+    nickname?: string
+    profileImage?: string
+    subscriptionType?: 'NONE' | 'BASIC' | 'STANDARD' | 'PREMIUM' | 'ADMIN'
+    language?: 'ENGLISH' | 'JAPANESE' | 'NONE' | 'ALL'
+    subscriptions?: {
+        planName: 'STANDARD' | 'PREMIUM'
+        amount: number
+        startedAt: string
+        expiredAt: string
+        isPossibleToCancel: 'true' | 'false'
+    }[]
+}
+
 export default function SuccessPage() {
     const searchParams = useSearchParams()
     const router = useRouter()
+    const { setLoginMember } = useGlobalLoginMember()
     const [status, setStatus] = useState<'loading' | 'success' | 'error'>('loading')
     const [errorMessage, setErrorMessage] = useState<string>('')
+
+    const fetchMember = async () => {
+        try {
+            const response = await client.GET('/api/v1/members/me')
+            if (response.data && 'data' in response.data) {
+                setLoginMember(response.data.data as UserProfileResponse)
+            }
+        } catch (error) {
+            console.error('사용자 정보 새로고침 중 오류 발생:', error)
+        }
+    }
 
     useEffect(() => {
         async function confirmPayment() {
@@ -24,6 +52,8 @@ export default function SuccessPage() {
             const subscriptionType = searchParams.get('subscriptionType')
             const periodType = searchParams.get('periodType')
             const authKey = searchParams.get('authKey')
+
+            console.log('isBillingKey', isBillingKey)
 
             // 로컬 스토리지에서 idempotencyKey 가져오기
             let idempotencyKey = localStorage.getItem('payment_idempotency_key')
@@ -56,7 +86,7 @@ export default function SuccessPage() {
 
             try {
                 // 빌링키 발급과 일반 결제 구분하여 처리
-                const endpoint = isBillingKey ? '/api/v1/payment/confirm/issue-billing-key' : '/api/v1/payment/confirm'
+                const endpoint = isBillingKey ? '/api/v1/payment/issue-billing-key' : '/api/v1/payment/confirm'
 
                 const requestBody = isBillingKey
                     ? {
@@ -73,9 +103,25 @@ export default function SuccessPage() {
                           orderId,
                       }
 
+                console.log('결제 승인 요청:', {
+                    endpoint,
+                    requestBody,
+                    params: {
+                        orderId,
+                        paymentKey,
+                        amount,
+                        isBillingKey,
+                        subscriptionType,
+                        periodType,
+                    },
+                })
+
                 const response = await client.POST(endpoint, {
                     body: requestBody,
                 })
+
+                console.log('결제 승인 응답:', response)
+
                 const { error, data } = response
 
                 // 결제 성공 후 idempotencyKey 삭제
@@ -95,6 +141,8 @@ export default function SuccessPage() {
                     throw new Error('결제 승인 응답이 없습니다.')
                 }
 
+                // 결제 성공 후 사용자 정보 새로고침
+                await fetchMember()
                 setStatus('success')
             } catch (e) {
                 console.error('결제 승인 중 오류가 발생했습니다:', e)

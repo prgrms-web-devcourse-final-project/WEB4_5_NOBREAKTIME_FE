@@ -7,6 +7,7 @@ const nextConfig: NextConfig = {
     images: {
         domains: ['i.ytimg.com', 'team07-mallang-bucket.s3.ap-northeast-2.amazonaws.com'],
     },
+    reactStrictMode: false,
 }
 
 export default nextConfig
