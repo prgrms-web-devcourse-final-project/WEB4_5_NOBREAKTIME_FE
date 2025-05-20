@@ -33,16 +33,6 @@ export default function DashboardPage() {
         }
 
         const fetchRecentVideos = async () => {
-            // 가데이터 설정
-            const mockData: VideoHistoryResponse = {
-                videoId: '1',
-                title: '영어 회화 기초 - 일상 대화',
-                lastViewedAt: new Date().toISOString(),
-            }
-            setWatchHistoryList([mockData, mockData, mockData, mockData, mockData])
-
-            // 실제 API 호출은 주석 처리
-            /*
             try {
                 const response = await client.GET('/api/v1/videohistory/videos/summary')
                 if (response.data?.data) {
@@ -51,7 +41,6 @@ export default function DashboardPage() {
             } catch (error) {
                 console.error('Failed to fetch recent videos:', error)
             }
-            */
         }
 
         fetchStatistics()
