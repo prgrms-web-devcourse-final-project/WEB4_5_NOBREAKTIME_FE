@@ -8,6 +8,7 @@ import React from 'react'
 import BookmarkIcon from '../icon/bookmarkIcon'
 import DashboardIcon from '../icon/dashboardIcon'
 import ExpressionIcon from '../icon/expressionIcon'
+import HistoryIcon from '../icon/historyIcon'
 import VideoIcon from '../icon/videoIcon'
 import AbcIcon from '../icon/wordIcon'
 
@@ -25,6 +26,12 @@ function Nav() {
             </Link>
             {/* 메뉴 아이템 */}
             <NavItem icon={<DashboardIcon />} label="Dashboard" href="/dashboard" active={pathname === '/dashboard'} />
+            <NavItem
+                icon={<HistoryIcon />}
+                label="History"
+                href="/dashboard/history"
+                active={pathname === '/dashboard/history'}
+            />
             <NavItem
                 icon={<BookmarkIcon />}
                 label="Bookmark"
