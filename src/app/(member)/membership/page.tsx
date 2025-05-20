@@ -160,9 +160,8 @@ export default function Membership() {
                                     <div className="flex items-end justify-center gap-1">
                                         <div className="flex items-end justify-center gap-2">
                                             {/* 원래 가격 (할인일 경우만) */}
-                                            {plan.priceInfo?.discountRate &&
-                                                plan.priceInfo.discountRate > 0 &&
-                                                plan.priceInfo.originalPrice && (
+                                            {(plan.priceInfo?.discountRate ?? 0) > 0 &&
+                                                plan.priceInfo?.originalPrice && (
                                                     <span className="text-base text-gray-400 line-through">
                                                         ₩{plan.priceInfo.originalPrice.toLocaleString()}
                                                     </span>
