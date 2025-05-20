@@ -1,8 +1,7 @@
 'use client'
 
-import React, { useState, useEffect } from 'react'
 import Image from 'next/image'
-import { components } from '@/lib/backend/apiV1/schema'
+import { useEffect, useState } from 'react'
 
 type SubtitleResult = {
     subtitleId: number
@@ -127,7 +126,14 @@ function VideoScript({
             <div className="flex-grow flex w-full rounded-lg p-2 flex-col gap-2 bg-[var(--color-sub-2)] overflow-hidden overflow-y-auto">
                 {isLoading ? (
                     <div className="flex flex-col items-center justify-center h-full text-gray-500 bg-[var(--color-white)]">
-                        <Image src="/character/loading-2.gif" alt="loading" width={300} height={300} />
+                        <Image
+                            src="/character/loading-2.gif"
+                            alt="loading"
+                            width={200}
+                            height={200}
+                            className="max-w-full h-auto"
+                            style={{ maxWidth: '100%', height: 'auto' }}
+                        />
                         {/* 분석 상태 표시 */}
                         {analysisStatus.stage !== 'analysisComplete' && (
                             <div className="w-full max-w-md p-6">

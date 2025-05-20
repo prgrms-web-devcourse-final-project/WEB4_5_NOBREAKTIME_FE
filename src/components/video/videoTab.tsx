@@ -1,13 +1,13 @@
 'use client'
 
-import React, { useState, useEffect } from 'react'
-import { Keyword } from './videoTab/KeywordCard'
-import WordQuiz from './videoTab/WordQuiz'
-import ExpressionQuiz from './videoTab/ExpressionQuiz'
-import Overview from './videoTab/Overview'
-import Image from 'next/image'
 import { components } from '@/lib/backend/apiV1/schema'
 import client from '@/lib/backend/client'
+import Image from 'next/image'
+import { useEffect, useState } from 'react'
+import ExpressionQuiz from './videoTab/ExpressionQuiz'
+import { Keyword } from './videoTab/KeywordCard'
+import Overview from './videoTab/Overview'
+import WordQuiz from './videoTab/WordQuiz'
 
 type VideoLearningWordQuizItem = components['schemas']['VideoLearningWordQuizItem']
 type VideoLearningWordQuizListResponse = components['schemas']['VideoLearningWordQuizListResponse']
@@ -166,7 +166,14 @@ function VideoTab({
                 {isLoading ? (
                     <div className="flex items-center justify-center h-full text-gray-500">
                         <div className="animate-pulse">
-                            <Image src="/character/loading-1.gif" alt="loading" width={300} height={300} />
+                            <Image
+                                src="/character/loading-1.gif"
+                                alt="loading"
+                                width={300}
+                                height={300}
+                                className="max-w-full h-auto"
+                                style={{ maxWidth: '100%', height: 'auto' }}
+                            />
                         </div>
                     </div>
                 ) : (
