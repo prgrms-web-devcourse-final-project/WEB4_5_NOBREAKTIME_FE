@@ -3,7 +3,7 @@ import { useGlobalLoginMember } from '@/stores/auth/loginMember'
 import { loadTossPayments, TossPaymentsWidgets } from '@tosspayments/tosspayments-sdk'
 import { useEffect, useState } from 'react'
 
-const paymentsWidgetKey = 'test_gck_docs_Ovk5rk1EwkEbP0W43n07xlzm'
+const WIDGET_KEY = process.env.NEXT_PUBLIC_TOSS_WIDGET_CLIENT_KEY || ''
 
 interface Amount {
     currency: string
@@ -31,7 +31,7 @@ export default function PaymentsWidget({ amount, subscriptionType, periodType }:
 
         async function initializeAndRenderPayment() {
             try {
-                const tossPayments = await loadTossPayments(paymentsWidgetKey)
+                const tossPayments = await loadTossPayments(WIDGET_KEY)
 
                 if (isMounted) {
                     const paymentsInstance = tossPayments.widgets({

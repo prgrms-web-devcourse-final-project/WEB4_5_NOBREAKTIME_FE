@@ -3,24 +3,12 @@ import { useGlobalLoginMember } from '@/stores/auth/loginMember'
 import { loadTossPayments, TossPaymentsPayment } from '@tosspayments/tosspayments-sdk'
 import { useEffect, useState } from 'react'
 
-const billingApiKey = 'test_ck_D5GePWvyJnrK0W0k6q8gLzN97Eoq'
+const BILLING_KEY = process.env.NEXT_PUBLIC_TOSS_BILLING_CLIENT_KEY || ''
 
 interface Amount {
     currency: string
     value: number
 }
-
-interface PaymentRequestResponse {
-    data: {
-        orderId: string
-    }
-}
-
-interface PaymentRequestBody {
-    type: 'BASIC' | 'STANDARD' | 'PREMIUM'
-    period: 'MONTHLY'
-}
-
 interface BillingWidgetProps {
     amount: Amount
     subscriptionType: 'BASIC' | 'STANDARD' | 'PREMIUM'
@@ -37,7 +25,7 @@ export default function BillingWidget({ amount, subscriptionType }: BillingWidge
 
         async function initializeAndRenderPayment() {
             try {
-                const tossPayments = await loadTossPayments(billingApiKey)
+                const tossPayments = await loadTossPayments(BILLING_KEY)
 
                 if (isMounted) {
                     const billingInstance = tossPayments.payment({ customerKey: customerKey })
