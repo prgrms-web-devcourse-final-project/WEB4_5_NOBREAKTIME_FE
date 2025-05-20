@@ -1,4 +1,3 @@
-import Image from 'next/image'
 import { usePathname, useRouter } from 'next/navigation'
 
 interface Props {
@@ -22,31 +21,33 @@ export default function Card({ wordbooks, isLoading = false }: Props) {
 
     if (isLoading) {
         return (
-            <div className="flex-1 grid grid-cols-2 gap-4">
-                {[1, 2, 3, 4].map((i) => (
-                    <div
-                        key={i}
-                        className="bg-[var(--color-white)] rounded-lg p-4 shadow flex flex-col justify-between h-[180px] border border-gray-200 animate-pulse"
-                    >
-                        <div className="h-4 bg-gray-200 rounded w-3/4 mb-4"></div>
-                        <div className="h-5 bg-gray-200 rounded w-1/2 mb-4"></div>
-                        <div className="flex justify-end gap-2">
-                            <div className="h-8 bg-gray-200 rounded w-16"></div>
-                            <div className="h-8 bg-gray-200 rounded w-16"></div>
+            <div className="flex-1 w-full h-full learning-box gap-2 flex flex-col p-2">
+                <div className="flex-1 grid grid-cols-2 md:grid-cols-2 sm:grid-cols-1 gap-2">
+                    {[1, 2, 3, 4].map((i) => (
+                        <div
+                            key={i}
+                            className="bg-[var(--color-white)] rounded-lg p-3 shadow flex flex-col justify-between h-[150px] border border-gray-200 animate-pulse w-full"
+                        >
+                            <div className="h-4 bg-gray-200 rounded w-3/4 mb-4"></div>
+                            <div className="h-5 bg-gray-200 rounded w-1/2 mb-4"></div>
+                            <div className="flex justify-end gap-2">
+                                <div className="h-8 bg-gray-200 rounded w-16"></div>
+                                <div className="h-8 bg-gray-200 rounded w-16"></div>
+                            </div>
                         </div>
-                    </div>
-                ))}
+                    ))}
+                </div>
             </div>
         )
     }
 
     return (
-        <div className="flex-1 w-full h-full learning-box gap-4 flex flex-col">
-            <div className="flex-1 grid grid-cols-2 gap-2 max-[1000px]:grid-cols-1">
+        <div className="flex-1 w-full h-full learning-box gap-2 flex flex-col p-2">
+            <div className="flex-1 grid grid-cols-2 md:grid-cols-2 sm:grid-cols-1 gap-2">
                 {wordbooks.map((wordbook) => (
                     <div
                         key={wordbook.id}
-                        className="bg-[var(--color-white)] rounded-lg p-4 shadow flex flex-col h-[180px] border border-gray-200"
+                        className="bg-[var(--color-white)] rounded-lg p-3 shadow flex flex-col h-[150px] border border-gray-200 w-full"
                     >
                         <div className="flex-1">
                             {/* 날짜 + 제목 */}
@@ -104,18 +105,18 @@ export default function Card({ wordbooks, isLoading = false }: Props) {
                 ))}
             </div>
 
+            {/* 
+            // 유료회원기능
             <div className="flex justify-between gap-2 rounded-lg">
                 <div className="flex gap-2">
-                    {/*
                     <button className="bg-[var(--color-main)] text-sm text-[var(--color-white)] p-2 rounded-lg hover:opacity-90 transition-opacity">
                         추가
                     </button>
                     <button className="bg-[var(--color-warning)] text-sm text-[var(--color-white)] p-2 rounded-lg hover:opacity-90 transition-opacity">
                         삭제
                     </button>
-                    */}
                 </div>
-
+                // 페이지네이션 기능
                 <div className="flex gap-2">
                     <button className="p-2 rounded-lg hover:bg-gray-100 transition-colors">
                         <Image src="/assets/left.svg" alt="arrow-left" width={24} height={24} />
@@ -124,7 +125,8 @@ export default function Card({ wordbooks, isLoading = false }: Props) {
                         <Image src="/assets/right.svg" alt="arrow-right" width={24} height={24} />
                     </button>
                 </div>
-            </div>
+            </div> 
+            */}
         </div>
     )
 }
