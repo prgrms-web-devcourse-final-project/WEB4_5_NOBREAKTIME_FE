@@ -111,15 +111,6 @@ export default function ExpressionPage() {
         }
     }
 
-    const openAddModal = () => {
-        if (selectedExpressionBookIds.length === 0) {
-            alert('표현을 추가할 표현함을 먼저 선택해주세요.')
-            return
-        }
-        // TODO: 표현 추가 모달 구현
-        alert('표현 추가 기능 구현 예정입니다.')
-    }
-
     const toggleEditMode = () => {
         if (isEditMode) {
             setSelectedExpressions([])
@@ -215,22 +206,7 @@ export default function ExpressionPage() {
                                 }))}
                                 onWordbookSelect={handleWordbookSelect}
                             />
-                            <button
-                                onClick={openAddModal}
-                                className="flex items-center gap-1 bg-[var(--color-main)] text-white px-3 py-2 rounded-md text-sm font-medium hover:bg-opacity-90 transition-colors"
-                            >
-                                <svg
-                                    xmlns="http://www.w3.org/2000/svg"
-                                    fill="none"
-                                    viewBox="0 0 24 24"
-                                    strokeWidth={1.5}
-                                    stroke="currentColor"
-                                    className="w-5 h-5"
-                                >
-                                    <path strokeLinecap="round" strokeLinejoin="round" d="M12 4.5v15m7.5-7.5h-15" />
-                                </svg>
-                                표현 추가
-                            </button>
+
                             <button
                                 onClick={isEditMode ? handleSelectComplete : toggleEditMode}
                                 className={`flex items-center gap-1 ${
