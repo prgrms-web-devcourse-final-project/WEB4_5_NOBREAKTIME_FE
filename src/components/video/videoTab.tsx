@@ -145,9 +145,8 @@ function VideoTab({
             <div className="flex justify-center items-center w-50 h-[80%] p-2">
                 <ul className="w-full h-full flex flex-col border-r-2 border-[var(--color-main)] px-2">
                     {['overview', '단어', '표현'].map((tab) => (
-                        <li>
+                        <li key={tab}>
                             <button
-                                key={tab}
                                 onClick={() => onTabChange(tab)}
                                 className={`px-4 py-2 ${
                                     selectedTab === tab
