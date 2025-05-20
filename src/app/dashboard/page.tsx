@@ -171,10 +171,12 @@ export default function DashboardPage() {
                     </div>
 
                     {/* 학습 기록 */}
-                    <div className="bg-white rounded-2xl p-4 shadow-md flex-1">
+                    <div className="bg-white rounded-2xl p-4 shadow-md flex-1 min-h-[300px] flex flex-col">
                         <h3 className="text-base md:text-lg font-bold mb-3">Learning History</h3>
-                        <div className="h-full">
-                            <LearningHistory />
+                        <div className="flex-1 flex justify-center items-center overflow-hidden">
+                            <div className="w-full max-w-[600px]">
+                                <LearningHistory />
+                            </div>
                         </div>
                     </div>
                 </section>
