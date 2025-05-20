@@ -4,12 +4,12 @@ import DropdownCheckBox from '@/components/common/dropdownCheckBox'
 import Search from '@/components/common/search'
 import WordIcon from '@/components/icon/wordIcon'
 import LearningCard from '@/components/learning/learningCard'
-import WordCard from '@/components/learning/wordCard'
-import { useEffect, useRef, useState } from 'react'
 import WordAddModal from '@/components/learning/WordAddModal'
+import WordCard from '@/components/learning/wordCard'
 import WordMoveDeleteModal from '@/components/learning/WordMoveDeleteModal'
-import client from '@/lib/backend/client'
 import type { components } from '@/lib/backend/apiV1/schema'
+import client from '@/lib/backend/client'
+import { useEffect, useRef, useState } from 'react'
 
 type WordbookResponse = components['schemas']['WordbookResponse']
 type WordResponse = components['schemas']['WordResponse']
@@ -274,7 +274,7 @@ export default function WordLearningPage() {
                 <h3 className="text-2xl font-bold text-[var(--color-black)]">Word Learning</h3>
             </div>
 
-            <div className="flex flex-col gap-6 bg-[var(--color-sub-2)] p-6 rounded-lg h-[calc(100vh-200px)]">
+            <div className="flex flex-col gap-6 bg-[var(--color-sub-2)] p-6 rounded-lg h-[calc(100vh-120px)]">
                 <div className="w-[80%] m-auto">
                     <Search onSearch={handleSearch} placeholder="단어 또는 뜻 검색..." />
                 </div>

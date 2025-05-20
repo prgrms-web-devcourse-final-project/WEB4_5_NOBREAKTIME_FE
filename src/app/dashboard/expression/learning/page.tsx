@@ -1,14 +1,14 @@
 'use client'
 
-import { useEffect, useState, useRef } from 'react'
 import DropdownCheckBox from '@/components/common/dropdownCheckBox'
 import Search from '@/components/common/search'
 import ExpressionIcon from '@/components/icon/expressionIcon'
 import ExpressionCard from '@/components/learning/expressionCard'
+import ExpressionMoveDeleteModal from '@/components/learning/ExpressionMoveDeleteModal'
 import LearningCard from '@/components/learning/learningCard'
 import type { components } from '@/lib/backend/apiV1/schema'
 import client from '@/lib/backend/client'
-import ExpressionMoveDeleteModal from '@/components/learning/ExpressionMoveDeleteModal'
+import { useEffect, useRef, useState } from 'react'
 
 type ExpressionBookResponse = components['schemas']['ExpressionBookResponse']
 type ExpressionResponse = components['schemas']['ExpressionResponse']
@@ -170,7 +170,7 @@ export default function ExpressionPage() {
                 <h3 className="text-2xl font-bold text-[var(--color-black)]">Expression Learning</h3>
             </div>
 
-            <div className="flex flex-col gap-6 bg-[var(--color-sub-2)] p-6 rounded-lg h-[calc(100vh-200px)]">
+            <div className="flex flex-col gap-6 bg-[var(--color-sub-2)] p-6 rounded-lg h-[calc(100vh-120px)]">
                 <div className="w-[80%] m-auto">
                     <Search onSearch={handleSearch} placeholder="문장, 제목으로 검색..." />
                 </div>
