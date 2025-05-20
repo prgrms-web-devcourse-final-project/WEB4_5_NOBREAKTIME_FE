@@ -1,6 +1,5 @@
 'use client'
 
-import BillingWidget from '@/components/payment/BillingWidget'
 import PaymentsWidget from '@/components/payment/PaymentsWidget'
 import { components } from '@/lib/backend/apiV1/schema'
 import client from '@/lib/backend/client'
@@ -227,23 +226,23 @@ export default function Membership() {
                     {/* 결제 위젯 모달 */}
                     {checkoutModalOpen && selectedPlan && (
                         <div className="fixed inset-0 bg-black/30 flex items-center justify-center z-50">
-                            {selectedPlan.periodType === 'MONTHLY' ? (
-                                <div className="w-[400px] bg-white rounded-2xl shadow-lg flex flex-col relative">
-                                    {/* 닫기 버튼 */}
-                                    <button
-                                        onClick={() => setCheckoutModalOpen(false)}
-                                        className="absolute -right-4 -top-4 w-8 h-8 bg-white rounded-full shadow-md flex items-center justify-center hover:bg-gray-50 transition-colors"
-                                    >
-                                        <Image
-                                            src="/assets/close.svg"
-                                            alt="닫기"
-                                            width={20}
-                                            height={20}
-                                            className="text-gray-500"
-                                        />
-                                    </button>
-                                    {/* 정보+결제(월간) */}
-                                    <div className="p-6 flex flex-col">
+                            <div className="w-[800px] h-[600px] bg-white rounded-2xl shadow-lg flex relative">
+                                {/* 닫기 버튼 */}
+                                <button
+                                    onClick={() => setCheckoutModalOpen(false)}
+                                    className="absolute -right-4 -top-4 w-8 h-8 bg-white rounded-full shadow-md flex items-center justify-center hover:bg-gray-50 transition-colors"
+                                >
+                                    <Image
+                                        src="/assets/close.svg"
+                                        alt="닫기"
+                                        width={20}
+                                        height={20}
+                                        className="text-gray-500"
+                                    />
+                                </button>
+                                {/* 왼쪽 정보 섹션 */}
+                                <div className="w-[320px] p-6 border-r border-gray-100 flex flex-col">
+                                    <div>
                                         <h2 className="text-xl font-bold text-[var(--color-main)] mb-3">
                                             {selectedPlan.name} 멤버십
                                         </h2>
@@ -254,8 +253,13 @@ export default function Membership() {
                                                     /{selectedPlan.period}
                                                 </span>
                                             </div>
+                                            {activeTab !== 'month' && (
+                                                <div className="text-sm text-[var(--color-point)]">
+                                                    {activeTab === 'quarter' ? '10% 할인' : '20% 할인'} 적용
+                                                </div>
+                                            )}
                                         </div>
-                                        <div className="space-y-2 mb-4">
+                                        <div className="space-y-2">
                                             <h3 className="font-bold text-[var(--color-main)] text-sm">주요 혜택</h3>
                                             <ul className="space-y-1.5">
                                                 {membershipPlans
@@ -278,113 +282,32 @@ export default function Membership() {
                                                     ))}
                                             </ul>
                                         </div>
-                                        <div className="pt-3 border-t border-gray-100 mb-4">
-                                            <div className="flex items-center gap-2 text-sm text-[var(--color-main)] mb-3 mt-2">
-                                                <Image
-                                                    src="/assets/clock.svg"
-                                                    alt="시계"
-                                                    width={14}
-                                                    height={14}
-                                                    className="text-[var(--color-point)]"
-                                                />
-                                                <span className="text-sm">결제 후 즉시 이용 가능</span>
-                                            </div>
+                                    </div>
+                                    <div className="mt-4 pt-3 border-t border-gray-100">
+                                        <div className="flex items-center gap-2 text-sm text-[var(--color-main)] mb-3">
+                                            <Image
+                                                src="/assets/clock.svg"
+                                                alt="시계"
+                                                width={14}
+                                                height={14}
+                                                className="text-[var(--color-point)]"
+                                            />
+                                            <span className="text-sm">결제 후 즉시 이용 가능</span>
                                         </div>
-                                        <BillingWidget
-                                            amount={{
-                                                currency: 'KRW',
-                                                value: parseInt(selectedPlan.price.replace(/,/g, '')),
-                                            }}
-                                            subscriptionType={selectedPlan.type}
-                                        />
                                     </div>
                                 </div>
-                            ) : (
-                                <div className="w-[800px] h-[600px] bg-white rounded-2xl shadow-lg flex relative">
-                                    {/* 닫기 버튼 */}
-                                    <button
-                                        onClick={() => setCheckoutModalOpen(false)}
-                                        className="absolute -right-4 -top-4 w-8 h-8 bg-white rounded-full shadow-md flex items-center justify-center hover:bg-gray-50 transition-colors"
-                                    >
-                                        <Image
-                                            src="/assets/close.svg"
-                                            alt="닫기"
-                                            width={20}
-                                            height={20}
-                                            className="text-gray-500"
-                                        />
-                                    </button>
-                                    {/* 왼쪽 정보 섹션 */}
-                                    <div className="w-[320px] p-6 border-r border-gray-100 flex flex-col">
-                                        <div>
-                                            <h2 className="text-xl font-bold text-[var(--color-main)] mb-3">
-                                                {selectedPlan.name} 멤버십
-                                            </h2>
-                                            <div className="mb-4">
-                                                <div className="text-2xl font-bold text-[var(--color-black)] mb-1">
-                                                    ₩{selectedPlan.price}
-                                                    <span className="text-base text-[var(--color-main)] ml-1">
-                                                        /{selectedPlan.period}
-                                                    </span>
-                                                </div>
-                                                {activeTab !== 'month' && (
-                                                    <div className="text-sm text-[var(--color-point)]">
-                                                        {activeTab === 'quarter' ? '10% 할인' : '20% 할인'} 적용
-                                                    </div>
-                                                )}
-                                            </div>
-                                            <div className="space-y-2">
-                                                <h3 className="font-bold text-[var(--color-main)] text-sm">
-                                                    주요 혜택
-                                                </h3>
-                                                <ul className="space-y-1.5">
-                                                    {membershipPlans
-                                                        .find((p) => p.type === selectedPlan.type)
-                                                        ?.features?.slice(0, 4)
-                                                        .map((feature: string, index: number) => (
-                                                            <li
-                                                                key={index}
-                                                                className="flex items-center gap-2 text-[var(--color-main)]"
-                                                            >
-                                                                <Image
-                                                                    src="/assets/check.svg"
-                                                                    alt="체크"
-                                                                    width={16}
-                                                                    height={16}
-                                                                    className="text-[var(--color-point)] flex-shrink-0"
-                                                                />
-                                                                <span className="text-sm">{feature}</span>
-                                                            </li>
-                                                        ))}
-                                                </ul>
-                                            </div>
-                                        </div>
-                                        <div className="mt-4 pt-3 border-t border-gray-100">
-                                            <div className="flex items-center gap-2 text-sm text-[var(--color-main)] mb-3">
-                                                <Image
-                                                    src="/assets/clock.svg"
-                                                    alt="시계"
-                                                    width={14}
-                                                    height={14}
-                                                    className="text-[var(--color-point)]"
-                                                />
-                                                <span className="text-sm">결제 후 즉시 이용 가능</span>
-                                            </div>
-                                        </div>
-                                    </div>
-                                    {/* 오른쪽 결제 섹션 */}
-                                    <div className="flex-1 p-6">
-                                        <PaymentsWidget
-                                            amount={{
-                                                currency: 'KRW',
-                                                value: parseInt(selectedPlan.price.replace(/,/g, '')),
-                                            }}
-                                            subscriptionType={selectedPlan.type}
-                                            periodType={selectedPlan.periodType}
-                                        />
-                                    </div>
+                                {/* 오른쪽 결제 섹션 */}
+                                <div className="flex-1 p-6">
+                                    <PaymentsWidget
+                                        amount={{
+                                            currency: 'KRW',
+                                            value: parseInt(selectedPlan.price.replace(/,/g, '')),
+                                        }}
+                                        subscriptionType={selectedPlan.type}
+                                        periodType={selectedPlan.periodType}
+                                    />
                                 </div>
-                            )}
+                            </div>
                         </div>
                     )}
 
