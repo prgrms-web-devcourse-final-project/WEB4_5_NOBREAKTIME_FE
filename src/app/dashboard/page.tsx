@@ -33,6 +33,16 @@ export default function DashboardPage() {
         }
 
         const fetchRecentVideos = async () => {
+            // 가데이터 설정
+            const mockData: VideoHistoryResponse = {
+                videoId: '1',
+                title: '영어 회화 기초 - 일상 대화',
+                lastViewedAt: new Date().toISOString(),
+            }
+            setWatchHistoryList([mockData, mockData, mockData, mockData, mockData])
+
+            // 실제 API 호출은 주석 처리
+            /*
             try {
                 const response = await client.GET('/api/v1/videohistory/videos/summary')
                 if (response.data?.data) {
@@ -41,6 +51,7 @@ export default function DashboardPage() {
             } catch (error) {
                 console.error('Failed to fetch recent videos:', error)
             }
+            */
         }
 
         fetchStatistics()
@@ -97,22 +108,24 @@ export default function DashboardPage() {
                             </div>
                         </div>
 
-                        <div className="flex flex-col bg-white p-6 rounded-2xl border-2 border-[var(--color-sub-2)] shadow-md">
-                            <h3 className="text-xl md:text-2xl lg:text-3xl font-bold mb-4">🎓 나의 Level은?</h3>
+                        <div className="flex flex-col bg-white p-4 rounded-2xl border-2 border-[var(--color-sub-2)] shadow-md">
+                            <h3 className="text-lg md:text-xl lg:text-2xl font-bold mb-2">🎓 나의 Level은?</h3>
                             <LevelBox
                                 statistics={userInfo}
                                 onStatisticsUpdate={(newStatistics) => setUserInfo(newStatistics)}
                             />
-                            <div className="flex flex-1 flex-col mt-4">
-                                <div className="flex justify-between items-center mb-2">
-                                    <h4 className="font-semibold text-lg md:text-xl lg:text-2xl">
+                            <div className="flex flex-1 flex-col mt-2 h-[250px]">
+                                <div className="flex justify-between items-center mb-1">
+                                    <h4 className="font-semibold text-base">
                                         📺 최근 시청 영상 <small>({watchHistoryList.length})</small>
                                     </h4>
                                     <Link href="/dashboard/video/learning">
-                                        <button className="text-sm text-[var(--color-main)] font-bold">+ 더보기</button>
+                                        <button className="text-xs text-[var(--color-main)] font-bold">+ 더보기</button>
                                     </Link>
                                 </div>
-                                <WatchHistory data={watchHistoryList} />
+                                <div className="flex-1 overflow-hidden">
+                                    <WatchHistory data={watchHistoryList} />
+                                </div>
                             </div>
                         </div>
                     </div>
