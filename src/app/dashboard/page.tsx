@@ -68,7 +68,7 @@ export default function DashboardPage() {
             {/* 본문 레이아웃 */}
             <div className="flex flex-1 flex-col lg:flex-row gap-4 overflow-hidden px-2 pb-2">
                 {/* 좌측 섹션 */}
-                <section className="flex-1 flex flex-col gap-6 border-b-2 lg:border-b-0 lg:border-r-2 border-[var(--color-sub-2)] overflow-y-auto pr-0 lg:pr-4 pb-4">
+                <section className="flex-1 flex flex-col gap-6 border-b-2 lg:border-b-0 lg:border-r-2 border-[var(--color-sub-2)] pr-0 lg:pr-4 pb-4">
                     {/* 인사말 + 오늘 학습 */}
                     <div className="min-h-[300px] bg-white rounded-2xl flex flex-col lg:flex-row justify-between items-center px-6 md:px-8 py-6 shadow-md border-2 border-[var(--color-sub-2)]">
                         <div className="flex-1">
@@ -132,43 +132,50 @@ export default function DashboardPage() {
                 </section>
 
                 {/* 우측 패널 */}
-                <section className="w-full lg:w-[350px] flex flex-col gap-6 overflow-y-auto">
+                <section className="w-full lg:w-[350px] flex flex-col gap-4 border-b-2 lg:border-b-0 border-[var(--color-sub-2)] pb-4">
                     {/* 캘린더 */}
-                    <div className="bg-[var(--color-white)] rounded-2xl p-4 shadow-md flex flex-col">
-                        <h3 className="text-base md:text-lg font-bold mb-2">Calendar</h3>
-                        <Calendar
-                            mode="single"
-                            className="w-full"
-                            classNames={{
-                                months: 'flex flex-col w-full',
-                                month: 'space-y-4 w-full',
-                                caption: 'flex justify-center pt-1 relative items-center text-lg',
-                                caption_label: 'text-lg font-medium',
-                                nav: 'space-x-1 flex items-center',
-                                nav_button: 'h-7 w-7 bg-transparent p-0 opacity-50 hover:opacity-100',
-                                nav_button_previous: 'absolute left-1',
-                                nav_button_next: 'absolute right-1',
-                                table: 'w-full border-collapse space-y-1',
-                                head_row: 'flex w-full justify-between',
-                                head_cell: 'text-muted-foreground rounded-md w-10 text-center font-normal text-base',
-                                row: 'flex w-full mt-2 justify-between',
-                                cell: 'text-center text-base p-0 relative w-10 [&:has([aria-selected])]:bg-accent first:[&:has([aria-selected])]:rounded-l-md last:[&:has([aria-selected])]:rounded-r-md focus-within:relative focus-within:z-20',
-                                day: 'h-10 w-10 p-0 font-normal aria-selected:opacity-100',
-                                day_selected:
-                                    'bg-primary text-primary-foreground hover:bg-primary hover:text-primary-foreground focus:bg-primary focus:text-primary-foreground',
-                                day_today: 'bg-accent text-accent-foreground',
-                                day_outside: 'text-muted-foreground opacity-50',
-                                day_disabled: 'text-muted-foreground opacity-50',
-                                day_range_middle: 'aria-selected:bg-accent aria-selected:text-accent-foreground',
-                                day_hidden: 'invisible',
-                            }}
-                        />
+                    <div className="bg-[var(--color-white)] rounded-2xl p-4 shadow-md flex flex-col flex-1 border-t-2 border-r-2 border-[var(--color-sub-2)]">
+                        <h3 className="text-base md:text-lg font-bold mb-2 pb-2 border-b-2 border-[var(--color-sub-2)]">
+                            Calendar
+                        </h3>
+                        <div className="flex-1">
+                            <Calendar
+                                mode="single"
+                                className="w-full h-full"
+                                classNames={{
+                                    months: 'flex flex-col h-full',
+                                    month: 'space-y-4 h-full',
+                                    caption: 'flex justify-center pt-1 relative items-center text-base md:text-lg',
+                                    caption_label: 'text-base md:text-lg font-medium',
+                                    nav: 'space-x-1 flex items-center',
+                                    nav_button: 'h-7 w-7 bg-transparent p-0 opacity-50 hover:opacity-100',
+                                    nav_button_previous: 'absolute left-1',
+                                    nav_button_next: 'absolute right-1',
+                                    table: 'w-full border-collapse space-y-1',
+                                    head_row: 'flex w-full justify-between',
+                                    head_cell:
+                                        'text-muted-foreground rounded-md w-8 md:w-10 text-center font-normal text-sm md:text-base',
+                                    row: 'flex w-full mt-2 justify-between',
+                                    cell: 'text-center text-sm md:text-base p-0 relative w-8 md:w-10 [&:has([aria-selected])]:bg-accent first:[&:has([aria-selected])]:rounded-l-md last:[&:has([aria-selected])]:rounded-r-md focus-within:relative focus-within:z-20',
+                                    day: 'h-8 md:h-10 w-8 md:w-10 p-0 font-normal aria-selected:opacity-100',
+                                    day_selected:
+                                        'bg-primary text-primary-foreground hover:bg-primary hover:text-primary-foreground focus:bg-primary focus:text-primary-foreground',
+                                    day_today: 'bg-accent text-accent-foreground',
+                                    day_outside: 'text-muted-foreground opacity-50',
+                                    day_disabled: 'text-muted-foreground opacity-50',
+                                    day_range_middle: 'aria-selected:bg-accent aria-selected:text-accent-foreground',
+                                    day_hidden: 'invisible',
+                                }}
+                            />
+                        </div>
                     </div>
 
                     {/* 학습 기록 */}
-                    <div className="bg-white rounded-2xl p-4 shadow-md">
+                    <div className="bg-white rounded-2xl p-4 shadow-md flex-1">
                         <h3 className="text-base md:text-lg font-bold mb-3">Learning History</h3>
-                        <LearningHistory />
+                        <div className="h-full">
+                            <LearningHistory />
+                        </div>
                     </div>
                 </section>
             </div>
