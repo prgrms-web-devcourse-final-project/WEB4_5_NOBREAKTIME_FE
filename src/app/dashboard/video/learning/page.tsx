@@ -99,6 +99,7 @@ export default function VideoLearningPage() {
 
                 // 더 불러올 데이터가 있는지 확인
                 setHasMore(videos.length === itemsPerPage)
+                setIsLoading(false) // 데이터 로드 성공 시 로딩 상태 해제
                 break
             } catch (err) {
                 retryCount++
@@ -110,12 +111,9 @@ export default function VideoLearningPage() {
                         setVideoList([])
                     }
                     setHasMore(false) // 에러 발생 시 더 이상 로드하지 않도록 설정
+                    setIsLoading(false) // 최대 재시도 횟수 도달 시 로딩 상태 해제
                 } else {
                     await new Promise((resolve) => setTimeout(resolve, 1000 * retryCount))
-                }
-            } finally {
-                if (retryCount === maxRetries) {
-                    setIsLoading(false)
                 }
             }
         }
@@ -283,7 +281,7 @@ export default function VideoLearningPage() {
 
                     {/* 로딩 상태 표시 */}
                     {isLoading && (
-                        <div className="flex justify-center items-center py-8">
+                        <div className="flex justify-center items-center absolute top-1/2 left-1/2 transform -translate-x-1/2 -translate-y-1/2">
                             <Loading />
                         </div>
                     )}
