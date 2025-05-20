@@ -177,9 +177,9 @@ export default function ExpressionPage() {
 
                 <div className="flex-1">
                     <LearningCard
-                        title="문장"
+                        title="표현함"
                         descriptions={[
-                            { text: '내 {title}장에서 톡톡 랜덤 등장!', strong: ['랜덤'] },
+                            { text: '내 {title}에서 톡톡 랜덤 등장!', strong: ['랜덤'] },
                             { text: '반복과 호기심 학습을 한번에!', strong: ['반복', '호기심'] },
                         ]}
                         wordbooks={expressionBooks.map((book) => ({
@@ -195,7 +195,7 @@ export default function ExpressionPage() {
                 <div className="flex flex-col flex-1 gap-2 h-full overflow-hidden">
                     {/* 상단 타이틀 */}
                     <div className="flex justify-between items-center">
-                        <h1 className="text-2xl font-bold">📚 내 문장</h1>
+                        <h1 className="text-2xl font-bold">📚 내 표현함</h1>
                         <div className="flex items-center gap-2">
                             <DropdownCheckBox
                                 wordbooks={expressionBooks.map((book) => ({
@@ -205,6 +205,7 @@ export default function ExpressionPage() {
                                     learnedWordCount: book.learnedExpressionCount,
                                 }))}
                                 onWordbookSelect={handleWordbookSelect}
+                                studyType="EXPRESSION"
                             />
 
                             <button

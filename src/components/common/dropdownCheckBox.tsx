@@ -8,9 +8,10 @@ type WordbookResponse = components['schemas']['WordbookResponse']
 interface Props {
     wordbooks: WordbookResponse[]
     onWordbookSelect: (ids: number[]) => void
+    studyType: 'EXPRESSION' | 'WORD'
 }
 
-export default function DropdownCheckBox({ wordbooks, onWordbookSelect }: Props) {
+export default function DropdownCheckBox({ wordbooks, onWordbookSelect, studyType }: Props) {
     const [isOpen, setIsOpen] = useState(false)
     const [selectedIds, setSelectedIds] = useState<number[]>([])
 
@@ -64,7 +65,7 @@ export default function DropdownCheckBox({ wordbooks, onWordbookSelect }: Props)
                     aria-expanded={isOpen}
                     aria-haspopup="true"
                 >
-                    단어장 선택 ({getSelectedCount()})
+                    {studyType === 'EXPRESSION' ? '표현함 선택' : '단어장 선택'} ({getSelectedCount()})
                     <svg
                         className="-mr-1 size-5 text-gray-400"
                         viewBox="0 0 20 20"

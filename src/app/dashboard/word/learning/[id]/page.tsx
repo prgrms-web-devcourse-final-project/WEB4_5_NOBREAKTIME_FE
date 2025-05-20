@@ -146,7 +146,7 @@ export default function WordLearning() {
                 <div className="flex flex-col items-center justify-center bg-[var(--color-white)] w-180 h-full gap-8 p-12">
                     <div className="text-yellow-400 text-xl">
                         {Array.from({
-                            length: current.difficulty === 'EASY' ? 1 : current.difficulty === 'MEDIUM' ? 2 : 3,
+                            length: current.difficulty === 'EASY' ? 1 : current.difficulty === 'NORMAL' ? 2 : 3,
                         }).map((_, i) => (
                             <span key={i}>⭐</span>
                         ))}
