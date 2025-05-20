@@ -1,9 +1,9 @@
 'use client'
 
+import Loading from '@/components/common/loading'
 import Search from '@/components/common/search'
 import BookmarkIcon from '@/components/icon/bookmarkIcon'
 import VideoIcon from '@/components/icon/videoIcon'
-import Loading from '@/components/common/loading'
 import { components } from '@/lib/backend/apiV1/schema'
 import client from '@/lib/backend/client'
 import { useRouter } from 'next/navigation'
@@ -77,16 +77,13 @@ export default function VideoLearningPage() {
                 setIsLoading(true)
                 setError(null)
 
+                // TODO: 스키마 타입 불일치, @ModelAttribute를 위한 중첩 파라미터 형식으로 커스텀
                 const { data: response } = await client.GET('/api/v1/videos/list', {
                     params: {
-                        query: {
-                            req: {
-                                q: searchKeyword || undefined,
-                                category: selectedCategory.id === 0 ? undefined : String(selectedCategory.id),
-                                maxResults: itemsPerPage,
-                            },
-                        },
-                    },
+                        'req[q]': searchKeyword && searchKeyword.length > 0 ? searchKeyword : undefined,
+                        'req[category]': selectedCategory.id === 0 ? undefined : String(selectedCategory.id),
+                        'req[maxResults]': Math.min(Math.max(itemsPerPage, 1), 100), // 1~100 사이로 제한
+                    } as any,
                 })
 
                 const videos = response?.data || []
