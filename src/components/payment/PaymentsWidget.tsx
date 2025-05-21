@@ -13,7 +13,7 @@ interface Amount {
 interface PaymentsWidgetProps {
     amount: Amount
     subscriptionType: 'BASIC' | 'STANDARD' | 'PREMIUM'
-    periodType: 'SIX_MONTHS' | 'YEAR'
+    periodType: 'MONTHLY' | 'SIX_MONTHS' | 'YEAR'
 }
 
 export default function PaymentsWidget({ amount, subscriptionType, periodType }: PaymentsWidgetProps) {
@@ -24,10 +24,6 @@ export default function PaymentsWidget({ amount, subscriptionType, periodType }:
 
     useEffect(() => {
         let isMounted = true
-
-        console.log('amount', amount)
-        console.log('subscriptionType', subscriptionType)
-        console.log('periodType', periodType)
 
         async function initializeAndRenderPayment() {
             try {
@@ -86,8 +82,8 @@ export default function PaymentsWidget({ amount, subscriptionType, periodType }:
 
             console.log('responseAmount', responseAmount)
 
-            const successUrl = new URL('/membership/success', window.location.origin)
-            const failUrl = new URL('/membership/fail', window.location.origin)
+            const successUrl = new URL('/membership/payments/success', window.location.origin)
+            const failUrl = new URL('/membership/paymentsfail', window.location.origin)
 
             // orderId, amount는 paymentsWidget에서 받아오는 값이므로 여기서는 사용하지 않음
             const commonParams = {

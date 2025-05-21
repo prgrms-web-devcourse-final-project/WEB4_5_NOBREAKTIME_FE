@@ -301,7 +301,11 @@ export default function WordLearningPage() {
                             )}
                         </h1>
                         <div className="flex items-center gap-2">
-                            <DropdownCheckBox wordbooks={wordbooks} onWordbookSelect={handleWordbookSelect} />
+                            <DropdownCheckBox
+                                wordbooks={wordbooks}
+                                onWordbookSelect={handleWordbookSelect}
+                                studyType="WORD"
+                            />
                             <button
                                 onClick={openAddModal}
                                 className="flex items-center gap-1 bg-[var(--color-main)] text-white px-3 py-2 rounded-md text-sm font-medium hover:bg-opacity-90 transition-colors"

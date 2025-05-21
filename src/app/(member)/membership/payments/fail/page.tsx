@@ -9,7 +9,7 @@ interface PaymentError {
     message?: string
 }
 
-export default function FailPage() {
+export default function PaymentsFailPage() {
     const searchParams = useSearchParams()
     const router = useRouter()
     const [errorMessage, setErrorMessage] = useState<string>('')
@@ -18,7 +18,6 @@ export default function FailPage() {
         async function handlePaymentFail() {
             const orderId = searchParams.get('orderId')
             const errorCode = searchParams.get('error')
-            const isBillingKey = searchParams.get('isBillingKey') === 'true'
             const subscriptionType = searchParams.get('subscriptionType')
             const periodType = searchParams.get('periodType')
 
@@ -29,9 +28,7 @@ export default function FailPage() {
 
             try {
                 // 빌링키 발급과 일반 결제 구분하여 처리
-                const endpoint = isBillingKey ? '/api/v1/payment/issue-billing-key' : '/api/v1/payment/fail'
-
-                const { error } = await client.POST(endpoint, {
+                const { error } = await client.POST('/api/v1/payment/fail', {
                     body: {
                         orderId,
                         errorCode,

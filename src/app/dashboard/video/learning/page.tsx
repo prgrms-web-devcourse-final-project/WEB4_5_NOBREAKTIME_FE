@@ -77,29 +77,46 @@ export default function VideoLearningPage() {
                 setIsLoading(true)
                 setError(null)
 
-                // TODO: 스키마 타입 불일치, @ModelAttribute를 위한 중첩 파라미터 형식으로 커스텀
                 const { data: response } = await client.GET('/api/v1/videos/list', {
                     params: {
                         'req[q]': searchKeyword && searchKeyword.length > 0 ? searchKeyword : undefined,
                         'req[category]': selectedCategory.id === 0 ? undefined : String(selectedCategory.id),
-                        'req[maxResults]': Math.min(Math.max(itemsPerPage, 1), 100), // 1~100 사이로 제한
+                        'req[maxResults]': Math.min(Math.max(itemsPerPage, 1), 100),
                     } as any,
                 })
 
                 const videos = response?.data || []
 
+                // API 응답 데이터 출력
+                console.log('API 응답 데이터:', response)
+                console.log('로드된 비디오 목록:', videos)
+
+                // hasMore 조건 수정
+                setHasMore(videos.length > 0) // 비디오가 하나라도 있으면 더 로드 가능하다고 판단
+
                 if (isNewSearch) {
                     setCachedVideos(videos)
                     setDisplayCount(displayPerPage)
                     setVideoList(videos.slice(0, displayPerPage))
+                    console.log('새 검색 결과:', videos)
                 } else {
-                    setCachedVideos((prev) => [...prev, ...videos])
-                    setVideoList((prev) => [...prev, ...videos.slice(0, displayPerPage)])
+                    setCachedVideos((prev) => {
+                        const uniqueVideos = Array.from(
+                            new Map([...prev, ...videos].map((video) => [video.videoId, video])).values(),
+                        )
+                        console.log('기존 캐시 + 새로운 비디오:', uniqueVideos)
+                        return uniqueVideos
+                    })
+                    setVideoList((prev) => {
+                        const uniqueVideos = Array.from(
+                            new Map([...prev, ...videos].map((video) => [video.videoId, video])).values(),
+                        )
+                        console.log('현재 표시되는 비디오 목록:', uniqueVideos)
+                        return uniqueVideos
+                    })
                 }
 
-                // 더 불러올 데이터가 있는지 확인
-                setHasMore(videos.length === itemsPerPage)
-                setIsLoading(false) // 데이터 로드 성공 시 로딩 상태 해제
+                setIsLoading(false)
                 break
             } catch (err) {
                 retryCount++

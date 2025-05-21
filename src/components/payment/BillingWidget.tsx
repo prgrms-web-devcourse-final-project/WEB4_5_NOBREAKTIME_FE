@@ -12,9 +12,10 @@ interface Amount {
 interface BillingWidgetProps {
     amount: Amount
     subscriptionType: 'BASIC' | 'STANDARD' | 'PREMIUM'
+    orderId: string
 }
 
-export default function BillingWidget({ amount, subscriptionType }: BillingWidgetProps) {
+export default function BillingWidget({ amount, subscriptionType, orderId }: BillingWidgetProps) {
     const { loginMember } = useGlobalLoginMember()
     const [ready, setReady] = useState(false)
     const [billingWidget, setBillingWidget] = useState<TossPaymentsPayment | null>(null)
@@ -51,16 +52,8 @@ export default function BillingWidget({ amount, subscriptionType }: BillingWidge
         if (!billingWidget || !loginMember.email || !loginMember.nickname) return
 
         try {
-            const { error: requestError, data: requestData } = await client.POST('/api/v1/payment/request', {
-                body: { type: subscriptionType, period: 'MONTHLY' },
-            })
-
-            if (requestError || !requestData) throw requestError || new Error('결제 요청 실패')
-
-            const { orderId } = (requestData as { data?: { orderId?: string } }).data || {}
-
-            const successUrl = new URL('/membership/success', window.location.origin)
-            const failUrl = new URL('/membership/fail', window.location.origin)
+            const successUrl = new URL('/membership/billing/success', window.location.origin)
+            const failUrl = new URL('/membership/billing/fail', window.location.origin)
 
             const commonParams = {
                 orderId: orderId ?? '',
@@ -96,7 +89,7 @@ export default function BillingWidget({ amount, subscriptionType }: BillingWidge
                     disabled={!ready}
                     onClick={handlePayment}
                 >
-                    {ready ? '결제하기' : '결제 준비중...'}
+                    {ready ? '정기 결제 카드 등록하기' : '위젯 준비중...'}
                 </button>
             </div>
         </div>

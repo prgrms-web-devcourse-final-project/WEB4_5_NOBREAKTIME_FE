@@ -28,7 +28,26 @@ export default function BookmarkPage() {
     }
 
     const handleVideoClick = (videoId: string) => {
-        router.push(`/dashboard/video/${videoId}`)
+        router.push(`/dashboard/video/learning/${videoId}`)
+    }
+
+    const handleBookmarkToggle = async (e: React.MouseEvent, videoId: string | undefined) => {
+        e.stopPropagation()
+
+        if (!videoId) return
+
+        try {
+            // 북마크 상태 토글
+            setVideoList((prevList) => prevList.filter((video) => video.videoId !== videoId))
+
+            await client.DELETE('/api/v1/bookmarks/{videoId}', {
+                params: { path: { videoId } },
+            })
+        } catch (err) {
+            console.error('북마크 취소 중 오류 발생:', err)
+            // 실패 시 상태 복구
+            fetchBookmarks()
+        }
     }
 
     return (
@@ -45,16 +64,29 @@ export default function BookmarkPage() {
                     {videoList.map((video) => (
                         <div
                             key={video.videoId}
-                            className="flex gap-4 bg-[var(--color-white)] rounded-lg p-4 cursor-pointer hover:bg-gray-50"
+                            className="group flex gap-4 bg-[var(--color-white)] rounded-lg p-4 cursor-pointer hover:bg-gray-50"
                             onClick={() => handleVideoClick(video.videoId || '')}
                         >
-                            <div className="w-[450px] h-[300px] bg-gray-200 rounded-md overflow-hidden flex-shrink-0">
+                            <div className="w-[450px] h-[300px] bg-gray-200 rounded-md overflow-hidden flex-shrink-0 relative">
                                 {video.thumbnailUrl && (
-                                    <img
-                                        src={video.thumbnailUrl}
-                                        alt={video.title}
-                                        className="w-full h-full object-cover rounded-md"
-                                    />
+                                    <>
+                                        <img
+                                            src={video.thumbnailUrl}
+                                            alt={video.title}
+                                            className="w-full h-full object-cover rounded-md"
+                                        />
+                                        {video.videoId && (
+                                            <button
+                                                onClick={(e) => handleBookmarkToggle(e, video.videoId)}
+                                                className="absolute top-2 left-2 p-1.5 bg-white/90 rounded-full 
+                                                         opacity-0 group-hover:opacity-100 transition-opacity
+                                                         hover:bg-white shadow-sm z-10"
+                                                title="북마크 제거"
+                                            >
+                                                <BookmarkIcon className="w-5 h-5 text-[var(--color-main)] fill-[var(--color-main)]" />
+                                            </button>
+                                        )}
+                                    </>
                                 )}
                             </div>
                             <div className="flex flex-col">

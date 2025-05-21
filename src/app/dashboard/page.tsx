@@ -108,7 +108,7 @@ export default function DashboardPage() {
                                     <h4 className="font-semibold text-base">
                                         📺 최근 시청 영상 <small>({watchHistoryList.length})</small>
                                     </h4>
-                                    <Link href="/dashboard/video/learning">
+                                    <Link href="/dashboard/history">
                                         <button className="text-xs text-[var(--color-main)] font-bold">+ 더보기</button>
                                     </Link>
                                 </div>
