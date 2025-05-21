@@ -80,7 +80,7 @@ export default function Card({ wordbooks, isLoading = false }: Props) {
                                     className="bg-[var(--color-main)] text-white px-3 py-1 rounded text-sm max-[1030px]:text-[10px]"
                                     onClick={() =>
                                         router.push(
-                                            `/${basePath}/learning/${wordbook.id}?title=${encodeURIComponent(
+                                            `/${basePath}/learning/${wordbook.id}?type=word&title=${encodeURIComponent(
                                                 wordbook.name,
                                             )}`,
                                         )

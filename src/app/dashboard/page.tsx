@@ -73,7 +73,7 @@ export default function DashboardPage() {
                                 <br />
                                 오늘도 함께 시작해볼까요?
                             </p>
-                            <Link href="/dashboard/word/learning">
+                            <Link href="/dashboard/word/quiz/0?type=today&title=Today's Study">
                                 <button className="mt-4 px-4 py-2 text-sm md:text-base lg:text-lg text-[var(--color-point)] bg-[var(--color-main)] rounded-full">
                                     Today's Study →
                                 </button>
