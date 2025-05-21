@@ -4,22 +4,6 @@
  */
 
 export interface paths {
-    '/send': {
-        parameters: {
-            query?: never
-            header?: never
-            path?: never
-            cookie?: never
-        }
-        get?: never
-        put?: never
-        post: operations['sendSlackMessage']
-        delete?: never
-        options?: never
-        head?: never
-        patch?: never
-        trace?: never
-    }
     '/api/v1/wordbooks': {
         parameters: {
             query?: never
@@ -396,6 +380,22 @@ export interface paths {
         patch?: never
         trace?: never
     }
+    '/api/test-slackSend': {
+        parameters: {
+            query?: never
+            header?: never
+            path?: never
+            cookie?: never
+        }
+        get?: never
+        put?: never
+        post: operations['sendSlackMessage']
+        delete?: never
+        options?: never
+        head?: never
+        patch?: never
+        trace?: never
+    }
     '/api/v1/wordbooks/{wordbookId}': {
         parameters: {
             query?: never
@@ -586,22 +586,6 @@ export interface paths {
          * @description 영상 학습 목표, 단어 학습 목표를 설정합니다.
          */
         patch: operations['updateGoal']
-        trace?: never
-    }
-    '/test/gpt': {
-        parameters: {
-            query?: never
-            header?: never
-            path?: never
-            cookie?: never
-        }
-        get: operations['testGptService']
-        put?: never
-        post?: never
-        delete?: never
-        options?: never
-        head?: never
-        patch?: never
         trace?: never
     }
     '/api/v1/words/search': {
@@ -996,7 +980,39 @@ export interface paths {
         patch?: never
         trace?: never
     }
-    '/api/test/error': {
+    '/api/test-sentry': {
+        parameters: {
+            query?: never
+            header?: never
+            path?: never
+            cookie?: never
+        }
+        get: operations['testSentry']
+        put?: never
+        post?: never
+        delete?: never
+        options?: never
+        head?: never
+        patch?: never
+        trace?: never
+    }
+    '/api/test-gpt': {
+        parameters: {
+            query?: never
+            header?: never
+            path?: never
+            cookie?: never
+        }
+        get: operations['testGptService']
+        put?: never
+        post?: never
+        delete?: never
+        options?: never
+        head?: never
+        patch?: never
+        trace?: never
+    }
+    '/api/test-error': {
         parameters: {
             query?: never
             header?: never
@@ -1202,11 +1218,6 @@ export interface components {
             msg: string
             data?: boolean
         }
-        RsDataObject: {
-            code: string
-            msg: string
-            data?: Record<string, never>
-        }
         ExpressionBookRequest: {
             name?: string
         }
@@ -1229,8 +1240,8 @@ export interface components {
              */
             roleName?: string
             password?: string
-            username?: string
             authorities?: components['schemas']['GrantedAuthority'][]
+            username?: string
             enabled?: boolean
             credentialsNonExpired?: boolean
             accountNonExpired?: boolean
@@ -1238,6 +1249,11 @@ export interface components {
         }
         GrantedAuthority: {
             authority?: string
+        }
+        RsDataObject: {
+            code: string
+            msg: string
+            data?: Record<string, never>
         }
         ExpressionQuizResultSaveRequest: {
             /** Format: int64 */
@@ -1287,6 +1303,11 @@ export interface components {
              * @example user@example.com
              */
             email?: string
+            /**
+             * @description 회원 언어
+             * @example ENGLISH
+             */
+            language?: string
         }
         /** @description 회원 정보 수정 응답 DTO */
         ChangeInfoResponse: {
@@ -1300,6 +1321,11 @@ export interface components {
              * @example user@example.com
              */
             email?: string
+            /**
+             * @description 회원 언어
+             * @example ENGLISH
+             */
+            language?: string
         }
         UpdateExpressionBookNameRequest: {
             newName?: string
@@ -1437,18 +1463,6 @@ export interface components {
         }
         VideoLearningExpressionQuizListResponse: {
             quiz?: components['schemas']['VideoLearningExpressionQuizItem'][]
-        }
-        VideoListRequest: {
-            /** @description 검색어 (1~100자) */
-            q?: string
-            /** @description 유튜브 카테고리 ID */
-            category?: string
-            /**
-             * Format: int64
-             * @description 최대 조회 개수 (1~100)
-             * @default 100
-             */
-            maxResults: number
         }
         RsDataListVideoResponse: {
             code: string
@@ -1711,46 +1725,6 @@ export interface components {
 }
 export type $defs = Record<string, never>
 export interface operations {
-    sendSlackMessage: {
-        parameters: {
-            query: {
-                message: string
-            }
-            header?: never
-            path?: never
-            cookie?: never
-        }
-        requestBody?: never
-        responses: {
-            /** @description OK */
-            200: {
-                headers: {
-                    [name: string]: unknown
-                }
-                content: {
-                    'application/json': string
-                }
-            }
-            /** @description Forbidden */
-            403: {
-                headers: {
-                    [name: string]: unknown
-                }
-                content: {
-                    'application/json': components['schemas']['ErrorResponse']
-                }
-            }
-            /** @description Internal Server Error */
-            500: {
-                headers: {
-                    [name: string]: unknown
-                }
-                content: {
-                    'application/json': components['schemas']['ErrorResponse']
-                }
-            }
-        }
-    }
     getWordbooks: {
         parameters: {
             query?: never
@@ -2409,7 +2383,7 @@ export interface operations {
                     [name: string]: unknown
                 }
                 content: {
-                    'application/json': components['schemas']['RsDataObject']
+                    'application/json': components['schemas']['RsDataVoid']
                 }
             }
             /** @description 파라미터 검증 오류 메시지 */
@@ -2418,7 +2392,7 @@ export interface operations {
                     [name: string]: unknown
                 }
                 content: {
-                    'application/json': components['schemas']['RsDataObject']
+                    'application/json': components['schemas']['RsDataVoid']
                 }
             }
             /** @description Forbidden */
@@ -2886,6 +2860,46 @@ export interface operations {
             }
         }
     }
+    sendSlackMessage: {
+        parameters: {
+            query: {
+                message: string
+            }
+            header?: never
+            path?: never
+            cookie?: never
+        }
+        requestBody?: never
+        responses: {
+            /** @description OK */
+            200: {
+                headers: {
+                    [name: string]: unknown
+                }
+                content: {
+                    'application/json': string
+                }
+            }
+            /** @description Forbidden */
+            403: {
+                headers: {
+                    [name: string]: unknown
+                }
+                content: {
+                    'application/json': components['schemas']['ErrorResponse']
+                }
+            }
+            /** @description Internal Server Error */
+            500: {
+                headers: {
+                    [name: string]: unknown
+                }
+                content: {
+                    'application/json': components['schemas']['ErrorResponse']
+                }
+            }
+        }
+    }
     deleteWordbook: {
         parameters: {
             query?: never
@@ -3080,7 +3094,7 @@ export interface operations {
                     [name: string]: unknown
                 }
                 content: {
-                    'application/json': components['schemas']['RsDataObject']
+                    'application/json': components['schemas']['RsDataVoid']
                 }
             }
             /** @description Forbidden */
@@ -3551,44 +3565,6 @@ export interface operations {
             }
         }
     }
-    testGptService: {
-        parameters: {
-            query?: never
-            header?: never
-            path?: never
-            cookie?: never
-        }
-        requestBody?: never
-        responses: {
-            /** @description OK */
-            200: {
-                headers: {
-                    [name: string]: unknown
-                }
-                content: {
-                    'application/json': string
-                }
-            }
-            /** @description Forbidden */
-            403: {
-                headers: {
-                    [name: string]: unknown
-                }
-                content: {
-                    'application/json': components['schemas']['ErrorResponse']
-                }
-            }
-            /** @description Internal Server Error */
-            500: {
-                headers: {
-                    [name: string]: unknown
-                }
-                content: {
-                    'application/json': components['schemas']['ErrorResponse']
-                }
-            }
-        }
-    }
     searchWord: {
         parameters: {
             query: {
@@ -3924,8 +3900,13 @@ export interface operations {
     }
     getVideoList: {
         parameters: {
-            query: {
-                req: components['schemas']['VideoListRequest']
+            query?: {
+                /** @description 검색어 (1~100자) */
+                q?: string
+                /** @description 유튜브 카테고리 ID */
+                category?: string
+                /** @description 최대 조회 개수 (1~50) */
+                maxResults?: number
             }
             header?: never
             path?: never
@@ -4127,7 +4108,7 @@ export interface operations {
                     [name: string]: unknown
                 }
                 content: {
-                    'application/json': components['schemas']['RsDataObject']
+                    'application/json': components['schemas']['RsDataVoid']
                 }
             }
             /** @description Unauthorized */
@@ -4479,6 +4460,80 @@ export interface operations {
         }
     }
     test_1: {
+        parameters: {
+            query?: never
+            header?: never
+            path?: never
+            cookie?: never
+        }
+        requestBody?: never
+        responses: {
+            /** @description OK */
+            200: {
+                headers: {
+                    [name: string]: unknown
+                }
+                content: {
+                    'application/json': string
+                }
+            }
+            /** @description Forbidden */
+            403: {
+                headers: {
+                    [name: string]: unknown
+                }
+                content: {
+                    'application/json': components['schemas']['ErrorResponse']
+                }
+            }
+            /** @description Internal Server Error */
+            500: {
+                headers: {
+                    [name: string]: unknown
+                }
+                content: {
+                    'application/json': components['schemas']['ErrorResponse']
+                }
+            }
+        }
+    }
+    testSentry: {
+        parameters: {
+            query?: never
+            header?: never
+            path?: never
+            cookie?: never
+        }
+        requestBody?: never
+        responses: {
+            /** @description OK */
+            200: {
+                headers: {
+                    [name: string]: unknown
+                }
+                content?: never
+            }
+            /** @description Forbidden */
+            403: {
+                headers: {
+                    [name: string]: unknown
+                }
+                content: {
+                    'application/json': components['schemas']['ErrorResponse']
+                }
+            }
+            /** @description Internal Server Error */
+            500: {
+                headers: {
+                    [name: string]: unknown
+                }
+                content: {
+                    'application/json': components['schemas']['ErrorResponse']
+                }
+            }
+        }
+    }
+    testGptService: {
         parameters: {
             query?: never
             header?: never
