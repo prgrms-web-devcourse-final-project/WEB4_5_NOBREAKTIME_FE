@@ -4,7 +4,6 @@ import client from '@/lib/backend/client'
 import { useGlobalLoginMember } from '@/stores/auth/loginMember'
 import { useRouter, useSearchParams } from 'next/navigation'
 import { useEffect, useState } from 'react'
-import BillingWidget from '@/components/payment/BillingWidget'
 
 interface PaymentError {
     status?: number
@@ -35,6 +34,7 @@ export default function BillingSuccessPage() {
     const amount = searchParams.get('amount')
     const subscriptionType = searchParams.get('subscriptionType') as 'BASIC' | 'STANDARD' | 'PREMIUM'
     const orderId = searchParams.get('orderId')
+    const customerKey = searchParams.get('customerKey')
 
     const [billingStatus, setBillingStatus] = useState<'idle' | 'processing' | 'success' | 'error'>('idle')
     const [billingError, setBillingError] = useState<string>('')
@@ -55,17 +55,7 @@ export default function BillingSuccessPage() {
             const periodType = searchParams.get('periodType')
             const authKey = searchParams.get('authKey')
 
-            // 로컬 스토리지에서 idempotencyKey 가져오기
-            let idempotencyKey = localStorage.getItem('payment_idempotency_key')
-            if (idempotencyKey) console.log('idempotencyKey', idempotencyKey)
-
-            // idempotencyKey가 없으면 새로 생성
-            if (!idempotencyKey) {
-                idempotencyKey = crypto.randomUUID()
-                localStorage.setItem('payment_idempotency_key', idempotencyKey)
-            }
-
-            if (!orderId || !amount || !idempotencyKey || !subscriptionType || !periodType || !authKey) {
+            if (!orderId || !amount || !customerKey || !subscriptionType || !periodType || !authKey) {
                 setErrorMessage('필수 결제 정보가 누락되었습니다.')
                 setStatus('error')
                 return
@@ -73,7 +63,7 @@ export default function BillingSuccessPage() {
 
             try {
                 const billingRequestBody = {
-                    customerKey: idempotencyKey,
+                    customerKey,
                     authKey,
                     orderId,
                     orderName: `스탠다드 정기 구독`,
@@ -99,9 +89,6 @@ export default function BillingSuccessPage() {
                 await fetchMember()
 
                 setStatus('success')
-
-                // 결제 성공 후 idempotencyKey 삭제
-                localStorage.removeItem('payment_idempotency_key')
             } catch (e) {
                 console.error('결제 승인 중 오류가 발생했습니다:', e)
                 const paymentError = e as PaymentError
