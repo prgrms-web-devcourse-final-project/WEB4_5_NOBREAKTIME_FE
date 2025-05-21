@@ -11,6 +11,7 @@ import WordMoveDeleteModal from '@/components/learning/WordMoveDeleteModal'
 import type { components } from '@/lib/backend/apiV1/schema'
 import client from '@/lib/backend/client'
 import { useEffect, useRef, useState } from 'react'
+import { toast } from 'sonner'
 
 type WordbookResponse = components['schemas']['WordbookResponse']
 type WordResponse = components['schemas']['WordResponse']
@@ -27,6 +28,11 @@ export default function WordLearningPage() {
     const [isAddModalOpen, setIsAddModalOpen] = useState(false)
     const [words, setWords] = useState<WordResponse[]>([])
     const [selectedWords, setSelectedWords] = useState<WordResponse[]>([])
+    const [isAddWordbookModalOpen, setIsAddWordbookModalOpen] = useState(false)
+    const [newWordbookName, setNewWordbookName] = useState('')
+    const [isDeleteWordbookModalOpen, setIsDeleteWordbookModalOpen] = useState(false)
+    const [deleteWordbookId, setDeleteWordbookId] = useState<number | null>(null)
+    const [moveDeleteDefaultTargetId, setMoveDeleteDefaultTargetId] = useState<number | ''>('')
 
     const handleSearch = (keyword: string) => {
         setSearchKeyword(keyword)
@@ -37,13 +43,35 @@ export default function WordLearningPage() {
         }
     }
 
-    const handleWordbookSelect = (ids: number[]) => {
+    const handleWordbookSelect = async (ids: number[]) => {
         setSelectedWordbookIds(ids)
         // 기본 단어장이나 첫 번째 단어장을 선택
         const defaultWordbook = wordbooks.find((wb) => wb.name === '기본 단어장')
         if (ids.length > 0) {
             const newSelectedId = defaultWordbook?.wordbookId || ids[0]
             setSelectedWordbookId(newSelectedId)
+        }
+
+        try {
+            setIsLoading(true)
+            const { data, error } = await client.GET('/api/v1/wordbooks/view', {
+                params: {
+                    query: {
+                        wordbookIds: ids,
+                    },
+                },
+            })
+
+            if (error || !data?.data) {
+                console.error('단어 데이터 요청 실패:', error)
+                return
+            }
+
+            setWords(data.data)
+        } catch (error) {
+            console.error('단어 데이터 요청 실패:', error)
+        } finally {
+            setIsLoading(false)
         }
     }
 
@@ -74,11 +102,91 @@ export default function WordLearningPage() {
             setIsEditMode(false)
             return
         }
+        const sourceWordbookIds = Array.from(new Set(selectedWords.map((word) => word.wordBookId)))
+
+        if (sourceWordbookIds.length > 1) {
+            toast.error('서로 다른 단어장의 단어는 한 번에 이동할 수 없습니다.')
+            return
+        }
+        setMoveDeleteDefaultTargetId(sourceWordbookIds[0] || '')
         setIsMoveDeleteModalOpen(true)
     }
 
     const handleMoveWords = async (targetWordbookId: number) => {
-        setIsMoveDeleteModalOpen(false)
+        try {
+            const sourceWordbookId = selectedWords[0]?.wordBookId
+            if (!sourceWordbookId) {
+                toast.error('단어장 ID를 찾을 수 없습니다.')
+                return
+            }
+
+            const moveItems = selectedWords.map((word) => ({
+                fromWordbookId: sourceWordbookId,
+                word: word.word,
+            }))
+
+            const response = await client.PATCH('/api/v1/wordbooks/words/move', {
+                body: {
+                    destinationWordbookId: targetWordbookId,
+                    words: moveItems,
+                },
+            })
+
+            if (response.error) {
+                throw new Error('단어 이동 실패')
+            }
+
+            // 단어 목록 새로고침
+            const fetchWords = async () => {
+                if (selectedWordbookIds.length === 0) {
+                    setWords([])
+                    return
+                }
+
+                try {
+                    setIsLoading(true)
+                    const { data, error } = await client.GET('/api/v1/wordbooks/view', {
+                        params: {
+                            query: {
+                                wordbookIds: selectedWordbookIds,
+                            },
+                        },
+                    })
+
+                    if (error || !data?.data) {
+                        console.error('단어 데이터 요청 실패:', error)
+                        return
+                    }
+
+                    setWords(data.data)
+                } catch (error) {
+                    console.error('단어 데이터 요청 실패:', error)
+                } finally {
+                    setIsLoading(false)
+                }
+            }
+
+            // 단어장 목록 새로고침
+            const fetchWordbooks = async () => {
+                try {
+                    const { data, error } = await client.GET('/api/v1/wordbooks', {})
+                    if (!error && data?.data) {
+                        setWordbooks(data.data)
+                    }
+                } catch (error) {
+                    console.error('단어장 데이터 요청 실패:', error)
+                }
+            }
+
+            await Promise.all([fetchWords(), fetchWordbooks()])
+            setSelectedWords([])
+            setIsEditMode(false)
+            setIsMoveDeleteModalOpen(false)
+            toast.success('선택한 단어들이 이동되었습니다.')
+        } catch (error) {
+            console.error('단어 이동 실패:', error)
+            toast.error('단어 이동에 실패했습니다.')
+        }
     }
 
     const handleDeleteWords = async () => {
@@ -111,26 +219,20 @@ export default function WordLearningPage() {
 
                 try {
                     setIsLoading(true)
-                    const promises = selectedWordbookIds.map((id) =>
-                        client.GET('/api/v1/wordbooks/{wordbookId}/words', {
-                            params: {
-                                path: {
-                                    wordbookId: id,
-                                },
+                    const { data, error } = await client.GET('/api/v1/wordbooks/view', {
+                        params: {
+                            query: {
+                                wordbookIds: selectedWordbookIds,
                             },
-                        }),
-                    )
-
-                    const responses = await Promise.all(promises)
-                    const allWords = responses.flatMap((response) => {
-                        if (response.error || !response.data?.data) {
-                            console.error('단어 데이터 요청 실패:', response.error)
-                            return []
-                        }
-                        return response.data.data
+                        },
                     })
 
-                    setWords(allWords)
+                    if (error || !data?.data) {
+                        console.error('단어 데이터 요청 실패:', error)
+                        return
+                    }
+
+                    setWords(data.data)
                 } catch (error) {
                     console.error('단어 데이터 요청 실패:', error)
                 } finally {
@@ -138,14 +240,26 @@ export default function WordLearningPage() {
                 }
             }
 
-            fetchWords()
+            // 단어장 목록 새로고침
+            const fetchWordbooks = async () => {
+                try {
+                    const { data, error } = await client.GET('/api/v1/wordbooks', {})
+                    if (!error && data?.data) {
+                        setWordbooks(data.data)
+                    }
+                } catch (error) {
+                    console.error('단어장 데이터 요청 실패:', error)
+                }
+            }
+
+            await Promise.all([fetchWords(), fetchWordbooks()])
             setSelectedWords([])
             setIsEditMode(false)
             setIsMoveDeleteModalOpen(false)
-            alert('선택한 단어들이 삭제되었습니다.')
+            toast.success('선택한 단어들이 삭제되었습니다.')
         } catch (error) {
             console.error('단어 삭제 실패:', error)
-            alert('단어 삭제에 실패했습니다.')
+            toast.error('단어 삭제에 실패했습니다.')
         }
     }
 
@@ -214,6 +328,62 @@ export default function WordLearningPage() {
         setSelectedWords(words)
     }
 
+    const handleAddWordbook = async () => {
+        if (!newWordbookName.trim()) {
+            toast.error('단어장 이름을 입력해주세요.')
+            return
+        }
+        try {
+            setIsLoading(true)
+            const response = await client.POST('/api/v1/wordbooks', {
+                body: { name: newWordbookName.trim() },
+            })
+            if (response.error) {
+                throw new Error('단어장 추가 실패')
+            }
+            setIsAddWordbookModalOpen(false)
+            setNewWordbookName('')
+            // 단어장 목록 새로고침
+            const { data, error } = await client.GET('/api/v1/wordbooks', {})
+            if (!error && data?.data) {
+                setWordbooks(data.data)
+            }
+            toast('단어장이 추가되었습니다.')
+        } catch (error) {
+            toast.error('사용할 수 없는 멤버십입니다. 구독해주세요')
+        } finally {
+            setIsLoading(false)
+        }
+    }
+
+    const handleDeleteWordbook = async () => {
+        if (!deleteWordbookId) {
+            toast.error('삭제할 단어장을 선택해주세요.')
+            return
+        }
+        try {
+            setIsLoading(true)
+            const response = await client.DELETE('/api/v1/wordbooks/{wordbookId}', {
+                params: { path: { wordbookId: deleteWordbookId } },
+            })
+            if (response.error) {
+                throw new Error('단어장 삭제 실패')
+            }
+            setIsDeleteWordbookModalOpen(false)
+            setDeleteWordbookId(null)
+            // 단어장 목록 새로고침
+            const { data, error } = await client.GET('/api/v1/wordbooks', {})
+            if (!error && data?.data) {
+                setWordbooks(data.data)
+            }
+            toast('단어장이 삭제되었습니다.')
+        } catch (error) {
+            toast.error('오류가 발생했습니다.')
+        } finally {
+            setIsLoading(false)
+        }
+    }
+
     useEffect(() => {
         const fetchWordbooks = async () => {
             try {
@@ -237,34 +407,6 @@ export default function WordLearningPage() {
 
         fetchWordbooks()
     }, [])
-
-    useEffect(() => {
-        const fetchWords = async () => {
-            try {
-                setIsLoading(true)
-                const { data, error } = await client.GET('/api/v1/wordbooks/view', {})
-
-                if (error || !data?.data) {
-                    console.error('단어 데이터 요청 실패:', error)
-                    return
-                }
-
-                // 선택된 단어장의 단어들만 필터링
-                const filteredWords =
-                    selectedWordbookIds.length > 0
-                        ? data.data.filter((word) => selectedWordbookIds.includes(word.wordBookId || 0))
-                        : data.data
-
-                setWords(filteredWords)
-            } catch (error) {
-                console.error('단어 데이터 요청 실패:', error)
-            } finally {
-                setIsLoading(false)
-            }
-        }
-
-        fetchWords()
-    }, [selectedWordbookIds])
 
     return (
         <>
@@ -302,10 +444,16 @@ export default function WordLearningPage() {
                             )}
                         </h1>
                         <div className="flex items-center gap-2">
-                            <button className="bg-[var(--color-main)] text-sm text-[var(--color-white)] p-2 rounded-lg hover:opacity-90 transition-opacity">
+                            <button
+                                className="bg-[var(--color-main)] text-sm text-[var(--color-white)] p-2 rounded-lg hover:opacity-90 transition-opacity"
+                                onClick={() => setIsAddWordbookModalOpen(true)}
+                            >
                                 단어장 추가
                             </button>
-                            <button className="bg-[var(--color-warning)] text-sm text-[var(--color-white)] p-2 rounded-lg hover:opacity-90 transition-opacity">
+                            <button
+                                className="bg-[var(--color-warning)] text-sm text-[var(--color-white)] p-2 rounded-lg hover:opacity-90 transition-opacity"
+                                onClick={() => setIsDeleteWordbookModalOpen(true)}
+                            >
                                 단어장 삭제
                             </button>
                             <DropdownCheckBox
@@ -389,7 +537,86 @@ export default function WordLearningPage() {
                 }))}
                 onMoveWords={handleMoveWords}
                 onDeleteWords={handleDeleteWords}
+                defaultTargetId={moveDeleteDefaultTargetId}
             />
+
+            {isAddWordbookModalOpen && (
+                <div className="fixed inset-0 flex items-center justify-center bg-black bg-opacity-40 z-50">
+                    <div className="bg-white rounded-lg p-6 w-96 shadow-lg">
+                        <h2 className="text-lg font-bold mb-4">단어장 추가</h2>
+                        <input
+                            type="text"
+                            className="w-full border rounded-lg p-3 mb-4 focus:outline-none focus:ring-2 focus:ring-[var(--color-main)]"
+                            placeholder="단어장 이름을 입력하세요"
+                            value={newWordbookName}
+                            onChange={(e) => setNewWordbookName(e.target.value)}
+                            disabled={isLoading}
+                        />
+                        <div className="flex justify-end gap-2">
+                            <button
+                                onClick={handleAddWordbook}
+                                className="px-6 py-2 bg-[var(--color-main)] text-white rounded-lg hover:bg-[var(--color-sub-1)] transition-colors font-bold disabled:opacity-70"
+                                disabled={isLoading}
+                            >
+                                저장
+                            </button>
+                            <button
+                                onClick={() => {
+                                    setIsAddWordbookModalOpen(false)
+                                    setNewWordbookName('')
+                                }}
+                                className="px-6 py-2 bg-gray-200 text-gray-800 rounded-lg hover:bg-gray-300 transition-colors font-bold"
+                                disabled={isLoading}
+                            >
+                                취소
+                            </button>
+                        </div>
+                    </div>
+                </div>
+            )}
+
+            {/* 단어장 삭제 모달 */}
+            {isDeleteWordbookModalOpen && (
+                <div className="fixed inset-0 flex items-center justify-center bg-black bg-opacity-40 z-50">
+                    <div className="bg-white rounded-lg p-6 w-96 shadow-lg">
+                        <h2 className="text-lg font-bold mb-4">단어장 삭제</h2>
+                        <select
+                            className="w-full border rounded-lg p-3 mb-4 focus:outline-none focus:ring-2 focus:ring-[var(--color-main)]"
+                            value={deleteWordbookId ?? ''}
+                            onChange={(e) => setDeleteWordbookId(Number(e.target.value))}
+                            disabled={isLoading}
+                        >
+                            <option value="" disabled>
+                                삭제할 단어장을 선택하세요
+                            </option>
+                            {wordbooks.map((wb) => (
+                                <option key={wb.wordbookId} value={wb.wordbookId || 0}>
+                                    {wb.name}
+                                </option>
+                            ))}
+                        </select>
+                        <div className="flex justify-end gap-2">
+                            <button
+                                onClick={handleDeleteWordbook}
+                                className="px-6 py-2 bg-[var(--color-warning)] text-white rounded-lg hover:bg-red-600 transition-colors font-bold disabled:opacity-70"
+                                disabled={isLoading}
+                            >
+                                삭제
+                            </button>
+                            <button
+                                onClick={() => {
+                                    setIsDeleteWordbookModalOpen(false)
+                                    setDeleteWordbookId(null)
+                                }}
+                                className="px-6 py-2 bg-gray-200 text-gray-800 rounded-lg hover:bg-gray-300 transition-colors font-bold"
+                                disabled={isLoading}
+                            >
+                                취소
+                            </button>
+                        </div>
+                    </div>
+                </div>
+            )}
         </>
     )
 }

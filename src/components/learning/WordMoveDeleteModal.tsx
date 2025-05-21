@@ -1,5 +1,6 @@
 import { useState } from 'react'
 import type { components } from '@/lib/backend/apiV1/schema'
+import { toast } from 'sonner'
 
 type Wordbook = components['schemas']['WordbookResponse']
 
@@ -15,6 +16,7 @@ interface Props {
     }[]
     onMoveWords: (targetWordbookId: number) => Promise<void>
     onDeleteWords: () => Promise<void>
+    defaultTargetId?: number | ''
 }
 
 export default function WordMoveDeleteModal({ isOpen, onClose, wordbooks, onMoveWords, onDeleteWords }: Props) {
@@ -27,14 +29,18 @@ export default function WordMoveDeleteModal({ isOpen, onClose, wordbooks, onMove
     }
 
     const handleMoveWords = async () => {
-        alert('이동 기능은 추후 구현 예정입니다.')
-        onClose()
+        try {
+            await onMoveWords(moveTargetWordbookId)
+            onClose()
+        } catch (error) {
+            console.error('단어 이동에 실패했습니다:', error)
+            alert('단어 이동에 실패했습니다.')
+        }
     }
 
     const handleDeleteWords = async () => {
         try {
             await onDeleteWords()
-            alert('선택한 단어들이 삭제되었습니다.')
             onClose()
         } catch (error) {
             console.error('단어 삭제에 실패했습니다:', error)
@@ -61,14 +67,20 @@ export default function WordMoveDeleteModal({ isOpen, onClose, wordbooks, onMove
                 </div>
                 <div className="flex gap-2 justify-end">
                     <button
+                        onClick={onClose}
+                        className="px-4 py-2 bg-gray-200 text-gray-800 rounded-md hover:bg-gray-300 transition-colors"
+                    >
+                        취소
+                    </button>
+                    <button
                         onClick={handleMoveWords}
-                        className="px-4 py-2 bg-green-500 text-white rounded hover:bg-green-600"
+                        className="px-4 py-2 bg-green-500 text-white rounded-md hover:bg-green-600 transition-colors"
                     >
                         이동
                     </button>
                     <button
                         onClick={handleDeleteWords}
-                        className="px-4 py-2 bg-red-500 text-white rounded hover:bg-red-600"
+                        className="px-4 py-2 bg-red-500 text-white rounded-md hover:bg-red-600 transition-colors"
                     >
                         삭제
                     </button>
