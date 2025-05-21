@@ -2,6 +2,7 @@
 
 import DropdownCheckBox from '@/components/common/dropdownCheckBox'
 import Search from '@/components/common/search'
+import PlusIcon from '@/components/icon/plusIcon'
 import WordIcon from '@/components/icon/wordIcon'
 import LearningCard from '@/components/learning/learningCard'
 import WordAddModal from '@/components/learning/WordAddModal'
@@ -301,6 +302,12 @@ export default function WordLearningPage() {
                             )}
                         </h1>
                         <div className="flex items-center gap-2">
+                            <button className="bg-[var(--color-main)] text-sm text-[var(--color-white)] p-2 rounded-lg hover:opacity-90 transition-opacity">
+                                단어장 추가
+                            </button>
+                            <button className="bg-[var(--color-warning)] text-sm text-[var(--color-white)] p-2 rounded-lg hover:opacity-90 transition-opacity">
+                                단어장 삭제
+                            </button>
                             <DropdownCheckBox
                                 wordbooks={wordbooks}
                                 onWordbookSelect={handleWordbookSelect}
@@ -310,16 +317,7 @@ export default function WordLearningPage() {
                                 onClick={openAddModal}
                                 className="flex items-center gap-1 bg-[var(--color-main)] text-white px-3 py-2 rounded-md text-sm font-medium hover:bg-opacity-90 transition-colors"
                             >
-                                <svg
-                                    xmlns="http://www.w3.org/2000/svg"
-                                    fill="none"
-                                    viewBox="0 0 24 24"
-                                    strokeWidth={1.5}
-                                    stroke="currentColor"
-                                    className="w-5 h-5"
-                                >
-                                    <path strokeLinecap="round" strokeLinejoin="round" d="M12 4.5v15m7.5-7.5h-15" />
-                                </svg>
+                                <PlusIcon />
                                 단어 추가
                             </button>
                             <button
