@@ -2,6 +2,7 @@
 import { components } from '@/lib/backend/apiV1/schema'
 import client from '@/lib/backend/client'
 import { useState } from 'react'
+import { toast } from 'sonner'
 
 type LevelCheckResponse = components['schemas']['LevelCheckResponse']
 type StatisticResponse = components['schemas']['StatisticResponse']
@@ -35,6 +36,11 @@ export default function LevelBox({ statistics, onStatisticsUpdate }: LevelBoxPro
     }
 
     const handleReMeasure = async () => {
+        if (!statistics?.levelStatus?.remeasurable) {
+            toast.error('퀴즈 결과가 부족해 레벨 측정이 불가합니다.')
+            return
+        }
+
         try {
             setIsLoading(true)
             const response = await client.POST('/api/v1/dashboard/level')
