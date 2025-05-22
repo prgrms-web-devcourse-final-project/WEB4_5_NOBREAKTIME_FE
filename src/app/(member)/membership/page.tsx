@@ -106,7 +106,7 @@ export default function Membership() {
     return (
         <div className="flex min-h-screen">
             <div className="flex-1 flex flex-col">
-                <Link href="/">
+                <Link href="/dashboard">
                     <Image src="/logo/all-logo.svg" alt="logo" width={180} height={180} className="ml-10 mt-5" />
                 </Link>
                 <main className="flex-1 px-12 py-8 flex flex-col items-center justify-center">
