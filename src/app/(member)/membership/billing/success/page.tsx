@@ -36,9 +36,6 @@ export default function BillingSuccessPage() {
     const orderId = searchParams.get('orderId')
     const customerKey = searchParams.get('customerKey')
 
-    const [billingStatus, setBillingStatus] = useState<'idle' | 'processing' | 'success' | 'error'>('idle')
-    const [billingError, setBillingError] = useState<string>('')
-
     const fetchMember = async () => {
         try {
             const response = await client.GET('/api/v1/members/me')
@@ -66,7 +63,7 @@ export default function BillingSuccessPage() {
                     customerKey,
                     authKey,
                     orderId,
-                    orderName: `스탠다드 정기 구독`,
+                    orderName: localStorage.getItem('selectedPlanTitle') || '',
                     amount: Number(amount),
                 }
                 const confirmResponse = await client.POST('/api/v1/payment/issue-billing-key', {
@@ -87,6 +84,9 @@ export default function BillingSuccessPage() {
                 }
                 // 결제 성공 후 사용자 정보 새로고침
                 await fetchMember()
+
+                // 로컬 스토리지에서 플랜 제목 삭제
+                localStorage.removeItem('selectedPlanTitle')
 
                 setStatus('success')
             } catch (e) {

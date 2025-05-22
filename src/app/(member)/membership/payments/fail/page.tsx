@@ -68,6 +68,7 @@ export default function PaymentsFailPage() {
             }
         }
 
+        localStorage.removeItem('selectedPlanTitle')
         handlePaymentFail()
     }, [searchParams])
 

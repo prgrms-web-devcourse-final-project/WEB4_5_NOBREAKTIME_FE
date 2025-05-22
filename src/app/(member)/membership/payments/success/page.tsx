@@ -58,19 +58,14 @@ export default function SuccessPage() {
             const periodType = searchParams.get('periodType')
             const authKey = searchParams.get('authKey')
 
-            console.log('isBillingKey', isBillingKey)
-
             // 로컬 스토리지에서 idempotencyKey 가져오기
             let idempotencyKey = localStorage.getItem('payment_idempotency_key')
-            console.log('스토리지 idempotencyKey', idempotencyKey)
 
             // idempotencyKey가 없으면 새로 생성
             if (!idempotencyKey) {
                 idempotencyKey = crypto.randomUUID()
                 localStorage.setItem('payment_idempotency_key', idempotencyKey)
             }
-
-            console.log('생성 idempotencyKey', idempotencyKey)
 
             if (!orderId || !amount || !idempotencyKey || !subscriptionType || !periodType) {
                 setErrorMessage('필수 결제 정보가 누락되었습니다.')
@@ -96,29 +91,18 @@ export default function SuccessPage() {
                     orderId,
                 }
 
-                console.log('결제 승인 요청:', {
-                    endpoint,
-                    requestBody,
-                    params: {
-                        orderId,
-                        paymentKey,
-                        amount,
-                        isBillingKey,
-                        subscriptionType,
-                        periodType,
-                    },
-                })
-
                 const response = await client.POST(endpoint, {
                     body: requestBody,
                 })
-
-                console.log('결제 승인 응답:', response)
 
                 const { error, data } = response
 
                 // 결제 성공 후 idempotencyKey 삭제
                 localStorage.removeItem('payment_idempotency_key')
+
+                if (!isBillingKey) {
+                    localStorage.removeItem('selectedPlanTitle')
+                }
 
                 if (error) {
                     const paymentError = error as PaymentError

@@ -37,6 +37,7 @@ export default function WordAddModal({
             wordbooks[0]?.wordbookId ||
             null,
     )
+    const [isAdding, setIsAdding] = useState(false)
 
     useEffect(() => {
         if (!selectedId && wordbooks.length > 0) {
@@ -75,12 +76,15 @@ export default function WordAddModal({
         }
 
         try {
+            setIsAdding(true)
             await onAddWord(selectedId, newWordData.word)
             setNewWordData({ word: '' }) // 입력 필드 초기화
             onClose()
         } catch (error) {
             console.error('단어 추가에 실패했습니다:', error)
             alert('단어 추가에 실패했습니다. 다시 시도해주세요.')
+        } finally {
+            setIsAdding(false)
         }
     }
 
@@ -145,16 +149,16 @@ export default function WordAddModal({
                     <button
                         onClick={onClose}
                         className="px-4 py-2 bg-gray-200 text-gray-800 rounded-md hover:bg-gray-300 transition-colors"
-                        disabled={isLoading}
+                        disabled={isLoading || isAdding}
                     >
                         취소
                     </button>
                     <button
                         onClick={handleAddWord}
                         className="px-4 py-2 bg-[var(--color-main)] text-white rounded-md hover:bg-opacity-90 transition-colors disabled:opacity-50 disabled:cursor-not-allowed"
-                        disabled={isLoading}
+                        disabled={isLoading || isAdding}
                     >
-                        {isLoading ? '추가 중...' : '추가'}
+                        {isAdding ? '추가 중...' : '추가'}
                     </button>
                 </div>
             </div>
