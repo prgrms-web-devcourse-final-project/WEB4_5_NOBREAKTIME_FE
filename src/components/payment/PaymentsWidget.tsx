@@ -80,8 +80,6 @@ export default function PaymentsWidget({ amount, subscriptionType, periodType }:
                 amount: responseAmount,
             } = (requestData as { data?: { orderId?: string; orderName?: string; amount?: number } }).data || {}
 
-            console.log('responseAmount', responseAmount)
-
             const successUrl = new URL('/membership/payments/success', window.location.origin)
             const failUrl = new URL('/membership/paymentsfail', window.location.origin)
 

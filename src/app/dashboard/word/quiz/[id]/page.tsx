@@ -24,6 +24,7 @@ export default function WordQuiz() {
     const searchParams = useSearchParams()
     const selectedId = params.id as string
     const selectedTitle = searchParams.get('title') || '제목 없음'
+    const selectedType = searchParams.get('type') || 'word'
 
     const [originalWords, setOriginalWords] = useState<WordQuizItemWithIds[]>([])
     const [words, setWords] = useState<WordQuizItemWithIds[]>([])
@@ -42,13 +43,19 @@ export default function WordQuiz() {
         const fetchQuizWords = async () => {
             try {
                 setIsLoading(true)
-                const response = await client.GET('/api/v1/wordbooks/{wordbookId}/quiz', {
-                    params: {
-                        path: {
-                            wordbookId: Number(selectedId),
+                let response
+
+                if (selectedType === 'today') {
+                    response = await client.GET('/api/v1/wordbooks/quiz/total')
+                } else {
+                    response = await client.GET('/api/v1/wordbooks/{wordbookId}/quiz', {
+                        params: {
+                            path: {
+                                wordbookId: Number(selectedId),
+                            },
                         },
-                    },
-                })
+                    })
+                }
 
                 if (response.data?.code === '200' && response.data?.data) {
                     const quizData = response.data.data
@@ -95,9 +102,14 @@ export default function WordQuiz() {
                             wordbookItemId: word.wordbookItemId,
                             isCorrect: quizResults[idx],
                         }
-                        return client.POST('/api/v1/wordbooks/quiz/result', {
-                            body: params,
-                        })
+                        return client.POST(
+                            selectedType === 'today'
+                                ? '/api/v1/wordbooks/quiz/total/result'
+                                : '/api/v1/wordbooks/quiz/result',
+                            {
+                                body: params,
+                            },
+                        )
                     }
                     return null
                 })

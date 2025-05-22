@@ -80,7 +80,7 @@ export default function Card({ wordbooks, isLoading = false }: Props) {
                                     className="bg-[var(--color-main)] text-white px-3 py-1 rounded text-sm max-[1030px]:text-[10px]"
                                     onClick={() =>
                                         router.push(
-                                            `/${basePath}/learning/${wordbook.id}?title=${encodeURIComponent(
+                                            `/${basePath}/learning/${wordbook.id}?type=word&title=${encodeURIComponent(
                                                 wordbook.name,
                                             )}`,
                                         )
@@ -104,29 +104,6 @@ export default function Card({ wordbooks, isLoading = false }: Props) {
                     </div>
                 ))}
             </div>
-
-            {/* 
-            // 유료회원기능
-            <div className="flex justify-between gap-2 rounded-lg">
-                <div className="flex gap-2">
-                    <button className="bg-[var(--color-main)] text-sm text-[var(--color-white)] p-2 rounded-lg hover:opacity-90 transition-opacity">
-                        추가
-                    </button>
-                    <button className="bg-[var(--color-warning)] text-sm text-[var(--color-white)] p-2 rounded-lg hover:opacity-90 transition-opacity">
-                        삭제
-                    </button>
-                </div>
-                // 페이지네이션 기능
-                <div className="flex gap-2">
-                    <button className="p-2 rounded-lg hover:bg-gray-100 transition-colors">
-                        <Image src="/assets/left.svg" alt="arrow-left" width={24} height={24} />
-                    </button>
-                    <button className="p-2 rounded-lg hover:bg-gray-100 transition-colors">
-                        <Image src="/assets/right.svg" alt="arrow-right" width={24} height={24} />
-                    </button>
-                </div>
-            </div> 
-            */}
         </div>
     )
 }

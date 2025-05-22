@@ -9,6 +9,7 @@ import LearningCard from '@/components/learning/learningCard'
 import type { components } from '@/lib/backend/apiV1/schema'
 import client from '@/lib/backend/client'
 import { useEffect, useRef, useState } from 'react'
+import { toast } from 'sonner'
 
 type ExpressionBookResponse = components['schemas']['ExpressionBookResponse']
 type ExpressionResponse = components['schemas']['ExpressionResponse']
@@ -26,6 +27,10 @@ export default function ExpressionPage() {
     const [selectedExpressions, setSelectedExpressions] = useState<ExpressionResponse[]>([])
     const [isMoveDeleteModalOpen, setIsMoveDeleteModalOpen] = useState(false)
     const [selectedExpressionBookId, setSelectedExpressionBookId] = useState<number | null>(null)
+    const [isAddModalOpen, setIsAddModalOpen] = useState(false)
+    const [isDeleteModalOpen, setIsDeleteModalOpen] = useState(false)
+    const [newExpressionBookName, setNewExpressionBookName] = useState('')
+    const [moveDeleteDefaultTargetId, setMoveDeleteDefaultTargetId] = useState<number | ''>('')
 
     // 표현함 목록 조회
     const fetchExpressionBooks = async () => {
@@ -42,16 +47,33 @@ export default function ExpressionPage() {
     }
 
     // 전체 표현 목록 조회
-    const fetchExpressions = async () => {
+    const fetchExpressions = async (expressionBookIds?: number[]) => {
         try {
-            const { data } = await client.GET('/api/v1/expressionbooks/view')
-            if (data?.data) {
-                console.log('표현 데이터:', data.data)
-                setExpressions(data.data)
-                setFilteredExpressions(data.data)
+            setIsLoading(true)
+            const { data, error } = await client.GET('/api/v1/expressionbooks/view', {
+                params: {
+                    query: {
+                        expressionBookIds: expressionBookIds,
+                    },
+                },
+            })
+
+            if (error || !data?.data) {
+                setExpressions([])
+                setFilteredExpressions([])
+                return
             }
+
+            console.log('표현 목록 조회 응답:', data?.data)
+
+            setExpressions(data.data)
+            setFilteredExpressions(data.data)
         } catch (error) {
             console.error('표현 목록 조회 실패:', error)
+            setExpressions([])
+            setFilteredExpressions([])
+        } finally {
+            setIsLoading(false)
         }
     }
 
@@ -102,13 +124,16 @@ export default function ExpressionPage() {
     // 화면에 표시할 표현들
     const displayedExpressions = filteredExpressions.slice(0, displayCount)
 
-    const handleWordbookSelect = (ids: number[]) => {
+    const handleWordbookSelect = async (ids: number[]) => {
         setSelectedExpressionBookIds(ids)
         if (ids.length > 0) {
             setSelectedExpressionBookId(ids[0])
         } else {
             setSelectedExpressionBookId(null)
         }
+
+        // 선택된 표현함의 표현만 조회
+        await fetchExpressions(ids)
     }
 
     const toggleEditMode = () => {
@@ -123,41 +148,135 @@ export default function ExpressionPage() {
             setIsEditMode(false)
             return
         }
+        // 선택된 표현들의 expressionBookId 집합 구하기
+        const bookIds = Array.from(new Set(selectedExpressions.map((e) => e.expressionBookId)))
+        if (bookIds.length > 1) {
+            toast.error('서로 다른 표현함의 표현은 한 번에 이동/삭제할 수 없습니다.')
+            return
+        }
+        setMoveDeleteDefaultTargetId(bookIds[0] || '')
         setIsMoveDeleteModalOpen(true)
     }
 
     const handleMoveExpressions = async (targetExpressionBookId: number) => {
-        alert('이동 기능은 추후 구현 예정입니다.')
-        setIsMoveDeleteModalOpen(false)
+        try {
+            const sourceExpressionBookId = selectedExpressions[0]?.expressionBookId
+            if (!sourceExpressionBookId) {
+                toast.error('표현함 ID를 찾을 수 없습니다.')
+                return
+            }
+            const requestBody = {
+                sourceExpressionBookId,
+                targetExpressionBookId,
+                expressionIds: selectedExpressions.map((exp) => exp.expressionId || 0),
+            }
+            console.log('표현 이동 요청:', requestBody)
+            const response = await client.PATCH('/api/v1/expressionbooks/expressions/move', {
+                body: requestBody,
+            })
+
+            if (response.error) {
+                throw new Error('표현 이동 실패')
+            }
+
+            // 표현 목록 새로고침
+            await fetchExpressions(selectedExpressionBookIds)
+            await fetchExpressionBooks() // 표현함 목록도 새로고침
+            setSelectedExpressions([])
+            setIsEditMode(false)
+            setIsMoveDeleteModalOpen(false)
+            toast.success('선택한 표현들이 이동되었습니다.')
+        } catch (error) {
+            console.error('표현 이동 실패:', error)
+            throw error // 에러를 상위로 전파하여 모달에서 처리하도록 함
+        }
     }
 
     const handleDeleteExpressions = async () => {
         try {
-            console.log('삭제할 표현들:', selectedExpressions)
-            console.log('선택된 표현함:', selectedExpressionBookId)
-
+            const expressionBookId = selectedExpressions[0]?.expressionBookId
+            if (!expressionBookId) {
+                toast.error('표현함 ID를 찾을 수 없습니다.')
+                return
+            }
+            const requestBody = {
+                expressionBookId,
+                expressionIds: selectedExpressions.map((exp) => exp.expressionId || 0),
+            }
+            console.log('표현 삭제 요청:', requestBody)
             const response = await client.POST('/api/v1/expressionbooks/expressions/delete', {
-                body: {
-                    expressionBookId: selectedExpressionBookIds[0],
-                    expressionIds: selectedExpressions.map((exp) => exp.expressionId || 0),
-                },
+                body: requestBody,
             })
-
-            console.log('표현 삭제 응답:', response)
 
             if (response.error) {
                 throw new Error('표현 삭제 실패')
             }
 
             // 표현 목록 새로고침
-            fetchExpressions()
+            await fetchExpressions(selectedExpressionBookIds)
+            await fetchExpressionBooks() // 표현함 목록도 새로고침
             setSelectedExpressions([])
             setIsEditMode(false)
             setIsMoveDeleteModalOpen(false)
-            alert('선택한 표현들이 삭제되었습니다.')
+            toast.success('선택한 표현들이 삭제되었습니다.')
         } catch (error) {
             console.error('표현 삭제 실패:', error)
-            alert('표현 삭제에 실패했습니다.')
+            throw error // 에러를 상위로 전파하여 모달에서 처리하도록 함
+        }
+    }
+
+    const handleAddExpressionBook = async () => {
+        try {
+            if (!newExpressionBookName.trim()) {
+                alert('표현함 이름을 입력해주세요.')
+                return
+            }
+
+            const { data, error } = await client.POST('/api/v1/expressionbooks', {
+                body: {
+                    name: newExpressionBookName.trim(),
+                },
+            })
+
+            if (error) {
+                throw new Error('표현함 생성 실패')
+            }
+
+            fetchExpressionBooks()
+            setNewExpressionBookName('')
+            setIsAddModalOpen(false)
+            alert('표현함이 생성되었습니다.')
+        } catch (error) {
+            console.error('표현함 생성 실패:', error)
+            toast.error('멤버십에 가입을 해야합니다.')
+        }
+    }
+
+    const handleDeleteExpressionBook = async () => {
+        try {
+            if (!selectedExpressionBookId) {
+                alert('삭제할 표현함을 선택해주세요.')
+                return
+            }
+
+            const { error } = await client.DELETE('/api/v1/expressionbooks/{expressionBookId}', {
+                params: {
+                    path: {
+                        expressionBookId: selectedExpressionBookId,
+                    },
+                },
+            })
+
+            if (error) {
+                throw new Error('표현함 삭제 실패')
+            }
+
+            fetchExpressionBooks()
+            setIsDeleteModalOpen(false)
+            alert('표현함이 삭제되었습니다.')
+        } catch (error) {
+            console.error('표현함 삭제 실패:', error)
+            toast.error('표현함 삭제에 실패했습니다.')
         }
     }
 
@@ -197,6 +316,20 @@ export default function ExpressionPage() {
                     <div className="flex justify-between items-center">
                         <h1 className="text-2xl font-bold">📚 내 표현함</h1>
                         <div className="flex items-center gap-2">
+                            {/*
+                            <button
+                                className="bg-[var(--color-main)] text-sm text-[var(--color-white)] p-2 rounded-lg hover:opacity-90 transition-opacity"
+                                onClick={() => setIsAddModalOpen(true)}
+                            >
+                                표현함 추가
+                            </button>
+                            <button
+                                className="bg-[var(--color-warning)] text-sm text-[var(--color-white)] p-2 rounded-lg hover:opacity-90 transition-opacity"
+                                onClick={() => setIsDeleteModalOpen(true)}
+                            >
+                                표현함 삭제
+                            </button>
+                            */}
                             <DropdownCheckBox
                                 wordbooks={expressionBooks.map((book) => ({
                                     ...book,
@@ -279,7 +412,81 @@ export default function ExpressionPage() {
                 expressionBooks={expressionBooks}
                 onMoveExpressions={handleMoveExpressions}
                 onDeleteExpressions={handleDeleteExpressions}
+                defaultTargetId={moveDeleteDefaultTargetId}
             />
+
+            {/* 표현함 추가 모달 */}
+            {isAddModalOpen && (
+                <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50">
+                    <div className="bg-white rounded-lg p-6 w-[500px]">
+                        <h2 className="text-xl font-bold mb-4">표현함 추가</h2>
+                        <div className="mb-4">
+                            <label className="block text-sm font-medium text-gray-700 mb-1">표현함 이름</label>
+                            <input
+                                type="text"
+                                value={newExpressionBookName}
+                                onChange={(e) => setNewExpressionBookName(e.target.value)}
+                                className="w-full border border-gray-300 rounded-md px-3 py-2 focus:outline-none focus:ring-2 focus:ring-[var(--color-main)]"
+                                placeholder="표현함 이름을 입력하세요"
+                            />
+                        </div>
+                        <div className="flex justify-end gap-2">
+                            <button
+                                onClick={() => {
+                                    setNewExpressionBookName('')
+                                    setIsAddModalOpen(false)
+                                }}
+                                className="px-4 py-2 bg-gray-200 text-gray-800 rounded-md hover:bg-gray-300 transition-colors"
+                            >
+                                취소
+                            </button>
+                            <button
+                                onClick={handleAddExpressionBook}
+                                className="px-4 py-2 bg-[var(--color-main)] text-white rounded-md hover:bg-opacity-90 transition-colors"
+                            >
+                                추가
+                            </button>
+                        </div>
+                    </div>
+                </div>
+            )}
+            {/* 표현함 삭제 모달 */}
+            {isDeleteModalOpen && (
+                <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50">
+                    <div className="bg-white rounded-lg p-6 w-[500px]">
+                        <h2 className="text-xl font-bold mb-4">표현함 삭제</h2>
+                        <div className="mb-4">
+                            <label className="block text-sm font-medium text-gray-700 mb-1">삭제할 표현함</label>
+                            <select
+                                className="w-full border border-gray-300 rounded-md px-3 py-2 focus:outline-none focus:ring-2 focus:ring-[var(--color-main)]"
+                                value={selectedExpressionBookId || ''}
+                                onChange={(e) => setSelectedExpressionBookId(Number(e.target.value))}
+                            >
+                                <option value="">표현함을 선택하세요</option>
+                                {expressionBooks.map((book) => (
+                                    <option key={book.expressionBookId} value={book.expressionBookId}>
+                                        {book.name}
+                                    </option>
+                                ))}
+                            </select>
+                        </div>
+                        <div className="flex justify-end gap-2">
+                            <button
+                                onClick={() => setIsDeleteModalOpen(false)}
+                                className="px-4 py-2 bg-gray-200 text-gray-800 rounded-md hover:bg-gray-300 transition-colors"
+                            >
+                                취소
+                            </button>
+                            <button
+                                onClick={handleDeleteExpressionBook}
+                                className="px-4 py-2 bg-red-500 text-white rounded-md hover:bg-red-600 transition-colors"
+                            >
+                                삭제
+                            </button>
+                        </div>
+                    </div>
+                </div>
+            )}
         </>
     )
 }

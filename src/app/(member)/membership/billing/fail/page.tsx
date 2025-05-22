@@ -68,7 +68,7 @@ export default function BillingFailPage() {
                 setErrorMessage(paymentError.message || '결제 실패 처리 중 오류가 발생했습니다.')
             }
         }
-
+        localStorage.removeItem('selectedPlanTitle')
         handlePaymentFail()
     }, [searchParams])
 

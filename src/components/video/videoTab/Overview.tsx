@@ -40,6 +40,8 @@ const Overview: React.FC<OverviewProps> = ({
     const [isLoading, setIsLoading] = useState(false)
     const [showTranscript, setShowTranscript] = useState(true)
     const [addedKeywords, setAddedKeywords] = useState<Keyword[]>([])
+    const [showExpressionModal, setShowExpressionModal] = useState(false)
+    const [selectedBookId, setSelectedBookId] = useState<number | null>(null)
 
     // 표현함 목록 가져오기
     useEffect(() => {
@@ -67,6 +69,13 @@ const Overview: React.FC<OverviewProps> = ({
 
         fetchExpressionBooks()
     }, [])
+
+    // 모달이 열릴 때 첫 번째 표현함을 자동 선택
+    useEffect(() => {
+        if (showExpressionModal && expressionBooks.length > 0) {
+            setSelectedBookId(expressionBooks[0].id)
+        }
+    }, [showExpressionModal, expressionBooks])
 
     // 텍스트에서 키워드를 찾아 span 태그로 감싸는 함수
     const highlightKeywords = (text: string, keywords: Keyword[] = []) => {
@@ -110,25 +119,19 @@ const Overview: React.FC<OverviewProps> = ({
             alert('선택된 자막이 없거나 비디오 정보가 없습니다.')
             return
         }
-
+        if (!selectedBookId) {
+            alert('표현함을 선택해주세요.')
+            return
+        }
         setIsLoading(true)
         try {
-            // 표현함이 없으면 기본 표현함 사용
-            if (expressionBooks.length === 0) {
-                alert('표현함이 없습니다. 표현함을 먼저 생성해주세요.')
-                setIsLoading(false)
-                return
-            }
-
-            // 첫 번째 표현함에 저장 (기본 표현함)
-            const expressionBookId = expressionBooks[0].id
             const { data, error } = await client.POST(`/api/v1/expressionbooks/{expressionBookId}/expressions`, {
                 params: {
                     query: {
                         userDetails: {},
                     },
                     path: {
-                        expressionBookId,
+                        expressionBookId: selectedBookId,
                     },
                 },
                 body: {
@@ -136,14 +139,14 @@ const Overview: React.FC<OverviewProps> = ({
                     subtitleId: selectedSubtitle.subtitleId,
                 },
             })
-
             if (error) {
                 console.error('표현 저장 실패:', error)
                 alert('표현 저장에 실패했습니다.')
                 return
             }
-
-            alert(`"${expressionBooks[0].name}" 표현함에 표현이 추가되었습니다.`)
+            const selectedBook = expressionBooks.find((book) => book.id === selectedBookId)
+            alert(`"${selectedBook?.name}" 표현함에 표현이 추가되었습니다.`)
+            setShowExpressionModal(false)
         } catch (error) {
             console.error('표현 저장 오류:', error)
             alert('표현 저장 중 오류가 발생했습니다.')
@@ -230,7 +233,7 @@ const Overview: React.FC<OverviewProps> = ({
                 {/* 🔹 표현 버튼과 한글 자막 토글 버튼 */}
                 <div className="flex justify-between items-center mt-2">
                     <button
-                        onClick={handleAddExpression}
+                        onClick={() => setShowExpressionModal(true)}
                         disabled={isLoading}
                         className="px-4 py-2 bg-[var(--color-main)] text-white rounded-lg hover:bg-[var(--color-sub-1)] transition-colors disabled:opacity-70"
                     >
@@ -276,6 +279,47 @@ const Overview: React.FC<OverviewProps> = ({
                     </div>
                 </div>
             </div>
+
+            {/* 표현함 선택 모달 */}
+            {showExpressionModal && (
+                <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50">
+                    <div className="bg-white rounded-lg p-6 w-96 relative">
+                        <h3 className="text-lg font-bold mb-4">표현함 선택</h3>
+                        {expressionBooks.length === 0 ? (
+                            <p className="text-gray-500">표현함이 없습니다. 표현함을 먼저 생성해주세요.</p>
+                        ) : (
+                            <>
+                                <select
+                                    className="w-full p-3 mb-8 border rounded-lg focus:outline-none focus:ring-2 focus:ring-[var(--color-main)]"
+                                    value={selectedBookId ?? expressionBooks[0].id}
+                                    onChange={(e) => setSelectedBookId(Number(e.target.value))}
+                                >
+                                    {expressionBooks.map((book) => (
+                                        <option key={book.id} value={book.id}>
+                                            {book.name}
+                                        </option>
+                                    ))}
+                                </select>
+                                <div className="flex justify-end gap-2 mt-2">
+                                    <button
+                                        onClick={handleAddExpression}
+                                        disabled={isLoading}
+                                        className="px-6 py-2 bg-[var(--color-main)] text-white rounded-lg hover:bg-[var(--color-sub-1)] transition-colors disabled:opacity-70 font-bold"
+                                    >
+                                        {isLoading ? '저장 중...' : '저장'}
+                                    </button>
+                                    <button
+                                        onClick={() => setShowExpressionModal(false)}
+                                        className="px-6 py-2 bg-gray-200 text-gray-800 rounded-lg hover:bg-gray-300 transition-colors font-bold"
+                                    >
+                                        취소
+                                    </button>
+                                </div>
+                            </>
+                        )}
+                    </div>
+                </div>
+            )}
 
             {/* 호버 시 나타나는 카드 */}
             {hoveredKeyword && (

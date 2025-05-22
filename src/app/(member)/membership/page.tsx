@@ -61,6 +61,9 @@ export default function Membership() {
 
         if (!selectedPlanData?.priceInfo?.discountPrice) return
 
+        // 선택한 플랜의 제목을 로컬 스토리지에 저장
+        localStorage.setItem('selectedPlanTitle', plan.title || plan.type || '')
+
         setSelectedPlan({
             name: plan.title || plan.type || '',
             price: selectedPlanData.priceInfo.discountPrice.toString(),
@@ -106,7 +109,7 @@ export default function Membership() {
     return (
         <div className="flex min-h-screen">
             <div className="flex-1 flex flex-col">
-                <Link href="/">
+                <Link href="/dashboard">
                     <Image src="/logo/all-logo.svg" alt="logo" width={180} height={180} className="ml-10 mt-5" />
                 </Link>
                 <main className="flex-1 px-12 py-8 flex flex-col items-center justify-center">
@@ -229,7 +232,10 @@ export default function Membership() {
                             <div className="w-[800px] h-[600px] bg-white rounded-2xl shadow-lg flex relative">
                                 {/* 닫기 버튼 */}
                                 <button
-                                    onClick={() => setCheckoutModalOpen(false)}
+                                    onClick={() => {
+                                        setCheckoutModalOpen(false)
+                                        localStorage.removeItem('selectedPlanTitle')
+                                    }}
                                     className="absolute -right-4 -top-4 w-8 h-8 bg-white rounded-full shadow-md flex items-center justify-center hover:bg-gray-50 transition-colors"
                                 >
                                     <Image

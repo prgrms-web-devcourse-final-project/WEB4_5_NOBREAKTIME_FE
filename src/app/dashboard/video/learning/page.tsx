@@ -25,6 +25,23 @@ const CATEGORIES = {
     MOVIE: { id: 30, label: '영화' },
 } as const
 
+// 디바운스 훅 추가
+function useDebounce<T>(value: T, delay: number): T {
+    const [debouncedValue, setDebouncedValue] = useState<T>(value)
+
+    useEffect(() => {
+        const timer = setTimeout(() => {
+            setDebouncedValue(value)
+        }, delay)
+
+        return () => {
+            clearTimeout(timer)
+        }
+    }, [value, delay])
+
+    return debouncedValue
+}
+
 export default function VideoLearningPage() {
     const router = useRouter()
     const isFirstRender = useRef(true)
@@ -32,6 +49,7 @@ export default function VideoLearningPage() {
 
     const [selectedCategory, setSelectedCategory] = useState<Category>(CATEGORIES.ALL)
     const [searchKeyword, setSearchKeyword] = useState<string>('')
+    const debouncedSearchKeyword = useDebounce(searchKeyword, 500) // 500ms 디바운스 적용
     const [videoList, setVideoList] = useState<VideoResponse[]>([])
     const [isLoading, setIsLoading] = useState(true)
     const [error, setError] = useState<string | null>(null)
@@ -79,10 +97,15 @@ export default function VideoLearningPage() {
 
                 const { data: response } = await client.GET('/api/v1/videos/list', {
                     params: {
-                        'req[q]': searchKeyword && searchKeyword.length > 0 ? searchKeyword : undefined,
-                        'req[category]': selectedCategory.id === 0 ? undefined : String(selectedCategory.id),
-                        'req[maxResults]': Math.min(Math.max(itemsPerPage, 1), 100),
-                    } as any,
+                        query: {
+                            q:
+                                debouncedSearchKeyword && debouncedSearchKeyword.length > 0
+                                    ? debouncedSearchKeyword
+                                    : undefined,
+                            category: selectedCategory.id === 0 ? undefined : String(selectedCategory.id),
+                            maxResults: Math.min(Math.max(itemsPerPage, 1), 50),
+                        },
+                    },
                 })
 
                 const videos = response?.data || []
@@ -146,7 +169,7 @@ export default function VideoLearningPage() {
         setPage(1)
         setHasMore(true) // 검색 조건 변경 시 hasMore 초기화
         loadVideos(1, true)
-    }, [selectedCategory, searchKeyword])
+    }, [selectedCategory, debouncedSearchKeyword]) // searchKeyword 대신 debouncedSearchKeyword 사용
 
     // 페이지 변경 시
     useEffect(() => {
