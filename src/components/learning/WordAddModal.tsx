@@ -1,5 +1,5 @@
-import { useState, useEffect } from 'react'
 import type { components } from '@/lib/backend/apiV1/schema'
+import { useEffect, useState } from 'react'
 
 type WordbookResponse = components['schemas']['WordbookResponse']
 
@@ -11,6 +11,7 @@ interface Props {
     wordbooks: WordbookResponse[]
     onAddWord: (wordbookId: number, word: string) => Promise<void>
     onWordbookSelect?: (id: number) => void
+    isLoading?: boolean
 }
 
 interface WordData {
@@ -25,6 +26,7 @@ export default function WordAddModal({
     wordbooks,
     onAddWord,
     onWordbookSelect,
+    isLoading = false,
 }: Props) {
     const [newWordData, setNewWordData] = useState<WordData>({
         word: '',
@@ -143,14 +145,16 @@ export default function WordAddModal({
                     <button
                         onClick={onClose}
                         className="px-4 py-2 bg-gray-200 text-gray-800 rounded-md hover:bg-gray-300 transition-colors"
+                        disabled={isLoading}
                     >
                         취소
                     </button>
                     <button
                         onClick={handleAddWord}
-                        className="px-4 py-2 bg-[var(--color-main)] text-white rounded-md hover:bg-opacity-90 transition-colors"
+                        className="px-4 py-2 bg-[var(--color-main)] text-white rounded-md hover:bg-opacity-90 transition-colors disabled:opacity-50 disabled:cursor-not-allowed"
+                        disabled={isLoading}
                     >
-                        추가
+                        {isLoading ? '추가 중...' : '추가'}
                     </button>
                 </div>
             </div>
