@@ -28,7 +28,7 @@ export default function HistoryPage() {
     }
 
     const handleVideoClick = (videoId: string) => {
-        router.push(`/dashboard/video/${videoId}`)
+        router.push(`/dashboard/video/learning/${videoId}`)
     }
 
     const formatDate = (dateString: string) => {
