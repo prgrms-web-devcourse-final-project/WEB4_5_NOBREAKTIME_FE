@@ -29,7 +29,6 @@ type Language = 'ENGLISH' | 'JAPANESE' | 'NONE' | 'ALL'
 const LANGUAGES = [
     { code: 'ENGLISH' as Language, label: '영어', image: '/assets/america.svg' },
     { code: 'JAPANESE' as Language, label: '일본어', image: '/assets/japan.svg' },
-    { code: 'NONE' as Language, label: '중국어', image: '/assets/china.svg' },
 ]
 
 export default function MyPage() {
@@ -57,7 +56,7 @@ export default function MyPage() {
     const languageFlags: Record<string, string> = {
         ENGLISH: '/assets/america.svg',
         JAPANESE: '/assets/japan.svg',
-        NONE: '/assets/china.svg',
+        NONE: '/assets/none.svg',
     }
 
     const handleImageChange = async (e: React.ChangeEvent<HTMLInputElement>) => {
@@ -333,8 +332,6 @@ export default function MyPage() {
                                         ? '영어'
                                         : language === 'JAPANESE'
                                         ? '일본어'
-                                        : language === 'NONE'
-                                        ? '중국어'
                                         : '미설정'}
                                 </span>
                                 <Image
