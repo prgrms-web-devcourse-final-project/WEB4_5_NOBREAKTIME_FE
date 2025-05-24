@@ -248,7 +248,7 @@ export default function ExpressionPage() {
             alert('표현함이 생성되었습니다.')
         } catch (error) {
             console.error('표현함 생성 실패:', error)
-            toast.error('멤버십에 가입을 해야합니다.')
+            toast.error('사용할 수 없는 멤버십입니다. 구독해주세요')
         }
     }
 
@@ -316,7 +316,7 @@ export default function ExpressionPage() {
                     <div className="flex justify-between items-center">
                         <h1 className="text-2xl font-bold">📚 내 표현함</h1>
                         <div className="flex items-center gap-2">
-                            {/*
+                            
                             <button
                                 className="bg-[var(--color-main)] text-sm text-[var(--color-white)] p-2 rounded-lg hover:opacity-90 transition-opacity"
                                 onClick={() => setIsAddModalOpen(true)}
@@ -329,7 +329,7 @@ export default function ExpressionPage() {
                             >
                                 표현함 삭제
                             </button>
-                            */}
+                           
                             <DropdownCheckBox
                                 wordbooks={expressionBooks.map((book) => ({
                                     ...book,
