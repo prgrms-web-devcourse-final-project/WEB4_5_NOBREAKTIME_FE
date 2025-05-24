@@ -205,9 +205,8 @@ const WordQuiz: React.FC<WordQuizProps> = ({ fontSize, videoId, quizData, onWron
                     <div className="flex gap-2 items-center">
                         <button
                             onClick={handlePrevQuiz}
-                            className={`px-2 py-1 rounded ${
-                                currentQuizIndex > 0 ? 'bg-gray-200' : 'bg-gray-100 text-gray-400 cursor-not-allowed'
-                            }`}
+                            className={`px-2 py-1 rounded ${currentQuizIndex > 0 ? 'bg-gray-200' : 'bg-gray-100 text-gray-400 cursor-not-allowed'
+                                }`}
                             disabled={currentQuizIndex === 0}
                         >
                             &larr;
@@ -217,11 +216,10 @@ const WordQuiz: React.FC<WordQuizProps> = ({ fontSize, videoId, quizData, onWron
                         </span>
                         <button
                             onClick={handleNextQuiz}
-                            className={`px-2 py-1 rounded ${
-                                currentQuizIndex < quizData.length - 1
+                            className={`px-2 py-1 rounded ${currentQuizIndex < quizData.length - 1
                                     ? 'bg-gray-200'
                                     : 'bg-gray-100 text-gray-400 cursor-not-allowed'
-                            }`}
+                                }`}
                             disabled={currentQuizIndex >= quizData.length - 1}
                         >
                             &rarr;
@@ -251,29 +249,9 @@ const WordQuiz: React.FC<WordQuizProps> = ({ fontSize, videoId, quizData, onWron
                 <WordModal
                     title="단어를 단어장에 추가할까요?"
                     description="추가한 단어와 틀린 문제의 단어가 자동으로 선택되었습니다."
-                    onCancel={() => {
+                    onCancel={() => setIsModalOpen(false)}
+                    onConfirm={(selectedWords, selectedList) => {
                         setIsModalOpen(false)
-                    }}
-                    onConfirm={async (selectedWords, selectedList) => {
-                        try {
-                            // 선택된 단어를 단어장에 추가
-                            const wordsToAdd = selectedWords
-                                .filter((word) => word.checked)
-                                .map((word) => ({
-                                    word: word.word,
-                                    subtitleId: word.subtitleId,
-                                    videoId: word.videoId,
-                                }))
-
-                            // 성공 메시지 표시
-                            alert('단어가 성공적으로 추가되었습니다.')
-
-                            // 모달 닫기
-                            setIsModalOpen(false)
-                        } catch (error) {
-                            console.error('단어 추가 중 오류 발생:', error)
-                            alert('단어 추가에 실패했습니다. 다시 시도해주세요.')
-                        }
                     }}
                     confirmText="추가하기"
                     cancelText="닫기"
