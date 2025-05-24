@@ -31,10 +31,10 @@ export default function WordCard({
     // 검색 키워드에 따라 단어 필터링
     const filteredWords = searchKeyword.trim()
         ? words.filter(
-              (word) =>
-                  (word.word || '').toLowerCase().includes(searchKeyword.toLowerCase()) ||
-                  (word.meaning || '').toLowerCase().includes(searchKeyword.toLowerCase()),
-          )
+            (word) =>
+                (word.word || '').toLowerCase().includes(searchKeyword.toLowerCase()) ||
+                (word.meaning || '').toLowerCase().includes(searchKeyword.toLowerCase()),
+        )
         : words
 
     // 화면에 표시할 단어들
@@ -62,8 +62,16 @@ export default function WordCard({
         setDisplayCount(ITEMS_PER_PAGE)
     }, [searchKeyword])
 
-    const getDifficultyStars = (difficulty: string) => {
-        return difficulty === 'EASY' ? 1 : difficulty === 'NORMAL' ? 2 : 3
+    const difficultyMap = new Map<string, number>([
+        ['EASY', 1],
+        ['NORMAL', 2],
+        ['HARD', 3],
+        ['VERY_HARD', 4],
+        ['EXTREME', 5],
+    ])
+
+    const getDifficultyStars = (difficulty: string): number => {
+        return difficultyMap.get(difficulty) ?? 1
     }
 
     const speak = (text: string | undefined) => {
@@ -142,11 +150,10 @@ export default function WordCard({
                                 onSelectWords?.(newSelectedWords)
                             }
                         }}
-                        className={`flex flex-col justify-between p-4 w-[32%] h-[180px] bg-[var(--color-white)] rounded-lg border border-2 ${
-                            selectedWords.some((w) => w.word === word.word)
+                        className={`flex flex-col justify-between p-4 w-[32%] h-[180px] bg-[var(--color-white)] rounded-lg border border-2 ${selectedWords.some((w) => w.word === word.word)
                                 ? 'border-[var(--color-point)]'
                                 : 'border-[var(--color-main)]'
-                        } ${isEditMode ? 'cursor-pointer hover:bg-gray-50' : ''}`}
+                            } ${isEditMode ? 'cursor-pointer hover:bg-gray-50' : ''}`}
                     >
                         <div className="flex justify-between">
                             <div>

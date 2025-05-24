@@ -21,6 +21,18 @@ const formatDate = (dateString: string | undefined) => {
     }).format(date)
 }
 
+const difficultyMap = new Map<string, number>([
+    ['EASY', 1],
+    ['NORMAL', 2],
+    ['HARD', 3],
+    ['VERY_HARD', 4],
+    ['EXTREME', 5],
+])
+
+const getDifficultyStars = (difficulty: string): number => {
+    return difficultyMap.get(difficulty) ?? 1
+}
+
 export default function WordLearning() {
     const searchParams = useSearchParams()
     const params = useParams()
@@ -146,7 +158,7 @@ export default function WordLearning() {
                 <div className="flex flex-col items-center justify-center bg-[var(--color-white)] w-180 h-full gap-8 p-12">
                     <div className="text-yellow-400 text-xl">
                         {Array.from({
-                            length: current.difficulty === 'EASY' ? 1 : current.difficulty === 'NORMAL' ? 2 : 3,
+                            length: getDifficultyStars(current.difficulty || 'EASY')
                         }).map((_, i) => (
                             <span key={i}>⭐</span>
                         ))}
