@@ -6,7 +6,9 @@ import client from '@/lib/backend/client'
 import { useRouter } from 'next/navigation'
 import { useEffect, useState } from 'react'
 
-type VideoHistoryResponse = components['schemas']['VideoHistoryResponse']
+type VideoHistoryResponse = components['schemas']['VideoHistoryResponse'] & {
+    duration?: string
+}
 
 export default function HistoryPage() {
     const [videoList, setVideoList] = useState<VideoHistoryResponse[]>([])
@@ -59,13 +61,22 @@ export default function HistoryPage() {
                             className="flex gap-4 bg-[var(--color-white)] rounded-lg p-4 cursor-pointer hover:bg-gray-50"
                             onClick={() => handleVideoClick(video.videoId || '')}
                         >
-                            <div className="w-[450px] h-[300px] bg-gray-200 rounded-md overflow-hidden flex-shrink-0">
+                            <div className="w-[450px] h-[300px] bg-gray-200 rounded-md overflow-hidden flex-shrink-0 relative">
                                 {video.thumbnailUrl && (
-                                    <img
-                                        src={video.thumbnailUrl}
-                                        alt={video.title}
-                                        className="w-full h-full object-cover rounded-md"
-                                    />
+                                    <>
+                                        <img
+                                            src={video.thumbnailUrl}
+                                            alt={video.title}
+                                            className="w-full h-full object-cover rounded-md"
+                                        />
+
+                                        {/* 동영상 길이 표시 */}
+                                        {typeof video.duration === 'string' && video.duration.trim() !== '' && (
+                                            <div className="absolute bottom-2 right-2 bg-black/70 text-white text-xs px-2 py-1 rounded">
+                                                {video.duration}
+                                            </div>
+                                        )}
+                                    </>
                                 )}
                             </div>
                             <div className="flex flex-col">

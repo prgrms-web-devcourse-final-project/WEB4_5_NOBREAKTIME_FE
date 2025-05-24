@@ -155,24 +155,16 @@ export default function WordQuiz() {
         newUserInputs[index] = ''
         setUserInputs(newUserInputs)
 
-        // 힌트를 한 번이라도 사용하면 오답 처리
-        if (newHintCounts[index] === 1) {
-            const newQuizResults = [...quizResults]
-            newQuizResults[index] = false
-            setQuizResults(newQuizResults)
-
-            // 서버에 오답 결과 저장
-            try {
-                await client.POST('/api/v1/wordbooks/quiz/result', {
-                    body: {
-                        quizId: words[index].quizId,
-                        wordbookItemId: words[index].wordbookItemId,
-                        isCorrect: false,
-                    },
-                })
-            } catch (error) {
-                console.error('힌트 사용으로 인한 오답 처리 중 오류:', error)
-            }
+        try {
+            await client.POST('/api/v1/wordbooks/quiz/result', {
+                body: {
+                    quizId: words[index].quizId,
+                    wordbookItemId: words[index].wordbookItemId,
+                    isCorrect: false,
+                },
+            })
+        } catch (error) {
+            console.error('힌트 사용으로 인한 오답 처리 중 오류:', error)
         }
     }
 
@@ -223,22 +215,14 @@ export default function WordQuiz() {
                     newShowButtons[index] = true
                     setShowButtons(newShowButtons)
 
-                    // 마지막 문제이고 정답인 경우
-                    if (index === words.length - 1) {
-                        setShowFinalButton(true)
+                    // 서버에 정답 결과 저장
+                    if (index === words.length - 1 && isAnswerCorrect) {
+                        setShowFinalButton(true);
                     }
                 } else {
                     const newQuizResults = [...quizResults]
                     newQuizResults[index] = false
                     setQuizResults(newQuizResults)
-
-                    // 마지막 문제이고 오답인 경우에도 바로 결과로 넘어가지 않고 버튼만 표시
-                    if (index === words.length - 1) {
-                        const newShowButtons = [...showButtons]
-                        newShowButtons[index] = true
-                        setShowButtons(newShowButtons)
-                        setShowFinalButton(true)
-                    }
 
                     try {
                         await client.POST('/api/v1/wordbooks/quiz/result', {
@@ -253,17 +237,18 @@ export default function WordQuiz() {
                     }
                 }
             } else if (isAnswerCorrect) {
+                saveQuizResult(index, true)
                 const newShowButtons = [...showButtons]
                 newShowButtons[index] = true
                 setShowButtons(newShowButtons)
 
-                // 마지막 문제이고 힌트를 사용한 경우
+                // 마지막 문제에서 정답을 맞춘 경우 최종 버튼 표시
                 if (index === words.length - 1) {
-                    setShowFinalButton(true)
+                    setShowFinalButton(true);
                 }
             }
 
-            // Tab 키로 다음 입력 필드로 이동 (숙어의 경우)
+            // Tab 키 이동 로직
             if (isMultiWord && inputIndex !== undefined && inputIndex < multiInputs[index].length - 1) {
                 const nextInput = document.querySelector(`input[data-index="${inputIndex + 1}"]`) as HTMLInputElement
                 if (nextInput) nextInput.focus()
@@ -414,13 +399,12 @@ export default function WordQuiz() {
                                     onKeyDown={(e) => handleKeyDown(e, inputIndex)}
                                     placeholder={getHintPlaceholder(index, inputIndex)}
                                     data-index={inputIndex}
-                                    className={`w-24 min-w-[96px] h-[50px] text-2xl text-center rounded-md bg-[#ECEAFC] border-2 border-[#D1CFFA] focus:outline-none focus:border-[var(--color-main)] ${
-                                        quizResults[index] === true
-                                            ? 'text-green-500 border-green-500 bg-green-100'
-                                            : quizResults[index] === false
+                                    className={`w-24 min-w-[96px] h-[50px] text-2xl text-center rounded-md bg-[#ECEAFC] border-2 border-[#D1CFFA] focus:outline-none focus:border-[var(--color-main)] ${quizResults[index] === true
+                                        ? 'text-green-500 border-green-500 bg-green-100'
+                                        : quizResults[index] === false
                                             ? 'text-[var(--color-black)] border-red-500 bg-red-100'
                                             : 'text-[var(--color-black)]'
-                                    } placeholder-gray-400`}
+                                        } placeholder-gray-400`}
                                     readOnly={quizResults[index] === true || showButtons[index]}
                                 />
                             ))}
@@ -432,13 +416,15 @@ export default function WordQuiz() {
                             onChange={handleInputChange}
                             onKeyDown={handleKeyDown}
                             placeholder={getHintPlaceholder(index)}
-                            className={`w-44 min-w-[140px] h-[50px] text-2xl text-center rounded-md bg-[#ECEAFC] border-2 border-[#D1CFFA] focus:outline-none focus:border-[var(--color-main)] ${
-                                quizResults[index] === true
-                                    ? 'text-green-500 border-green-500 bg-green-100'
-                                    : quizResults[index] === false
+                            style={{
+                                width: `${Math.max(current.word.length * 1.2, 8)}ch`, // 최소 8ch, 길이에 따라 확장
+                            }}
+                            className={`w-44 min-w-[140px] h-[50px] text-2xl text-center rounded-md bg-[#ECEAFC] border-2 border-[#D1CFFA] focus:outline-none focus:border-[var(--color-main)] ${quizResults[index] === true
+                                ? 'text-green-500 border-green-500 bg-green-100'
+                                : quizResults[index] === false
                                     ? 'text-[var(--color-black)] border-red-500 bg-red-100'
                                     : 'text-[var(--color-black)]'
-                            } placeholder-gray-400`}
+                                } placeholder-gray-400`}
                             readOnly={quizResults[index] === true || showButtons[index]}
                         />
                     )}
@@ -485,8 +471,8 @@ export default function WordQuiz() {
                             {quizResults[index] === true
                                 ? '정답'
                                 : hintCounts[index] >= maxHint
-                                ? '오답'
-                                : `힌트 사용: ${hintCounts[index]} / ${maxHint}`}
+                                    ? '오답'
+                                    : `힌트 사용: ${hintCounts[index]} / ${maxHint}`}
                         </p>
                     </div>
 

@@ -9,7 +9,9 @@ import client from '@/lib/backend/client'
 import { useRouter } from 'next/navigation'
 import { useEffect, useRef, useState } from 'react'
 
-type VideoResponse = components['schemas']['VideoResponse']
+type VideoResponse = components['schemas']['VideoResponse'] & {
+    duration?: string // 동영상 길이 추가
+}
 
 // 카테고리 타입 정의
 type Category = {
@@ -286,6 +288,15 @@ export default function VideoLearningPage() {
                                                 className="w-full h-full object-cover rounded-md"
                                             />
                                         </div>
+
+                                        {/* 동영상 길이 표시 */}
+                                         {typeof video.duration === 'string' && video.duration.trim() !== '' && (
+                                            <div className="absolute bottom-2 right-2 bg-black/70 text-white text-xs px-2 py-1 rounded">
+                                                {video.duration}
+                                            </div>
+                                        )}
+
+
                                         {video.videoId && (
                                             <button
                                                 onClick={(e) => handleBookmarkToggle(e, video.videoId)}

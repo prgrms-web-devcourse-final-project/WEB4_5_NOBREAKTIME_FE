@@ -6,7 +6,9 @@ import client from '@/lib/backend/client'
 import { useRouter } from 'next/navigation'
 import { useEffect, useState } from 'react'
 
-type VideoResponse = components['schemas']['VideoResponse']
+type VideoResponse = components['schemas']['VideoResponse'] & {
+    duration?: string
+}
 
 export default function BookmarkPage() {
     const [videoList, setVideoList] = useState<VideoResponse[]>([])
@@ -75,6 +77,14 @@ export default function BookmarkPage() {
                                             alt={video.title}
                                             className="w-full h-full object-cover rounded-md"
                                         />
+
+                                        {/* 동영상 길이 표시 */}
+                                        {typeof video.duration === 'string' && video.duration.trim() !== '' && (
+                                            <div className="absolute bottom-2 right-2 bg-black/70 text-white text-xs px-2 py-1 rounded">
+                                                {video.duration}
+                                            </div>
+                                        )}
+
                                         {video.videoId && (
                                             <button
                                                 onClick={(e) => handleBookmarkToggle(e, video.videoId)}
