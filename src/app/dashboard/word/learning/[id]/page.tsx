@@ -164,7 +164,7 @@ export default function WordLearning() {
                         ))}
                     </div>
 
-                    <p className="text-5xl font-bold text-center">{current.word}</p>
+                    <p className="text-5xl font-bold text-center break-all">{current.word}</p>
 
                     <button className="flex items-center gap-2 justify-center" onClick={() => speak(current.word)}>
                         <Image src="/assets/volume.svg" alt="volume" width={24} height={24} />

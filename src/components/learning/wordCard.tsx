@@ -182,7 +182,7 @@ export default function WordCard({
                                 )}
                             </div>
                         </div>
-                        <p className="text-2xl font-bold text-center">{word.word}</p>
+                        <p className="text-2xl font-bold text-center break-words">{word.word}</p>
                         {!isEditMode ? (
                             <button
                                 className="flex items-center gap-2 justify-center"
