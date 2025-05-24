@@ -46,7 +46,7 @@ export default function QuizComplete({
                     {score} / {totalCount}
                 </div>
                 <Image src="/assets/ok.svg" alt="complete" width={80} height={80} />
-                <p className="text-xl text-gray-600">오늘의 테스트를 완료했어요</p>
+                <p className="text-xl text-gray-600">테스트를 완료했어요</p>
                 {incorrectCount > 0 ? (
                     <>
                         <p className="text-lg text-gray-500">틀린 문제 {incorrectCount}개를 다시 풀어볼까요?</p>
