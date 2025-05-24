@@ -378,7 +378,7 @@ export default function WordLearningPage() {
             }
             toast('단어장이 삭제되었습니다.')
         } catch (error) {
-            toast.error('오류가 발생했습니다.')
+            toast.error('단어장 삭제에 실패했습니다.')
         } finally {
             setIsLoading(false)
         }
