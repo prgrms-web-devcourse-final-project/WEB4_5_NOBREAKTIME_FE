@@ -2,13 +2,32 @@
 
 import { ChartContainer } from '@/components/ui/chart'
 import client from '@/lib/backend/client'
-import { useState } from 'react'
+import { useEffect, useState } from 'react'
 import { Cell as ReCell, Pie as RePie, PieChart as RePieChart } from 'recharts'
 
 export default function DailyGoal() {
-    const [videoGoal, setVideoGoal] = useState(10)
-    const [wordGoal, setWordGoal] = useState(30)
+    const [videoGoal, setVideoGoal] = useState(3)
+    const [wordGoal, setWordGoal] = useState(20)
     const [goalRate, setGoalRate] = useState(0)
+
+    useEffect(() => {
+        fetchInitialGoal()
+    }, [])
+
+    async function fetchInitialGoal() {
+        try {
+            const response = await client.GET('/api/v1/dashboard/statistics')
+            const dailyGoal = response.data?.data?.dailyGoal
+            if (dailyGoal) {
+                setVideoGoal(dailyGoal.videoGoal ?? 3)  // undefined면 3 사용
+                setWordGoal(dailyGoal.wordGoal ?? 20)  // undefined면 20 사용
+                setGoalRate(dailyGoal.achievementRate ?? 0)
+            }
+        } catch {
+            // 에러 시 기본값 유지
+            console.error('Failed to fetch initial goal data.')
+        }
+    }
 
     async function handleVideoGoalChange(e: React.ChangeEvent<HTMLSelectElement>) {
         const newVideoGoal = Number(e.target.value)
@@ -32,8 +51,8 @@ export default function DailyGoal() {
     return (
         <div className="flex flex-col items-center w-full h-full">
             <div className="flex items-center gap-4 text-sm mb-1 w-full relative z-10">
-                <GoalItem label="영상" options={[10, 20, 30]} value={videoGoal} onChange={handleVideoGoalChange} />
-                <GoalItem label="단어" options={[30, 50, 100]} value={wordGoal} onChange={handleWordGoalChange} />
+                <GoalItem label="영상" options={[3, 10, 20, 30]} value={videoGoal} onChange={handleVideoGoalChange} />
+                <GoalItem label="단어" options={[10, 20, 30, 50, 100]} value={wordGoal} onChange={handleWordGoalChange} />
             </div>
             <div className="flex-1 flex items-center justify-center w-full -mt-20">
                 <ChartContainer config={{ goal: { color: '#3B82F6', label: '달성률' } }}>
@@ -59,7 +78,7 @@ export default function DailyGoal() {
                         </RePieChart>
                         <div className="absolute inset-0 flex flex-col items-center justify-center pointer-events-none">
                             <span className="text-3xl font-bold text-[var(--color-black)]">{goalRate}%</span>
-                            <span className="text-base text-gray-500 mt-1">달성률</span>
+                            <span className="text-base text-gray-500 mt-1">달성률</span>    
                         </div>
                     </div>
                 </ChartContainer>
