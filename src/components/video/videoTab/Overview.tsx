@@ -76,6 +76,9 @@ const Overview: React.FC<OverviewProps> = ({
             setSelectedBookId(expressionBooks[0].id)
         }
     }, [showExpressionModal, expressionBooks])
+    
+    const escapeRegExp = (str: string) =>
+        str.replace(/[.*+?^${}()|[\]\\]/g, '\\$&')
 
     // 텍스트에서 키워드를 찾아 span 태그로 감싸는 함수
     const highlightKeywords = (text: string, keywords: Keyword[] = []) => {
@@ -86,7 +89,9 @@ const Overview: React.FC<OverviewProps> = ({
         let result = text
 
         sortedKeywords.forEach((keyword) => {
-            const regex = new RegExp(`\\b${keyword.word}\\b`, 'gi')
+            const safeWord = escapeRegExp(keyword.word || '') // 특수문자 보호
+            const regex = new RegExp(`${safeWord}`, 'g') // ← 경계 제거
+
             result = result.replace(
                 regex,
                 `<span class="relative inline-block text-purple-800 font-bold cursor-help" data-keyword="${keyword.word}">$&</span>`,
@@ -243,9 +248,8 @@ const Overview: React.FC<OverviewProps> = ({
                         <div className="flex items-center gap-2">
                             <button
                                 onClick={onPrevSubtitle}
-                                className={`px-2 py-1 rounded ${
-                                    onPrevSubtitle ? 'bg-gray-200' : 'bg-gray-100 text-gray-400 cursor-not-allowed'
-                                }`}
+                                className={`px-2 py-1 rounded ${onPrevSubtitle ? 'bg-gray-200' : 'bg-gray-100 text-gray-400 cursor-not-allowed'
+                                    }`}
                                 disabled={!onPrevSubtitle}
                             >
                                 &larr;
@@ -253,9 +257,8 @@ const Overview: React.FC<OverviewProps> = ({
                             <span className="text-sm font-medium">{subtitleIndex + 1}</span>
                             <button
                                 onClick={onNextSubtitle}
-                                className={`px-2 py-1 rounded ${
-                                    onNextSubtitle ? 'bg-gray-200' : 'bg-gray-100 text-gray-400 cursor-not-allowed'
-                                }`}
+                                className={`px-2 py-1 rounded ${onNextSubtitle ? 'bg-gray-200' : 'bg-gray-100 text-gray-400 cursor-not-allowed'
+                                    }`}
                                 disabled={!onNextSubtitle}
                             >
                                 &rarr;
@@ -265,14 +268,12 @@ const Overview: React.FC<OverviewProps> = ({
                             <span className="text-sm">한국어 자막</span>
                             <button
                                 onClick={() => setShowTranscript(!showTranscript)}
-                                className={`w-12 h-6 rounded-full relative transition-colors ${
-                                    showTranscript ? 'bg-[var(--color-main)]' : 'bg-gray-300'
-                                }`}
+                                className={`w-12 h-6 rounded-full relative transition-colors ${showTranscript ? 'bg-[var(--color-main)]' : 'bg-gray-300'
+                                    }`}
                             >
                                 <span
-                                    className={`absolute top-1 w-4 h-4 rounded-full bg-white transition-transform ${
-                                        showTranscript ? 'left-7' : 'left-1'
-                                    }`}
+                                    className={`absolute top-1 w-4 h-4 rounded-full bg-white transition-transform ${showTranscript ? 'left-7' : 'left-1'
+                                        }`}
                                 />
                             </button>
                         </div>
