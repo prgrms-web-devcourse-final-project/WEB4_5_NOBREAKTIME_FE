@@ -1,7 +1,7 @@
 'use client'
 
 import { Button } from '@/components/ui/button'
-import { Dialog, DialogContent, DialogFooter, DialogHeader, DialogTitle } from '@/components/ui/dialog'
+import {  Dialog, DialogContent, DialogFooter, DialogHeader, DialogTitle } from '@/components/ui/dialog'
 import { Input } from '@/components/ui/input'
 import client from '@/lib/backend/client'
 import { useGlobalLoginMember } from '@/stores/auth/loginMember'
@@ -30,6 +30,7 @@ const LANGUAGES = [
     { code: 'ENGLISH' as Language, label: '영어', image: '/assets/america.svg' },
     { code: 'JAPANESE' as Language, label: '일본어', image: '/assets/japan.svg' },
 ]
+
 
 export default function MyPage() {
     const { loginMember, setLoginMember, logoutAndHome } = useGlobalLoginMember()
@@ -69,7 +70,7 @@ export default function MyPage() {
         setIsImageLoading(true)
         try {
             const formData = new FormData()
-            formData.append('file', file)
+            formData.append('file', file)   
 
             const { data, error } = await client.PATCH('/api/v1/members/me/profile', {
                 body: formData as any,
@@ -128,7 +129,7 @@ export default function MyPage() {
             const { error } = await client.PATCH('/api/v1/members/me', {
                 body: {
                     nickname,
-                    email: loginMember.email,
+                    language: loginMember.language,
                 },
             })
 
@@ -157,11 +158,10 @@ export default function MyPage() {
 
         setIsLanguageLoading(true)
         try {
-            const { error } = await client.PATCH('/api/v1/members/update-language', {
-                params: {
-                    query: {
-                        language: selectedLanguage,
-                    },
+            const { error } = await client.PATCH('/api/v1/members/me', {
+                body: {
+                    nickname,
+                    language: selectedLanguage,
                 },
             })
 
@@ -183,6 +183,14 @@ export default function MyPage() {
         } finally {
             setIsLanguageLoading(false)
         }
+    }
+
+    const handleLanguageButtonClick = () => {
+        if (loginMember.subscriptionType !== 'PREMIUM') {
+            alert('PREMIUM 회원인 경우에만 언어 변경이 가능합니다.');
+            return;
+        }
+        setIsLanguageModalOpen(true);
     }
 
     const handleWithdrawClick = () => {
@@ -271,9 +279,8 @@ export default function MyPage() {
                             </div>
                             <label
                                 htmlFor="profile-image"
-                                className={`absolute inset-0 flex items-center justify-center bg-black bg-opacity-50 rounded-full opacity-0 group-hover:opacity-100 transition-opacity cursor-pointer ${
-                                    isImageLoading ? 'hidden' : ''
-                                }`}
+                                className={`absolute inset-0 flex items-center justify-center bg-black bg-opacity-50 rounded-full opacity-0 group-hover:opacity-100 transition-opacity cursor-pointer ${isImageLoading ? 'hidden' : ''
+                                    }`}
                             >
                                 <span className="text-white text-sm font-medium">프로필 변경</span>
                             </label>
@@ -318,21 +325,21 @@ export default function MyPage() {
                         <div className="flex flex-col gap-1">
                             <div className="flex items-center gap-2 mb-4">
                                 <span className="text-sm text-[var(--color-black)]">선택한 언어</span>
-                                {/* <button
+                                {<button
                                     onClick={() => setIsLanguageModalOpen(true)}
                                     className="p-1 -ml-1 hover:bg-gray-100 rounded-full transition-colors"
                                     title="언어 수정"
                                 >
                                     <Pencil className="w-4 h-4 text-gray-500" />
-                                </button> */}
+                                </button>}
                             </div>
                             <div className="flex items-center gap-3">
                                 <span className="text-lg font-semibold text-[var(--color-main)]">
                                     {language === 'ENGLISH'
                                         ? '영어'
                                         : language === 'JAPANESE'
-                                        ? '일본어'
-                                        : '미설정'}
+                                            ? '일본어'
+                                            : '미설정'}
                                 </span>
                                 <Image
                                     src={languageFlags[language]}
@@ -346,11 +353,11 @@ export default function MyPage() {
                     </div>
 
                     {/* 수정 버튼 */}
-                    {/* <div className="flex gap-3">
+                    {<div className="flex gap-3">
                         <button className="px-6 py-3 text-sm font-medium bg-[var(--color-main)] text-white rounded-lg shadow-sm hover:bg-opacity-90 transition-all duration-200">
                             프로필 수정
                         </button>
-                    </div> */}
+                    </div>}
                     <div className="flex justify-between items-end gap-3 mt-8 w-full">
                         <Button
                             variant="default"
@@ -414,11 +421,10 @@ export default function MyPage() {
                                     <button
                                         key={lang.code}
                                         onClick={() => setSelectedLanguage(lang.code)}
-                                        className={`flex flex-col items-center gap-2 p-4 rounded-lg border-2 w-[100px] ${
-                                            selectedLanguage === lang.code
-                                                ? 'border-[var(--color-point)] bg-[var(--color-sub-2)]'
-                                                : 'border-gray-200'
-                                        }`}
+                                        className={`flex flex-col items-center gap-2 p-4 rounded-lg border-2 w-[100px] ${selectedLanguage === lang.code
+                                            ? 'border-[var(--color-point)] bg-[var(--color-sub-2)]'
+                                            : 'border-gray-200'
+                                            }`}
                                     >
                                         <Image
                                             src={lang.image}
