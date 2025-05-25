@@ -11,6 +11,7 @@ import { useGlobalLoginMember } from '@/stores/auth/loginMember'
 import Image from 'next/image'
 import Link from 'next/link'
 import { useEffect, useState } from 'react'
+import DashboardIcon from '@/components/icon/dashboardIcon'
 
 type VideoHistoryResponse = components['schemas']['VideoHistoryResponse']
 type StatisticResponse = components['schemas']['StatisticResponse']
@@ -51,7 +52,10 @@ export default function DashboardPage() {
         <div className="flex flex-col h-screen gap-2">
             {/* 상단 제목 */}
             <div className="h-[40px] flex items-center px-2">
-                <h3 className="text-2xl font-bold text-[var(--color-black)]">Dashboard</h3>
+                <span className="text-[var(--color-main)]">
+                                    <DashboardIcon />
+                                </span>
+                <h3 className="text-2xl font-bold text-[var(--color-black)]">&nbsp;Dashboard</h3>
             </div>
 
             {/* 본문 레이아웃 */}
