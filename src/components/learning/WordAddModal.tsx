@@ -140,7 +140,7 @@ export default function WordAddModal({
                         value={newWordData.word}
                         onChange={handleInputChange}
                         className="w-full border border-gray-300 rounded-md px-3 py-2 focus:outline-none focus:ring-2 focus:ring-[var(--color-main)]"
-                        placeholder="영단어를 입력하세요"
+                        placeholder="단어를 입력하세요"
                         required
                     />
                 </div>
