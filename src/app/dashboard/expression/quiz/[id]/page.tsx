@@ -200,60 +200,64 @@ export default function ExpressionQuiz() {
 
     const handleSubmit = () => {
         if (blanks.includes('')) {
-            setWarningMessage(true)
-            return
+            setWarningMessage(true);
+            return;
         }
-        const blanksCopy = [...blanks]
-        let userAnswer = parts
-            .map((part) => {
-                if (part.startsWith('{}')) {
-                    return blanksCopy.shift() || ''
-                }
-                return part
-            })
-            .join('')
-        const result = userAnswer === current.original
-        setIsCorrect(result)
 
-        // 결과 저장
+        const correctWords = current?.original?.split(/\s+/).map(w => w.replace(/[.,]/g, '')) || [];
+        const userWords = blanks.map(w => w.replace(/[.,]/g, ''));
+
+        // 위치별로 정확히 일치하는지 확인
+        let isCorrectAnswer = true;
+        for (let i = 0; i < userWords.length; i++) {
+            if (userWords[i] !== correctWords[i]) {
+                isCorrectAnswer = false;
+                break;
+            }
+        }
+
+        setIsCorrect(isCorrectAnswer);
+
         setQuizResults((prev) => ({
             ...prev,
             [index]: {
-                isCorrect: result,
+                isCorrect: isCorrectAnswer,
                 blanks,
                 usedChoices,
             },
-        }))
+        }));
 
         // 퀴즈 결과 저장 API 호출
         const saveQuizResult = async () => {
             try {
                 const response = await client.POST('/api/v1/expressionbooks/quiz/result', {
                     body: {
-                        quizId: quizData.quizId,
-                        expressionBookId: current.expressionId,
+                        quizId: quizData?.quizId,
+                        expressionBookId: current?.expressionId,
                         expressionId: expressionBookId,
-                        correct: result,
+                        correct: isCorrectAnswer,
                     },
-                })
+                });
 
                 if (response.error) {
-                    console.error('퀴즈 결과 저장 실패:', response.error)
+                    console.error('퀴즈 결과 저장 실패:', response.error);
                 }
             } catch (error) {
-                console.error('퀴즈 결과 저장 중 오류 발생:', error)
+                console.error('퀴즈 결과 저장 중 오류 발생:', error);
             }
-        }
+        };
 
-        saveQuizResult()
-    }
+        saveQuizResult();  // 문제 제출과 동시에 결과 전송
+    };
+
+
 
     const handlePrev = () => {
         if (index > 0) setIndex(index - 1)
     }
 
     return (
-        <>
+        <div className="h-screen overflow-y-auto bg-white">
             <div className="flex items-center gap-2">
                 <span className="text-[var(--color-main)]">
                     <ExpressionIcon />
@@ -283,59 +287,37 @@ export default function ExpressionQuiz() {
                                             return (
                                                 <span key={idx} className="inline-flex items-center">
                                                     <span
-                                                        className={`min-w-[100px] h-[40px] flex items-center justify-center bg-white border-2 rounded-lg text-base relative group ${
-                                                            blanks[
-                                                                parts.slice(0, idx).filter((p) => p.startsWith('{}'))
-                                                                    .length
-                                                            ]
-                                                                ? isCorrect === null
-                                                                    ? 'border-[#D1CFFA] text-[#333333]'
-                                                                    : isCorrect
+                                                        className={`min-w-[100px] h-[40px] flex items-center justify-center bg-white border-2 rounded-lg text-base relative group ${blanks[
+                                                            parts.slice(0, idx).filter((p) => p.startsWith('{}'))
+                                                                .length
+                                                        ]
+                                                            ? isCorrect === null
+                                                                ? 'border-[#D1CFFA] text-[#333333]'
+                                                                : isCorrect
                                                                     ? 'border-green-500 text-green-600'
                                                                     : (() => {
-                                                                          const currentIndex = parts
-                                                                              .slice(0, idx)
-                                                                              .filter((p) => p.startsWith('{}')).length
-                                                                          const userWord = blanks[
-                                                                              currentIndex
-                                                                          ]?.replace(/[.,]/g, '')
-                                                                          const originalWords =
-                                                                              current?.original
-                                                                                  ?.split(' ')
-                                                                                  .map((word) =>
-                                                                                      word.replace(/[.,]/g, ''),
-                                                                                  ) || []
-                                                                          const correctPositionIndex =
-                                                                              originalWords.indexOf(userWord)
-
-                                                                          // 단어가 original에 없거나, 현재 위치가 original에서의 위치와 다른 경우
-                                                                          return correctPositionIndex === -1 ||
-                                                                              correctPositionIndex !== currentIndex
-                                                                              ? 'border-red-500 text-red-600 hover:cursor-help'
-                                                                              : 'border-green-500 text-green-600'
-                                                                      })()
-                                                                : 'border-[#D1CFFA] bg-[#F5F3FF]'
-                                                        }`}
+                                                                        const currentIndex = parts
+                                                                            .slice(0, idx)
+                                                                            .filter((p) => p.startsWith('{}')).length
+                                                                        const userWord = blanks[currentIndex]?.replace(/[.,]/g, '')
+                                                                        const originalWords =
+                                                                            current?.original?.split(' ').map((word) => word.replace(/[.,]/g, '')) || []
+                                                                        const correctPositionIndex = originalWords.indexOf(userWord)
+                                                                        return correctPositionIndex === -1 || correctPositionIndex !== currentIndex
+                                                                            ? 'border-red-500 text-red-600 hover:cursor-help'
+                                                                            : 'border-green-500 text-green-600'
+                                                                    })()
+                                                            : 'border-[#D1CFFA] bg-[#F5F3FF]'
+                                                            }`}
                                                     >
-                                                        {blanks[
-                                                            parts.slice(0, idx).filter((p) => p.startsWith('{}')).length
-                                                        ] || ''}
+                                                        {blanks[parts.slice(0, idx).filter((p) => p.startsWith('{}')).length] || ''}
                                                         {!isCorrect &&
                                                             isCorrect !== null &&
                                                             (() => {
-                                                                const currentIndex = parts
-                                                                    .slice(0, idx)
-                                                                    .filter((p) => p.startsWith('{}')).length
-                                                                const userWord = blanks[currentIndex]?.replace(
-                                                                    /[.,]/g,
-                                                                    '',
-                                                                )
-                                                                const originalWords =
-                                                                    current?.original
-                                                                        ?.split(' ')
-                                                                        .map((word) => word.replace(/[.,]/g, '')) || []
+                                                                const currentIndex = parts.slice(0, idx).filter((p) => p.startsWith('{}')).length
+                                                                const userWord = blanks[currentIndex]?.replace(/[.,]/g, '')
+                                                                const originalWords = current?.original?.split(' ').map((word) => word.replace(/[.,]/g, '')) || []
                                                                 const correctWord = originalWords[currentIndex]
-
                                                                 if (userWord !== correctWord) {
                                                                     return (
                                                                         <div className="absolute invisible group-hover:visible bg-black text-white text-sm px-2 py-1 rounded -top-8 left-1/2 transform -translate-x-1/2 whitespace-nowrap">
@@ -365,13 +347,10 @@ export default function ExpressionQuiz() {
                         {current.choices?.map((choice, idx) => (
                             <button
                                 key={idx}
-                                className={`px-4 py-2 rounded-lg bg-[#ECEAFC] border-2 border-[#D1CFFA] text-[#6C2FFB] ${
-                                    usedChoices.includes(idx) ? 'opacity-50' : ''
-                                }`}
+                                className={`px-4 py-2 rounded-lg bg-[#ECEAFC] border-2 border-[#D1CFFA] text-[#6C2FFB] ${usedChoices.includes(idx) ? 'opacity-50' : ''
+                                    }`}
                                 onClick={() => handleChoice(choice, idx)}
-                                disabled={
-                                    isCorrect !== null || (!usedChoices.includes(idx) && blanks.every((b) => b !== ''))
-                                }
+                                disabled={isCorrect !== null || (!usedChoices.includes(idx) && blanks.every((b) => b !== ''))}
                             >
                                 {choice}
                             </button>
@@ -389,8 +368,8 @@ export default function ExpressionQuiz() {
                                     isCorrect === true
                                         ? '/assets/ok.svg'
                                         : isCorrect === false
-                                        ? '/assets/fail.svg'
-                                        : '/assets/check.svg'
+                                            ? '/assets/fail.svg'
+                                            : '/assets/check.svg'
                                 }
                                 alt="result"
                                 width={80}
@@ -401,10 +380,10 @@ export default function ExpressionQuiz() {
                             {warningMessage
                                 ? '빈칸을 모두 채워주세요'
                                 : isCorrect === null
-                                ? '정답 확인'
-                                : isCorrect
-                                ? '정답입니다!'
-                                : '틀렸습니다.'}
+                                    ? '정답 확인'
+                                    : isCorrect
+                                        ? '정답입니다!'
+                                        : '틀렸습니다.'}
                         </p>
                     </div>
 
@@ -434,6 +413,6 @@ export default function ExpressionQuiz() {
                     </div>
                 </div>
             </div>
-        </>
+        </div>
     )
 }
