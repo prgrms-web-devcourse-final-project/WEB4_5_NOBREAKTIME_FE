@@ -148,6 +148,16 @@ const ExpressionQuiz: React.FC<ExpressionQuizProps> = ({ fontSize, videoId }) =>
     return (
         <div className="w-full h-full overflow-y-auto" style={{ fontSize: `${fontSize}px` }}>
             <div className="bg-white rounded-lg p-4 relative h-full flex flex-col">
+
+                {expressionQuiz?.meaning && (
+                    <div
+                        className="bg-purple-50 p-2 rounded text-black-800 text-sm mb-3 mt-2"
+                        style={{ fontSize: `${fontSize}px` }}
+                    >
+                        {expressionQuiz.meaning}
+                    </div>
+                )}
+
                 <div className="mb-4">
                     {expressionQuiz &&
                         expressionParts.map((part, idx) =>
