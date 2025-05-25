@@ -91,35 +91,35 @@ export default function WordQuiz() {
         }
     }, [selectedId])
 
-    // 최종 결과 저장 함수
-    const saveAllResults = async () => {
-        try {
-            const savePromises = words
-                .map((word, idx) => {
-                    if (quizResults[idx] !== null) {
-                        const params = {
-                            quizId: word.quizId,
-                            wordbookItemId: word.wordbookItemId,
-                            isCorrect: quizResults[idx],
-                        }
-                        return client.POST(
-                            selectedType === 'today'
-                                ? '/api/v1/wordbooks/quiz/total/result'
-                                : '/api/v1/wordbooks/quiz/result',
-                            {
-                                body: params,
-                            },
-                        )
-                    }
-                    return null
-                })
-                .filter(Boolean)
+    // // 최종 결과 저장 함수
+    // const saveAllResults = async () => {
+    //     try {
+    //         const savePromises = words
+    //             .map((word, idx) => {
+    //                 if (quizResults[idx] !== null) {
+    //                     const params = {
+    //                         quizId: word.quizId,
+    //                         wordbookItemId: word.wordbookItemId,
+    //                         isCorrect: quizResults[idx],
+    //                     }
+    //                     return client.POST(
+    //                         selectedType === 'today'
+    //                             ? '/api/v1/wordbooks/quiz/total/result'
+    //                             : '/api/v1/wordbooks/quiz/result',
+    //                         {
+    //                             body: params,
+    //                         },
+    //                     )
+    //                 }
+    //                 return null
+    //             })
+    //             .filter(Boolean)
 
-            await Promise.all(savePromises)
-        } catch (error) {
-            console.error('결과 저장 실패:', error)
-        }
-    }
+    //         await Promise.all(savePromises)
+    //     } catch (error) {
+    //         console.error('결과 저장 실패:', error)
+    //     }
+    // }
 
     const getHintPlaceholder = (index: number, inputIndex?: number) => {
         if (hintCounts[index] === 0) return ''
@@ -142,31 +142,21 @@ export default function WordQuiz() {
         }
     }
 
-    const handleHint = async () => {
-        if (hintCounts[index] >= maxHint) return
 
-        // 힌트 카운트 증가
-        const newHintCounts = [...hintCounts]
-        newHintCounts[index] = hintCounts[index] + 1
-        setHintCounts(newHintCounts)
+    const handleHint = () => {
+        if (hintCounts[index] >= maxHint) return;
 
-        // 사용자 입력 초기화
-        const newUserInputs = [...userInputs]
-        newUserInputs[index] = ''
-        setUserInputs(newUserInputs)
+        const newHintCounts = [...hintCounts];
+        newHintCounts[index]++;
+        setHintCounts(newHintCounts);
 
-        try {
-            await client.POST('/api/v1/wordbooks/quiz/result', {
-                body: {
-                    quizId: words[index].quizId,
-                    wordbookItemId: words[index].wordbookItemId,
-                    isCorrect: false,
-                },
-            })
-        } catch (error) {
-            console.error('힌트 사용으로 인한 오답 처리 중 오류:', error)
-        }
-    }
+        // 정답 입력으로 넘어갈 때 최종 전송하므로 힌트는 상태만 표시
+        const newQuizResults = [...quizResults];
+        newQuizResults[index] = false; // 힌트 사용 시 틀린 것으로 기록
+        setQuizResults(newQuizResults);
+    };
+
+
 
     const handleInputChange = (e: React.ChangeEvent<HTMLInputElement>) => {
         // 정답을 맞췄거나 이동 버튼이 표시된 상태면 입력 불가
@@ -191,82 +181,50 @@ export default function WordQuiz() {
     }
 
     const handleKeyDown = async (e: React.KeyboardEvent<HTMLInputElement>, inputIndex?: number) => {
-        if (e.key === 'Enter') {
-            const currentWord = words[index].word
-            const isMultiWord = currentWord.includes(' ')
-            let isAnswerCorrect = false
-            let currentInput = ''
+        if (e.key !== 'Enter') return;
+        const input = userInputs[index].trim().toLowerCase();
+        const correctAnswer = words[index].word.toLowerCase();
 
-            if (isMultiWord) {
-                currentInput = multiInputs[index].join(' ').trim()
-                isAnswerCorrect = currentInput.toLowerCase() === currentWord.toLowerCase()
-            } else {
-                currentInput = userInputs[index].trim()
-                isAnswerCorrect = currentInput.toLowerCase() === currentWord.toLowerCase()
-            }
+        if (!input) return;
 
-            // 입력값이 비어있으면 처리하지 않음
-            if (!currentInput) return
+        if (input === correctAnswer) {
+            const newResults = [...quizResults];
+            newResults[index] = hintCounts[index] > 0 ? false : true; // 힌트 사용 여부로 판정
+            setQuizResults(newResults);
 
-            if (hintCounts[index] === 0) {
-                if (isAnswerCorrect) {
-                    saveQuizResult(index, true)
-                    const newShowButtons = [...showButtons]
-                    newShowButtons[index] = true
-                    setShowButtons(newShowButtons)
+            const newShow = [...showButtons];
+            newShow[index] = true;
+            setShowButtons(newShow);
 
-                    // 서버에 정답 결과 저장
-                    if (index === words.length - 1 && isAnswerCorrect) {
-                        setShowFinalButton(true);
-                    }
-                } else {
-                    const newQuizResults = [...quizResults]
-                    newQuizResults[index] = false
-                    setQuizResults(newQuizResults)
-
-                    try {
-                        await client.POST('/api/v1/wordbooks/quiz/result', {
-                            body: {
-                                quizId: words[index].quizId,
-                                wordbookItemId: words[index].wordbookItemId,
-                                isCorrect: false,
-                            },
-                        })
-                    } catch (error) {
-                        console.error('오답 처리 중 오류:', error)
-                    }
-                }
-            } else if (isAnswerCorrect) {
-                saveQuizResult(index, true)
-                const newShowButtons = [...showButtons]
-                newShowButtons[index] = true
-                setShowButtons(newShowButtons)
-
-                // 마지막 문제에서 정답을 맞춘 경우 최종 버튼 표시
-                if (index === words.length - 1) {
-                    setShowFinalButton(true);
-                }
-            }
-
-            // Tab 키 이동 로직
-            if (isMultiWord && inputIndex !== undefined && inputIndex < multiInputs[index].length - 1) {
-                const nextInput = document.querySelector(`input[data-index="${inputIndex + 1}"]`) as HTMLInputElement
-                if (nextInput) nextInput.focus()
-            }
+            await client.POST(selectedType === 'today'
+                ? '/api/v1/wordbooks/quiz/total/result'
+                : '/api/v1/wordbooks/quiz/result', {
+                body: {
+                    quizId: words[index].quizId,
+                    wordbookItemId: words[index].wordbookItemId,
+                    isCorrect: hintCounts[index] > 0 ? false : true,
+                },
+            }).catch(err => console.error(err));
+        } else {
+            alert('정답을 입력해야 넘어갈 수 있어요!');
         }
-    }
+    };
 
+
+    // 이전 및 다음 버튼 핸들러
     const handlePrev = () => {
         if (index > 0) {
-            setIndex(index - 1)
+            setIndex(index - 1);
         }
-    }
+    };
 
+    // 다음 버튼 핸들러
     const handleNext = () => {
-        if (index < words.length - 1) {
-            setIndex(index + 1)
+        if (index < words.length - 1 && (quizResults[index] || showButtons[index])) {
+            setIndex(index + 1);
         }
-    }
+    };
+
 
     const saveQuizResult = (index: number, result: boolean) => {
         setQuizResults((prev) => {
@@ -281,8 +239,8 @@ export default function WordQuiz() {
     }
 
     const isQuizCompleted = () => {
-        return quizResults.every((result) => result !== null)
-    }
+        return showButtons.length === words.length && showButtons.every(show => show === true);
+    };
 
     const filterIncorrectWords = () => {
         return originalWords.filter((_, index) => quizResults[index] === false)
@@ -353,7 +311,7 @@ export default function WordQuiz() {
         const incorrectCount = filterIncorrectWords().length
 
         // 결과 저장 후 완료 화면 표시
-        saveAllResults()
+        // saveAllResults()
 
         return (
             <QuizComplete
