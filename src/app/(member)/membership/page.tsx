@@ -55,24 +55,48 @@ export default function Membership() {
         setModalOpen(true)
     }
 
-    const handleStartClick = (plan: PlanResponse) => {
+    const handleStartClick = async (plan: PlanResponse) => {
         const periodType = activeTab === 'month' ? 'MONTHLY' : activeTab === 'quarter' ? 'SIX_MONTHS' : 'YEAR'
-        const selectedPlanData = membershipPlans.find((p) => p.type === plan.type && p.period === periodType)
+        try {
+            // 결제 요청 API 호출
+            const { error, data } = await client.POST('/api/v1/payment/request', {
+                body: {
+                    type: plan.type as SubscriptionType,
+                    period: periodType as PeriodType,
+                },
+            });
 
-        if (!selectedPlanData?.priceInfo?.discountPrice) return
+            if (error) {
+                if ((error as any).status === 409) {
+                    // 서버에서 message를 내려주면 해당 메시지를 알림으로 표시
+                    const errorMessage = (error as any).data?.message || '이미 사용 중인 구독 내역이 존재하여 결제할 수 없습니다.'
+                    alert(errorMessage);
+                } else {
+                    alert('결제 요청 중 오류가 발생했습니다.');
+                    console.error(error);
+                }
+                return; // 요청 실패 시 함수 종료
+            }
 
-        // 선택한 플랜의 제목을 로컬 스토리지에 저장
-        localStorage.setItem('selectedPlanTitle', plan.title || plan.type || '')
+            const selectedPlanData = membershipPlans.find((p) => p.type === plan.type && p.period === periodType);
+            if (!selectedPlanData?.priceInfo?.discountPrice) return;
 
-        setSelectedPlan({
-            name: plan.title || plan.type || '',
-            price: selectedPlanData.priceInfo.discountPrice.toString(),
-            period: activeTab === 'month' ? '월' : activeTab === 'quarter' ? '6개월' : '년',
-            type: plan.type as SubscriptionType,
-            periodType: periodType as PeriodType,
-        })
-        setCheckoutModalOpen(true)
-    }
+            localStorage.setItem('selectedPlanTitle', plan.title || plan.type || '');
+            setSelectedPlan({
+                name: plan.title || plan.type || '',
+                price: selectedPlanData.priceInfo.discountPrice.toString(),
+                period: activeTab === 'month' ? '월' : activeTab === 'quarter' ? '6개월' : '년',
+                type: plan.type as SubscriptionType,
+                periodType: periodType as PeriodType,
+            });
+            setCheckoutModalOpen(true);
+        } catch (error: any) {
+            // 예외 처리 (서버 응답 이외의 네트워크 오류 등)
+            alert('결제 요청 중 알 수 없는 오류가 발생했습니다.');
+            console.error(error);
+        }
+    };
+
 
     if (isLoading) {
         return (
@@ -126,17 +150,16 @@ export default function Membership() {
                             <button
                                 key={term}
                                 onClick={() => setActiveTab(term as typeof activeTab)}
-                                className={`px-6 py-2 rounded-lg font-bold transition-all ${
-                                    activeTab === term
-                                        ? 'bg-[var(--color-point)] text-white'
-                                        : 'bg-[var(--color-sub-2)] text-[var(--color-main)]'
-                                }`}
+                                className={`px-6 py-2 rounded-lg font-bold transition-all ${activeTab === term
+                                    ? 'bg-[var(--color-point)] text-white'
+                                    : 'bg-[var(--color-sub-2)] text-[var(--color-main)]'
+                                    }`}
                             >
                                 {term === 'month'
                                     ? '월간 구독'
                                     : term === 'quarter'
-                                    ? '6개월 구독(10%)'
-                                    : '연간 구독(20%)'}
+                                        ? '6개월 구독(10%)'
+                                        : '연간 구독(20%)'}
                             </button>
                         ))}
                     </div>
@@ -146,11 +169,10 @@ export default function Membership() {
                         {filteredPlans.map((plan) => (
                             <div
                                 key={plan.type}
-                                className={`bg-white rounded-2xl p-8 shadow-md border-2 flex flex-col ${
-                                    plan.type === 'STANDARD'
-                                        ? 'border-[var(--color-point)] relative'
-                                        : 'border-[var(--color-sub-2)]'
-                                }`}
+                                className={`bg-white rounded-2xl p-8 shadow-md border-2 flex flex-col ${plan.type === 'STANDARD'
+                                    ? 'border-[var(--color-point)] relative'
+                                    : 'border-[var(--color-sub-2)]'
+                                    }`}
                             >
                                 {plan.type === 'STANDARD' && (
                                     <div className="absolute -top-4 left-1/2 transform -translate-x-1/2 bg-[var(--color-point)] text-white px-4 py-1 rounded-full text-sm font-bold">
@@ -178,8 +200,8 @@ export default function Membership() {
                                                 {activeTab === 'month'
                                                     ? '월'
                                                     : activeTab === 'quarter'
-                                                    ? '6개월'
-                                                    : '년'}
+                                                        ? '6개월'
+                                                        : '년'}
                                             </span>
                                         </div>
                                     </div>
@@ -213,11 +235,10 @@ export default function Membership() {
                                     </button>
                                 )}
                                 <button
-                                    className={`w-full py-3 rounded-lg font-bold transition-all mt-auto ${
-                                        plan.type === 'STANDARD'
-                                            ? 'bg-[var(--color-point)] text-white hover:bg-opacity-90'
-                                            : 'bg-[var(--color-sub-2)] text-[var(--color-main)] hover:bg-opacity-80'
-                                    }`}
+                                    className={`w-full py-3 rounded-lg font-bold transition-all mt-auto ${plan.type === 'STANDARD'
+                                        ? 'bg-[var(--color-point)] text-white hover:bg-opacity-90'
+                                        : 'bg-[var(--color-sub-2)] text-[var(--color-main)] hover:bg-opacity-80'
+                                        }`}
                                     onClick={() => handleStartClick(plan)}
                                 >
                                     시작하기
