@@ -326,7 +326,7 @@ export default function MyPage() {
                             <div className="flex items-center gap-2 mb-4">
                                 <span className="text-sm text-[var(--color-black)]">선택한 언어</span>
                                 {<button
-                                    onClick={() => setIsLanguageModalOpen(true)}
+                                    onClick={handleLanguageButtonClick}
                                     className="p-1 -ml-1 hover:bg-gray-100 rounded-full transition-colors"
                                     title="언어 수정"
                                 >
