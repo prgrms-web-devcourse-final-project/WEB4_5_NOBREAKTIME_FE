@@ -78,7 +78,7 @@ export default function Home() {
                 {/* Carousel Section */}
                 <section className="flex flex-col gap-6 items-center text-center px-4 md:px-10 py-16">
                     <h3 className="text-[var(--color-black)] text-3xl md:text-5xl font-bold leading-snug">
-                        쉽게 배우는 영단어, 자연스러운 말하기!
+                        쉽게 배우는 외국어, 자연스러운 말하기!
                     </h3>
                     <p className="text-[var(--color-black)] text-lg md:text-2xl font-medium">
                         그동안 어려웠던 언어의 재미! 말랑~ 하게 말하기도 단어도 한번에 잡자!

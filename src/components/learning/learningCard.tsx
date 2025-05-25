@@ -29,7 +29,8 @@ export default function LearningCard({ title, descriptions, wordbooks, isLoading
             {/* 텍스트 설명 */}
             <div className="flex flex-col justify-center w-[40%] max-[1030px]:col-start-1 max-[1030px]:row-start-2 max-[1030px]:items-start max-[1030px]:w-[100%] ">
                 <h1 className="font-bold mb-4 learning-title leading-tight break-keep text-center lg:text-left max-[1030px]:text-left">
-                    오늘 함께할 {title} 퀴즈는?
+                    오늘 함께할<br />
+                    {title} 퀴즈는?
                 </h1>
 
                 {descriptions.map((desc, idx) => {
@@ -38,7 +39,7 @@ export default function LearningCard({ title, descriptions, wordbooks, isLoading
                     const parts = replaced.split(regex)
 
                     return (
-                        <p key={idx} className="learning-text mb-2">
+                        <p key={idx} className="mb-2 text-[clamp(1.05rem,2.2vw,1.3rem)] leading-normal break-words">
                             {parts.map((part, i) =>
                                 desc.strong.includes(part) ? (
                                     <strong key={i} className="text-[var(--color-point)] learning-strong">

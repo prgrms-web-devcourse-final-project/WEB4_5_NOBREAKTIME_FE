@@ -314,9 +314,16 @@ export default function ExpressionPage() {
                 <div className="flex flex-col flex-1 gap-2 h-full overflow-hidden">
                     {/* 상단 타이틀 */}
                     <div className="flex justify-between items-center">
-                        <h1 className="text-2xl font-bold">📚 내 표현함</h1>
+                        <h1 className="text-2xl font-bold">
+                            📚 내 표현함
+                            {searchTerm && (
+                                <span className="ml-2 text-sm text-[var(--color-point)]">
+                                    '{searchTerm}' 검색 결과
+                                </span>
+                            )}
+                        </h1>
                         <div className="flex items-center gap-2">
-                            
+
                             <button
                                 className="bg-[var(--color-main)] text-sm text-[var(--color-white)] p-2 rounded-lg hover:opacity-90 transition-opacity"
                                 onClick={() => setIsAddModalOpen(true)}
@@ -329,7 +336,7 @@ export default function ExpressionPage() {
                             >
                                 표현함 삭제
                             </button>
-                           
+
                             <DropdownCheckBox
                                 wordbooks={expressionBooks.map((book) => ({
                                     ...book,
@@ -343,11 +350,10 @@ export default function ExpressionPage() {
 
                             <button
                                 onClick={isEditMode ? handleSelectComplete : toggleEditMode}
-                                className={`flex items-center gap-1 ${
-                                    isEditMode
-                                        ? 'bg-[var(--color-point)] text-white'
-                                        : 'bg-white text-[var(--color-main)] border border-[var(--color-main)]'
-                                } px-3 py-2 rounded-md text-sm font-medium hover:bg-opacity-90 transition-colors`}
+                                className={`flex items-center gap-1 ${isEditMode
+                                    ? 'bg-[var(--color-point)] text-white'
+                                    : 'bg-white text-[var(--color-main)] border border-[var(--color-main)]'
+                                    } px-3 py-2 rounded-md text-sm font-medium hover:bg-opacity-90 transition-colors`}
                             >
                                 <svg
                                     xmlns="http://www.w3.org/2000/svg"
@@ -392,9 +398,13 @@ export default function ExpressionPage() {
                                 }}
                             />
                         ))}
-                        {filteredExpressions.length === 0 && (
+                        {filteredExpressions.length === 0 && !isLoading && (
                             <div className="col-span-2 flex items-center justify-center text-gray-500 py-8">
-                                검색 결과가 없습니다.
+                                <p className="text-xl text-gray-500">
+                                    {searchTerm.trim()
+                                        ? `'${searchTerm}'에 해당하는 표현이 없습니다.`
+                                        : '선택한 표현함에 표현이 없습니다.'}
+                                </p>
                             </div>
                         )}
                         {displayCount < filteredExpressions.length && (
