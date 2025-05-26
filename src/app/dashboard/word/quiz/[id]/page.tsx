@@ -202,7 +202,7 @@ export default function WordQuiz() {
                 body: {
                     quizId: words[index].quizId,
                     wordbookItemId: words[index].wordbookItemId,
-                    isCorrect: hintCounts[index] > 0 ? false : true,
+                    correct: hintCounts[index] > 0 ? false : true,
                 },
             }).catch(err => console.error(err));
         } else {
