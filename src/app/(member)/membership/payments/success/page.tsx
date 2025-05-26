@@ -189,6 +189,14 @@ export default function SuccessPage() {
                             subscriptionType={subscriptionType}
                             orderId={orderId}
                         />
+                        {/* 취소 버튼 추가 */}
+                        <button
+                            onClick={() => router.push('/dashboard')}
+                            className="mt-3 bg-gray-200 text-gray-700 rounded-lg text-sm font-semibold hover:bg-gray-300 transition-colors"
+                            style={{ width: '200px', padding: '12px 24px' }} // 너비 및 내부 여백 수동 조정
+                        >
+                            대시보드로 돌아가기
+                        </button>
                     </div>
                 )}
                 {!isBillingKey && <p className="text-sm text-gray-500 mb-8">잠시 후 대시보드로 이동합니다...</p>}
