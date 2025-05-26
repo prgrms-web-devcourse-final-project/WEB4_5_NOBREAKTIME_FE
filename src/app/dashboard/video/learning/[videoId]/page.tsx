@@ -50,17 +50,17 @@ function VideoLearningPage({ params }: { params: Promise<{ videoId: string }> })
             lockAcquired: {
                 stage: 'lockAcquired',
                 message: '영상 분석을 진행 중 입니다.',
-                progress: 0,
+                progress: 25,
             },
             audioExtracted: {
                 stage: 'audioExtracted',
                 message: '음성 추출을 진행 중이에요!!',
-                progress: 5,
+                progress: 50,
             },
             sttCompleted: {
                 stage: 'sttCompleted',
                 message: '자막을 생성하는 중이에요!!',
-                progress: 15,
+                progress: 75,
             },
             analysisComplete: {
                 stage: 'analysisComplete',
