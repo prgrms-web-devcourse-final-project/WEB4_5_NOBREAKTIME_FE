@@ -4,8 +4,6 @@ import Footer from '@/components/layout/footer'
 import Image from 'next/image'
 import Link from 'next/link'
 import { useRouter } from 'next/navigation'
-import { useEffect } from 'react'
-import client from '@/lib/backend/client'
 
 function Login() {
     const socialLoginForKakaoUrl = `${process.env.NEXT_PUBLIC_API_URL}/oauth2/authorization/kakao`
@@ -18,30 +16,6 @@ function Login() {
     const handleGoHome = () => {
         router.push('/')
     }
-
-    useEffect(() => {
-        const fetchUserInfo = async () => {
-            try {
-                // 현재 로그인된 회원 정보 가져오기
-                const response = await client.GET('/api/v1/members/me');
-                console.log('회원 정보:', response);
-                if (response) {
-                    // 이미 로그인된 상태라면 대시보드 페이지로 리다이렉트
-                    router.push('/dashboard');
-                }
-            } catch (error: any) {
-                if (error?.status === 409) {
-                    alert(error?.data?.message || '탈퇴 후 재가입 기간이 지나지 않아 가입할 수 없습니다.');
-                    router.push('/');
-                } else {
-                    console.error('API 호출 실패:', error);
-                    alert('네트워크 오류가 발생했습니다.');
-                }
-            }
-        }
-
-        fetchUserInfo();
-    }, []);
 
     return (
         <div className="flex flex-col h-screen">
