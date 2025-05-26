@@ -233,8 +233,8 @@ export default function ExpressionQuiz() {
                 const response = await client.POST('/api/v1/expressionbooks/quiz/result', {
                     body: {
                         quizId: quizData?.quizId,
-                        expressionBookId: current?.expressionId,
-                        expressionId: expressionBookId,
+                        expressionBookId: current.expressionBookId,
+                        expressionId: current.expressionId,
                         correct: isCorrectAnswer,
                     },
                 });
