@@ -204,8 +204,8 @@ export default function ExpressionQuiz() {
             return;
         }
 
-        const correctWords = current?.original?.split(/\s+/).map(w => w.replace(/[.,]/g, '')) || [];
-        const userWords = blanks.map(w => w.replace(/[.,]/g, ''));
+        const correctWords = current?.original?.split(/\s+/).map(w => w.replace(/[.,?!]/g, '')) || [];
+        const userWords = blanks.map(w => w.replace(/[.,?!]/g, ''));
 
         // 위치별로 정확히 일치하는지 확인
         let isCorrectAnswer = true;
