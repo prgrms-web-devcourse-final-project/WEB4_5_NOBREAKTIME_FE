@@ -204,8 +204,8 @@ export default function ExpressionQuiz() {
             return;
         }
 
-        const correctWords = current?.original?.split(/\s+/).map(w => w.replace(/[.,]/g, '')) || [];
-        const userWords = blanks.map(w => w.replace(/[.,]/g, ''));
+        const correctWords = current?.original?.split(/\s+/).map(w => w.replace(/[.,?!]/g, '')) || [];
+        const userWords = blanks.map(w => w.replace(/[.,?!]/g, ''));
 
         // 위치별로 정확히 일치하는지 확인
         let isCorrectAnswer = true;
@@ -233,8 +233,8 @@ export default function ExpressionQuiz() {
                 const response = await client.POST('/api/v1/expressionbooks/quiz/result', {
                     body: {
                         quizId: quizData?.quizId,
-                        expressionBookId: current?.expressionId,
-                        expressionId: expressionBookId,
+                        expressionBookId: current.expressionBookId,
+                        expressionId: current.expressionId,
                         correct: isCorrectAnswer,
                     },
                 });
