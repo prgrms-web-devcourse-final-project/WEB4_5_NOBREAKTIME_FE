@@ -117,7 +117,12 @@ export default function VideoLearningPage() {
                 console.log('로드된 비디오 목록:', videos)
 
                 // hasMore 조건 수정
-                setHasMore(videos.length > 0) // 비디오가 하나라도 있으면 더 로드 가능하다고 판단
+                const uniqueNewVideos = videos.filter(
+                    (video) => !cachedVideos.some((cached) => cached.videoId === video.videoId)
+                )
+
+                // hasMore 조건 수정: 새로 추가된 영상이 있어야만 true
+                setHasMore(uniqueNewVideos.length > 0)
 
                 if (isNewSearch) {
                     setCachedVideos(videos)
@@ -179,7 +184,7 @@ export default function VideoLearningPage() {
             // hasMore 체크 추가
             loadVideos(page)
         }
-    }, [page])
+    }, [page, hasMore])
 
     const handleSearch = (keyword: string) => {
         setSearchKeyword(keyword)
@@ -258,11 +263,10 @@ export default function VideoLearningPage() {
                             <button
                                 key={category.id}
                                 onClick={() => handleCategoryClick(category)}
-                                className={`px-3 py-1 rounded text-sm font-medium ${
-                                    selectedCategory.id === category.id
+                                className={`px-3 py-1 rounded text-sm font-medium ${selectedCategory.id === category.id
                                         ? 'bg-[var(--color-main)] text-white'
                                         : 'bg-[var(--color-sub-1)] text-white'
-                                }`}
+                                    }`}
                             >
                                 {category.label}
                             </button>
@@ -290,7 +294,7 @@ export default function VideoLearningPage() {
                                         </div>
 
                                         {/* 동영상 길이 표시 */}
-                                         {typeof video.duration === 'string' && video.duration.trim() !== '' && (
+                                        {typeof video.duration === 'string' && video.duration.trim() !== '' && (
                                             <div className="absolute bottom-2 right-2 bg-black/70 text-white text-xs px-2 py-1 rounded">
                                                 {video.duration}
                                             </div>
@@ -306,11 +310,10 @@ export default function VideoLearningPage() {
                                                 title={video.bookmarked ? '북마크 제거' : '북마크 추가'}
                                             >
                                                 <BookmarkIcon
-                                                    className={`w-5 h-5 transition-colors ${
-                                                        video.bookmarked
+                                                    className={`w-5 h-5 transition-colors ${video.bookmarked
                                                             ? 'text-[var(--color-main)] fill-[var(--color-main)]'
                                                             : 'text-gray-400 hover:text-gray-600'
-                                                    }`}
+                                                        }`}
                                                 />
                                             </button>
                                         )}
