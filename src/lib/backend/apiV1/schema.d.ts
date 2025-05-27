@@ -1696,6 +1696,7 @@ export interface components {
             watchedVideoCount?: number
             dailyGoal?: components['schemas']['DailyGoal']
             levelStatus?: components['schemas']['LevelStatus']
+            totalQuizAvailable?: boolean
         }
         LearningHistory: {
             learningTime?: string

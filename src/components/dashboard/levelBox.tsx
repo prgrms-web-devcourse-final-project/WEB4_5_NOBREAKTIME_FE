@@ -14,13 +14,13 @@ interface LevelBoxProps {
 
 export default function LevelBox({ statistics, onStatisticsUpdate }: LevelBoxProps) {
     const [isLoading, setIsLoading] = useState(false)
-    const [levelData, setLevelData] = useState<LevelCheckResponse>({
-        wordLevel: 'NONE',
-        expressionLevel: 'NONE',
-    })
+ 
+    const isMeasured =
+        statistics?.levelStatus?.word === '-' &&
+        statistics?.levelStatus?.expression === '-'
 
     const formatDateTime = (dateString: string | undefined) => {
-        if (!dateString) return '측정 전'
+        if (isMeasured || !dateString) return '측정 전'
         const date = new Date(dateString)
         return date
             .toLocaleString('ko-KR', {
@@ -45,7 +45,6 @@ export default function LevelBox({ statistics, onStatisticsUpdate }: LevelBoxPro
             setIsLoading(true)
             const response = await client.POST('/api/v1/dashboard/level')
             if (response.data?.data) {
-                setLevelData(response.data.data)
 
                 // 레벨 재측정 후 통계 정보 다시 받아오기
                 const statisticsResponse = await client.GET('/api/v1/dashboard/statistics')
@@ -75,19 +74,20 @@ export default function LevelBox({ statistics, onStatisticsUpdate }: LevelBoxPro
     }
 
     const categories = [
-        { key: 'wordLevel', label: '단어' },
-        { key: 'expressionLevel', label: '표현' },
+        { key: 'word', label: '단어' },
+        { key: 'expression', label: '표현' },
     ]
 
     return (
         <div className="flex flex-col gap-4 mb-4 ">
             <div className="flex justify-between text-sm">
                 {categories.map(({ label, key }) => {
-                    const level = levelData[key as keyof LevelCheckResponse] || 'NONE'
+                    const levelRaw = statistics?.levelStatus?.[key as 'word' | 'expression'] ?? '-'
+                    const displayLevel = levelRaw === '-' ? 'NONE' : levelRaw
                     return (
                         <div key={key} className="flex flex-1 justify-center gap-4 items-center">
                             <span className="text-lg whitespace-nowrap">{label}</span>
-                            <span className={`${levelColor[level]} text-2xl font-bold`}>{level}</span>
+                            <span className={`${levelColor[displayLevel]} text-2xl font-bold`}>{displayLevel}</span>
                         </div>
                     )
                 })}

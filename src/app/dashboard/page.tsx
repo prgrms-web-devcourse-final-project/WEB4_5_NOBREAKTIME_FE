@@ -12,6 +12,8 @@ import Image from 'next/image'
 import Link from 'next/link'
 import { useEffect, useState } from 'react'
 import DashboardIcon from '@/components/icon/dashboardIcon'
+import { toast } from 'sonner'
+import { useRouter } from 'next/navigation'
 
 type VideoHistoryResponse = components['schemas']['VideoHistoryResponse']
 type StatisticResponse = components['schemas']['StatisticResponse']
@@ -20,6 +22,7 @@ export default function DashboardPage() {
     const { loginMember } = useGlobalLoginMember()
     const [userInfo, setUserInfo] = useState<StatisticResponse | null>(null)
     const [watchHistoryList, setWatchHistoryList] = useState<VideoHistoryResponse[]>([])
+    const router = useRouter()
 
     useEffect(() => {
         const fetchStatistics = async () => {
@@ -53,8 +56,8 @@ export default function DashboardPage() {
             {/* 상단 제목 */}
             <div className="h-[40px] flex items-center px-2">
                 <span className="text-[var(--color-main)]">
-                                    <DashboardIcon />
-                                </span>
+                    <DashboardIcon />
+                </span>
                 <h3 className="text-2xl font-bold text-[var(--color-black)]">&nbsp;Dashboard</h3>
             </div>
 
@@ -77,11 +80,18 @@ export default function DashboardPage() {
                                 <br />
                                 오늘도 함께 시작해볼까요?
                             </p>
-                            <Link href="/dashboard/word/quiz/0?type=today&title=Today's Study">
-                                <button className="mt-4 px-4 py-2 text-sm md:text-base lg:text-lg text-[var(--color-point)] bg-[var(--color-main)] rounded-full">
-                                    Today's Study →
-                                </button>
-                            </Link>
+                            <button
+                                onClick={() => {
+                                    if (!userInfo?.totalQuizAvailable) {
+                                        toast.error('아직 퀴즈를 풀 수 있는 단어가 충분하지 않아요!')
+                                        return
+                                    }
+                                    router.push('/dashboard/word/quiz/0?type=today&title=Today\'s Study')
+                                }}
+                                className="mt-4 px-4 py-2 text-sm md:text-base lg:text-lg text-[var(--color-point)] bg-[var(--color-main)] rounded-full"
+                            >
+                                Today's Study →
+                            </button>
                         </div>
                         <Image
                             src="/character/character.png"
