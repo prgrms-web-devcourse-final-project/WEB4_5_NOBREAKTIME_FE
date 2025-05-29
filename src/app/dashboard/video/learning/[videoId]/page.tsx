@@ -69,7 +69,7 @@ function VideoLearningPage({ params }: { params: Promise<{ videoId: string }> })
             },
             lockChecking: {
                 stage: 'lockChecking',
-                message: message || '영상의 분석이 진행중입니다...',
+                message: message || '동일한 영상의 분석이 이미 진행중입니다!!',
                 progress: 0,
             },
         }
