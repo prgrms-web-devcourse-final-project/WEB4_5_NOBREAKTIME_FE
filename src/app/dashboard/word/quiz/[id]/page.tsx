@@ -248,12 +248,18 @@ export default function WordQuiz() {
 
     const resetQuiz = () => {
         const incorrectWords = filterIncorrectWords()
-        setWords(incorrectWords.length > 0 ? incorrectWords : originalWords)
+        const resetWords = incorrectWords.length > 0 ? incorrectWords : originalWords
+
+        setWords(resetWords)
         setIndex(0)
+
         const newLength = incorrectWords.length || originalWords.length
         setQuizResults(new Array(newLength).fill(null))
         setUserInputs(new Array(newLength).fill(''))
         setShowButtons(new Array(newLength).fill(false))
+
+        setHintCounts(new Array(newLength).fill(0))
+        setMultiInputs(resetWords.map((item) => item.word.split(' ').map(() => '')))
     }
 
     const restartQuiz = () => {
@@ -262,6 +268,9 @@ export default function WordQuiz() {
         setQuizResults(new Array(originalWords.length).fill(null))
         setUserInputs(new Array(originalWords.length).fill(''))
         setShowButtons(new Array(originalWords.length).fill(false))
+
+        setHintCounts(new Array(originalWords.length).fill(0))
+        setMultiInputs(originalWords.map((item) => item.word.split(' ').map(() => '')))
     }
 
     const handleShowResult = () => {
