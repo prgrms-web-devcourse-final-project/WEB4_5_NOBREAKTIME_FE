@@ -3,7 +3,7 @@
 import ExpressionIcon from '@/components/icon/expressionIcon'
 import Image from 'next/image'
 import { useParams } from 'next/navigation'
-import { useEffect, useState, useCallback } from 'react'
+import { useEffect, useState, useCallback, useRef } from 'react'
 import client from '@/lib/backend/client'
 import type { components } from '@/lib/backend/apiV1/schema'
 import QuizComplete from '@/components/learning/Quiz/QuizComplete'
@@ -34,83 +34,104 @@ export default function ExpressionQuiz() {
         }
     }>({})
     const [warningMessage, setWarningMessage] = useState(false)
+    const [incorrectIndices, setIncorrectIndices] = useState<number[]>([])
+    const originalResultsRef = useRef<typeof quizResults | null>(null)
 
-    const resetQuiz = useCallback(() => {
+    const resetQuiz = useCallback((targetIndex = index) => {
         if (!quizData?.quizItems) return
-        const savedResult = quizResults[index]
-        if (savedResult) {
-            setBlanks(savedResult.blanks)
-            setUsedChoices(savedResult.usedChoices)
-            setIsCorrect(savedResult.isCorrect)
-        } else {
-            const blankCount = getBlankCount(quizData.quizItems[index].question)
-            setBlanks(Array(blankCount).fill(''))
-            setUsedChoices([])
-            setIsCorrect(null)
-        }
-    }, [quizData, index, quizResults])
+        const blankCount = getBlankCount(quizData.quizItems[targetIndex].question)
+        setBlanks(Array(blankCount).fill(''))
+        setUsedChoices([])
+        setIsCorrect(null)
+    }, [quizData, index])
+
+    useEffect(() => {
+        resetQuiz()
+    }, [index, resetQuiz])
 
     const handleRestartQuiz = useCallback(() => {
+        setQuizResults({})
         setIndex(0)
         setIsCompleted(false)
-        setQuizResults({})
-        if (quizData?.quizItems) {
-            const blankCount = getBlankCount(quizData.quizItems[0].question)
-            setBlanks(Array(blankCount).fill(''))
-            setUsedChoices([])
-            setIsCorrect(null)
-        }
-    }, [quizData])
+        setIncorrectIndices([])
+        originalResultsRef.current = null
+    }, [])
 
     const handleResetIncorrectQuiz = useCallback(() => {
-        const incorrectIndices = Object.entries(quizResults)
+        const incorrects = Object.entries(quizResults)
             .filter(([_, result]) => result.isCorrect === false)
             .map(([index]) => Number(index))
 
-        if (incorrectIndices.length > 0) {
-            setIndex(incorrectIndices[0])
-            setIsCompleted(false)
-            // 오답만 남기고 나머지 결과 초기화
+        if (incorrects.length > 0) {
             const newResults = Object.fromEntries(
-                Object.entries(quizResults).filter(([index]) => incorrectIndices.includes(Number(index))),
+                Object.entries(quizResults).filter(([index]) => incorrects.includes(Number(index)))
             )
+            if (!originalResultsRef.current) {
+                originalResultsRef.current = quizResults
+            }
             setQuizResults(newResults)
-            resetQuiz()
+            setIncorrectIndices(incorrects)
+            setIndex(incorrects[0])
+            setIsCorrect(null)
+            setUsedChoices([])
+            setBlanks([])
+            setIsCompleted(false)
         }
-    }, [quizResults, resetQuiz])
+    }, [quizResults])
 
     const handleNext = useCallback(() => {
+        if (isCorrect === null) {
+            setWarningMessage(true)
+            return
+        }
+
         if (!quizData?.quizItems) return
 
-        // 현재 상태를 저장
-        setQuizResults((prev) => ({
-            ...prev,
+        const nextResults = {
+            ...quizResults,
             [index]: {
                 isCorrect,
                 blanks,
                 usedChoices,
             },
-        }))
+        }
+
+        if (incorrectIndices.length > 0) {
+            const currentIncorrectIndex = incorrectIndices.indexOf(index)
+            const nextIncorrectIndex = incorrectIndices[currentIncorrectIndex + 1]
+            if (nextIncorrectIndex !== undefined) {
+                setQuizResults(nextResults)
+                setIndex(nextIncorrectIndex)
+            } else {
+                const mergedResults = {
+                    ...originalResultsRef.current,
+                    ...nextResults,
+                }
+                setQuizResults(mergedResults)
+                setIsCompleted(true)
+                setIncorrectIndices([])
+                originalResultsRef.current = null
+            }
+            return
+        }
 
         if (index === quizData.quizItems.length - 1) {
-            // 풀지 않은 문제들을 오답 처리
-            const finalResults = { ...quizResults }
             quizData.quizItems.forEach((_, idx) => {
-                if (!finalResults[idx]) {
-                    finalResults[idx] = {
+                if (!nextResults[idx]) {
+                    nextResults[idx] = {
                         isCorrect: false,
                         blanks: [],
                         usedChoices: [],
                     }
                 }
             })
-            setQuizResults(finalResults)
+            setQuizResults(nextResults)
             setIsCompleted(true)
         } else {
+            setQuizResults(nextResults)
             setIndex(index + 1)
-            resetQuiz()
         }
-    }, [quizData, index, isCorrect, blanks, usedChoices, resetQuiz, quizResults])
+    }, [quizData, index, isCorrect, blanks, usedChoices, quizResults, incorrectIndices])
 
     useEffect(() => {
         const fetchQuiz = async () => {
@@ -174,7 +195,7 @@ export default function ExpressionQuiz() {
     const parts = current.question?.split(/({}\.?)/g) || []
 
     const handleChoice = (choice: string, idx: number) => {
-        setWarningMessage(false) // 단어 선택 시 경고 메시지 초기화
+        setWarningMessage(false)
         if (usedChoices.includes(idx)) {
             const choiceIndex = usedChoices.indexOf(idx)
             const newUsedChoices = usedChoices.filter((_, i) => i !== choiceIndex)
@@ -183,8 +204,7 @@ export default function ExpressionQuiz() {
             const blankIndex = blanks.findIndex((b) => b === choice)
             if (blankIndex !== -1) {
                 const newBlanks = [...blanks]
-                newBlanks.splice(blankIndex, 1)
-                newBlanks.push('')
+                newBlanks[blankIndex] = ''
                 setBlanks(newBlanks)
             }
             return
@@ -200,34 +220,16 @@ export default function ExpressionQuiz() {
 
     const handleSubmit = () => {
         if (blanks.includes('')) {
-            setWarningMessage(true);
-            return;
+            setWarningMessage(true)
+            return
         }
 
-        const correctWords = current?.original?.split(/\s+/).map(w => w.replace(/[.,?!]/g, '')) || [];
-        const userWords = blanks.map(w => w.replace(/[.,?!]/g, ''));
+        const correctWords = current?.original?.split(/\s+/).map(w => w.replace(/[.,?!]/g, '')) || []
+        const userWords = blanks.map(w => w.replace(/[.,?!]/g, ''))
+        const isCorrectAnswer = userWords.every((w, i) => w === correctWords[i])
 
-        // 위치별로 정확히 일치하는지 확인
-        let isCorrectAnswer = true;
-        for (let i = 0; i < userWords.length; i++) {
-            if (userWords[i] !== correctWords[i]) {
-                isCorrectAnswer = false;
-                break;
-            }
-        }
+        setIsCorrect(isCorrectAnswer)
 
-        setIsCorrect(isCorrectAnswer);
-
-        setQuizResults((prev) => ({
-            ...prev,
-            [index]: {
-                isCorrect: isCorrectAnswer,
-                blanks,
-                usedChoices,
-            },
-        }));
-
-        // 퀴즈 결과 저장 API 호출
         const saveQuizResult = async () => {
             try {
                 const response = await client.POST('/api/v1/expressionbooks/quiz/result', {
@@ -237,20 +239,27 @@ export default function ExpressionQuiz() {
                         expressionId: current.expressionId,
                         correct: isCorrectAnswer,
                     },
-                });
+                })
 
                 if (response.error) {
-                    console.error('퀴즈 결과 저장 실패:', response.error);
+                    console.error('퀴즈 결과 저장 실패:', response.error)
                 }
             } catch (error) {
-                console.error('퀴즈 결과 저장 중 오류 발생:', error);
+                console.error('퀴즈 결과 저장 중 오류 발생:', error)
             }
-        };
+        }
 
-        saveQuizResult();  // 문제 제출과 동시에 결과 전송
-    };
-
-
+        saveQuizResult().then(() => {
+            setQuizResults((prev) => ({
+                ...prev,
+                [index]: {
+                    isCorrect: isCorrectAnswer,
+                    blanks,
+                    usedChoices,
+                },
+            }))
+        })
+    }
 
     const handlePrev = () => {
         if (index > 0) setIndex(index - 1)
