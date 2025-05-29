@@ -9,7 +9,7 @@ function Login() {
     const socialLoginForKakaoUrl = `${process.env.NEXT_PUBLIC_API_URL}/oauth2/authorization/kakao`
     const socialLoginForNaverUrl = `${process.env.NEXT_PUBLIC_API_URL}/oauth2/authorization/naver`
     const socialLoginForGoogleUrl = `${process.env.NEXT_PUBLIC_API_URL}/oauth2/authorization/google`
-    const redirectUrlAfterSocialLogin = process.env.NEXT_PUBLIC_FRONT_BASE_URL
+    const redirectUrlAfterSocialLogin = process.env.NEXT_PUBLIC_FRONTEND_URL
 
     const router = useRouter()
 
