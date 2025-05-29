@@ -30,16 +30,11 @@ export function DashboardCalendar() {
 
     const getHistoryForDate = (date: Date): LearningHistory | undefined => {
         const today = new Date()
-        const yesterday = new Date(today)
-        yesterday.setDate(yesterday.getDate() - 1)
-
         const dateStr = date.toISOString().split('T')[0]
         const todayStr = today.toISOString().split('T')[0]
-        const yesterdayStr = yesterday.toISOString().split('T')[0]
 
         if (dateStr === todayStr) return history?.today
-        if (dateStr === yesterdayStr) return history?.yesterday
-        return history?.week
+        return undefined
     }
 
     return (

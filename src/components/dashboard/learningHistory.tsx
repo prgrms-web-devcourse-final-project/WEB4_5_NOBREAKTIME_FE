@@ -11,26 +11,39 @@ import {
 
 type LearningHistoryResponse = components['schemas']['LearningHistoryResponse']
 
-export default function LearningHistory() {
+interface Props {
+    selectedDate?: Date
+}
+
+export default function LearningHistory({ selectedDate }: Props) {
     const [history, setHistory] = useState<LearningHistoryResponse | null>(null)
 
     useEffect(() => {
         const fetchHistory = async () => {
             try {
-                const response = await client.GET('/api/v1/dashboard/calendar')
-                if (response.data?.data) {
-                    setHistory(response.data.data)
-                }
+                const targetDate = selectedDate ?? new Date()
+
+                const year = targetDate.getFullYear();
+                const month = String(targetDate.getMonth() + 1).padStart(2, '0');
+                const day = String(targetDate.getDate()).padStart(2, '0');
+                const dateStr = `${year}-${month}-${day}`;
+
+                const url = `${process.env.NEXT_PUBLIC_API_URL}/api/v1/dashboard/calendar?date=${encodeURIComponent(dateStr)}`;
+                const res = await fetch(url, { credentials: 'include' });
+                const json = await res.json();
+                setHistory(json?.data);
             } catch (error) {
                 console.error('Failed to fetch learning history:', error)
             }
         }
 
         fetchHistory()
-    }, [])
+    }, [selectedDate]) // 날짜 변경 시 요청
+
+    const learningData = history?.today
 
     const learningHistory = [
-        { id: 'total', icon: '/assets/time.svg', label: '총 학습 시간', time: history?.today?.learningTime || '0h 0m' },
+        { id: 'total', icon: '/assets/time.svg', label: '총 학습 시간', time: learningData?.learningTime || '0h 0m' },
         { id: 'video', icon: '/assets/fluent_video.svg', label: '학습 영상 수', time: `${history?.today?.videoCount || 0}개` },
         { id: 'word', icon: '/assets/tabler_abc.svg', label: '학습 단어 수', time: `${history?.today?.addedWordCount || 0}개` },
         { id: 'quiz', icon: '/assets/quiz.svg', label: '학습 퀴즈 수', time: `${history?.today?.quizCount || 0}개` },
@@ -38,7 +51,11 @@ export default function LearningHistory() {
 
     return (
         <div className="flex flex-col space-y-2 text-xs">
-            <h3 className="text-md font-semibold text-black">Today</h3>
+            <h3 className="text-md font-semibold text-black">
+                {(selectedDate ?? new Date()).toLocaleDateString('ko-KR', {
+                    year: 'numeric', month: 'long', day: 'numeric'
+                })} 학습 기록
+            </h3>
             <div className="grid grid-cols-2 gap-2 flex-1">
                 {learningHistory.map((item) => (
                     <div

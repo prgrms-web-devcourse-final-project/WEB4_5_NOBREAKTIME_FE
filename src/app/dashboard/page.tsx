@@ -23,6 +23,7 @@ export default function DashboardPage() {
     const [userInfo, setUserInfo] = useState<StatisticResponse | null>(null)
     const [watchHistoryList, setWatchHistoryList] = useState<VideoHistoryResponse[]>([])
     const router = useRouter()
+    const [selectedDate, setSelectedDate] = useState<Date>(new Date())
 
     useEffect(() => {
         const fetchStatistics = async () => {
@@ -144,6 +145,10 @@ export default function DashboardPage() {
                         <div className="flex-1">
                             <Calendar
                                 mode="single"
+                                selected={selectedDate}
+                                onSelect={(date) => {
+                                    if (date) setSelectedDate(date)
+                                }}
                                 className="w-full h-full"
                                 classNames={{
                                     months: 'flex flex-col h-full',
@@ -162,7 +167,7 @@ export default function DashboardPage() {
                                     cell: 'text-center text-sm md:text-base p-0 relative w-8 md:w-10 [&:has([aria-selected])]:bg-accent first:[&:has([aria-selected])]:rounded-l-md last:[&:has([aria-selected])]:rounded-r-md focus-within:relative focus-within:z-20',
                                     day: 'h-8 md:h-10 w-8 md:w-10 p-0 font-normal aria-selected:opacity-100',
                                     day_selected:
-                                        'bg-primary text-primary-foreground hover:bg-primary hover:text-primary-foreground focus:bg-primary focus:text-primary-foreground',
+                                        'bg-transparent border-3 border-black text-inherit',
                                     day_today: 'bg-accent text-accent-foreground',
                                     day_outside: 'text-muted-foreground opacity-50',
                                     day_disabled: 'text-muted-foreground opacity-50',
@@ -178,7 +183,7 @@ export default function DashboardPage() {
                         <h3 className="text-base md:text-lg font-bold mb-3">Learning History</h3>
                         <div className="flex-1 flex justify-center items-center overflow-hidden">
                             <div className="w-full max-w-[600px]">
-                                <LearningHistory />
+                                <LearningHistory selectedDate={selectedDate} />
                             </div>
                         </div>
                     </div>

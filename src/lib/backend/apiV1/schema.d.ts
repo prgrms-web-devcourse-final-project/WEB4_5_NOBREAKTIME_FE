@@ -910,7 +910,9 @@ export interface paths {
     }
     '/api/v1/dashboard/calendar': {
         parameters: {
-            query?: never
+            query?: {
+                date?: string
+            }
             header?: never
             path?: never
             cookie?: never
@@ -1708,9 +1710,7 @@ export interface components {
             addedWordCount?: number
         }
         LearningHistoryResponse: {
-            today?: components['schemas']['LearningHistory']
-            yesterday?: components['schemas']['LearningHistory']
-            week?: components['schemas']['LearningHistory']
+            today: components['schemas']['LearningHistory']
         }
         RsDataLearningHistoryResponse: {
             code: string
