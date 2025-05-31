@@ -3,7 +3,8 @@
 import Footer from '@/components/layout/footer'
 import Image from 'next/image'
 import Link from 'next/link'
-import { useRouter } from 'next/navigation'
+import { useRouter, useSearchParams } from 'next/navigation'
+import { useEffect } from 'react'
 
 function Login() {
     const socialLoginForKakaoUrl = `${process.env.NEXT_PUBLIC_API_URL}/oauth2/authorization/kakao`
@@ -12,10 +13,21 @@ function Login() {
     const redirectUrlAfterSocialLogin = process.env.NEXT_PUBLIC_FRONTEND_URL
 
     const router = useRouter()
+    const searchParams = useSearchParams()
 
     const handleGoHome = () => {
         router.push('/')
     }
+
+    useEffect(() => {
+        const availableDate = searchParams.get('availableDate')
+        const daysLeft = searchParams.get('daysLeft')
+
+        if (availableDate && daysLeft) {
+            const days = parseInt(daysLeft, 10)
+            alert(`회원 탈퇴 이력이 30일 이내에 있어서 재가입이 불가능합니다.\n재가입 가능일: ${availableDate} (${days}일 남았어요!)`)
+        }
+    }, [searchParams])
 
     return (
         <div className="flex flex-col h-screen">
