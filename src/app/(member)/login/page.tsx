@@ -25,7 +25,7 @@ function Login() {
 
         if (availableDate && daysLeft) {
             const days = parseInt(daysLeft, 10)
-            alert(`회원 탈퇴 이력이 30일 이내에 있어서 재가입이 불가능합니다.\n재가입 가능일: ${availableDate} (${days}일 남았어요!)`)
+            alert(`회원 탈퇴 후 30일 이내에는 재가입할 수 없습니다.\n재가입 가능일: ${availableDate} (${days}일 남았어요!)`)
         }
     }, [searchParams])
 
